@@ -14,13 +14,15 @@ client.on("ready", () => {
 });
  
 client.on("message", (message) => {
+	console.log(client.modules);
 	if (message.author.bot) return;
   	if (message.content.indexOf(config.prefix) !== 0) return;
 	const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
 	core.bootstrap(client, message, args);
   	const command = args.shift().toLowerCase();
 
-  	const cmd = client.modules.get(command);
+  	const cmd = client.modules.get('play');
+
 });
  
 client.login(config.token);

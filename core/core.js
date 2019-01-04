@@ -8,7 +8,12 @@ var core = {
 	modules: {
 		total: 0,
 		loaded: 0
+	},
+	commands: {
+		total: 0,
+		loaded: 0
 	}
+
 };
 
 core.bootstrap = function(client, message, args) {
@@ -78,7 +83,7 @@ core.load = function(moduleName, client, message = null) {
 		helper.logInfo(message, `Modules ${moduleName} has already been loaded`);
 		return true;
 	}
-	var modulePath = ('./modules/' + moduleName);
+	var modulePath = ('../modules/' + moduleName);
 	// See if module file exists
     try {
         var resolvedModulePath = require.resolve(modulePath);
@@ -98,8 +103,22 @@ core.load = function(moduleName, client, message = null) {
         return false;
     }
 
-    client.modules.set(moduleName, props);
-    helper.logInfo(message, `Modules ${moduleName} has been loaded`);
+    let listCommands = Object.getOwnPropertyNames(props).filter(function (p) {
+	    return typeof props[p] === 'function';
+	});
+	console.log(listCommands);
+
+	listCommands.forEach(cmd => {
+		let fnc = props[cmd];
+		console.log(fnc);
+		//client.modules.set(cmd, fnc);
+		
+	});
+	client.modules.set(moduleName, props);
+    
+    if(message) {
+    	helper.logInfo(`Modules ${moduleName} has been loaded with ${listCommands.length} commands`, message);
+    }
     return true;
 };
 
