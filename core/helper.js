@@ -18,7 +18,7 @@ module.exports = {
      *
      * @param {fs}
      */
-    createConfig: function(fs) {
+    createMainConfig: function(fs) {
         var json = {
             "bot": {
                 "token": "",
@@ -40,7 +40,7 @@ module.exports = {
      *
      * @param {fs}
      */
-    saveConfig: function(fs, json) {
+    saveMainConfig: function(fs, json) {
         json = JSON.stringify(json, null, 4);
         fs.writeFile('./config.json', json, (err) => {
             if (!err) {
@@ -49,19 +49,41 @@ module.exports = {
         });
     },
 
-    /**
-     * Create default modules list file. :)
-     *
-     * @param {fs}
-     */
-    createModulesData: function(fs) {
-        var json = {};
+    /*
+     * Create loaded module config
+    */
+    saveCommandConfig: function(fs, client) {
+        let json = {};
+        client.commands.keyArray().forEach(function(cmd) {
+            let module = client.commands.get(cmd);
+            json[cmd] = module;
+
+        });
         json = JSON.stringify(json, null, 4);
-        fs.writeFileSync('./data/modules.json', json, 'utf8', 'w', (err) => {
+        fs.writeFileSync('./config/commands.json', json, 'utf8', 'w', (err) => {
             if (!err) {
                 console.log('Configuration file created successfully!');
             }
         });
     },
+
+    saveModuleConfig: function(fs, client) {
+        let json = {};
+        Array.from(client.modules.keys()).forEach(function(module) {
+            json[module] = true;
+
+        });
+        json = JSON.stringify(json, null, 4);
+        fs.writeFileSync('./config/modules.json', json, 'utf8', 'w', (err) => {
+            if (!err) {
+                console.log('Configuration file created successfully!');
+            }
+        });
+    },
+
+    saveConfig: function(fs, client) {
+        this.saveCommandConfig(fs, client);
+        this.saveModuleConfig(fs, client);
+    }
 
 };

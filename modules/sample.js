@@ -8,11 +8,11 @@ modules.play = function(client, message, args) {
 	message.channel.send('i play something');
 };
 
-modules.stop = function(client, message, args) {
+modules.get = function(client, message, args) {
 	message.channel.send('i stop something');
 };
 
-modules.pause = function(client, message, args) {
+modules.test = function(client, message, args) {
 	message.channel.send('i pause something');
 };
 
