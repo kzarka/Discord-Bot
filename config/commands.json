@@ -1,3 +1,6 @@
 {
-    "play": "music"
+    "play": "music",
+    "queue": "music",
+    "stop": "music",
+    "pause": "music"
 }

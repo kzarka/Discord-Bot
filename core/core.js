@@ -5,6 +5,8 @@ const helper = require("../core/helper");
 const fs = require("fs");
 const Enmap = require("enmap");
 
+const modulesDir = '/modules/';
+
 var core = {
 	modules: {
 		total: 0,
@@ -86,7 +88,7 @@ core.loadAll = function(client, reload = false) {
 	}
 	helper.logInfo(`Loading active modules...`);
 	new Promise((resolve, reject) => {
-		fs.readdir("./modules/", (err, files) => {
+		fs.readdir(`.${modulesDir}`, (err, files) => {
 	  		if (err) console.log(err);
 	  		files.forEach(file => {
 		    	if (!file.endsWith(".js")) return;
@@ -113,7 +115,7 @@ core.load = function(moduleName, client, message = null) {
 		helper.logInfo(`Modules ${moduleName} has already been loaded`, message);
 		return true;
 	}
-	var modulePath = ('../modules/' + moduleName);
+	var modulePath = (`..${modulesDir}` + moduleName);
 	// See if module file exists
     try {
         var resolvedModulePath = require.resolve(modulePath);
@@ -129,6 +131,7 @@ core.load = function(moduleName, client, message = null) {
     try {
         var props = require(modulePath);
     } catch (e) {
+    	console.log(e);
         helper.logInfo(`Modules ${moduleName} cant be load`, message);
         return false;
     }
@@ -178,7 +181,7 @@ core.load = function(moduleName, client, message = null) {
 
 core.reload = function(moduleName, client, message = null) {
 
-	var modulePath = ('./modules/' + moduleName);
+	var modulePath = (`..${modulesDir}` + moduleName);
 	// See if module file exists
     try {
         var resolvedModulePath = require.resolve(modulePath);
@@ -198,7 +201,7 @@ core.reload = function(moduleName, client, message = null) {
     this.load(moduleName, client);
 
     client.modules.set(moduleName, props);
-    helper.logInfo(message, `Modules ${moduleName} has been reloaded`);
+    helper.logInfo(`Modules ${moduleName} has been reloaded`,message);
     helper.saveConfig(fs, client);
     return true;
 };
@@ -208,7 +211,7 @@ core.unload = function(moduleName, client, message = null) {
 		helper.logInfo(`Modules ${moduleName} didnt loaded`, message);
 		return true;
 	}
-	var modulePath = ('./modules/' + moduleName);
+	var modulePath = (`..${modulesDir}` + moduleName);
 	// See if module file exists
     try {
         var resolvedModulePath = require.resolve(modulePath);
@@ -224,8 +227,8 @@ core.unload = function(moduleName, client, message = null) {
 		return client.commands.get(cmd) != moduleName;
 	});
 
-    client.modules.deleteProp(moduleName);
-    helper.logInfo(message, `Modules ${moduleName} has been unloaded`);
+    client.modules.delete(moduleName);
+    helper.logInfo(`Modules ${moduleName} has been unloaded`, message);
     helper.saveConfig(fs, client);
     return true;
 };

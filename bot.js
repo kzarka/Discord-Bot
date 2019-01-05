@@ -8,10 +8,19 @@ client.modules = new Enmap();
 client.commands = new Enmap();
 
 client.on("ready", () => {
-	console.log("Black Spirit BOT");
-	console.log("Starting...");
+	console.log("------------------");
+	console.log("Xuan - Discord Bot");
+	console.log("------------------");
+	console.log("\nStarting... ");
+    console.log('\nBot is ready');
+    console.log('----------------\n');
+    console.log('Bot Name: '+ client.user.username);
+    console.log('Connected to '+ client.guilds.array().length+ ' servers with total '+client.channels.array().length+' channels');
+    console.log('----------------\n');
 	core.loadAll(client);
-
+	// Loading dependencies...
+	const dependencies = require("./dependencies/init");
+	dependencies(client);
 });
  
 client.on("message", (message) => {
@@ -26,8 +35,7 @@ client.on("message", (message) => {
   	if(!module) return;
   	const cmd = client.modules.get(module)[command];
   	if (typeof cmd !== 'function') return;
-  	copyArgs = copyArgs.unshift(command);
-  	cmd(client, message, copyArgs)
+  	cmd(client, message, args)
 });
  
 client.login(config.token);
