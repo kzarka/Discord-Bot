@@ -89,10 +89,12 @@ module.exports = function(client){
         }
         hour = time[current];
         while(!(table[n][hour])) {
+            console.log(table[n][hour]);
             if(current>time.length-1) {
                 current = 0;
                 n+= 1;
             }
+            if(n>6) n = 0;
             hour = time[current++];
         }
         let name = table[n][hour];
