@@ -13,6 +13,10 @@ var sent = true;
 
 module.exports = function(client){
 
+    mainCH = client.channels.get(config.channels.main);
+    scheduleWarning(mainCH);
+    setTopic(mainCH);
+
 	client.on('message', async message => {
     	if(message.author.bot) return;
         let ask = matchAsk(message);
@@ -44,11 +48,7 @@ module.exports = function(client){
     });
 
     client.on('ready', async () => {
-        client.user.setActivity('a');
-        mainCH = client.channels.get(config.channels.main);
-        bossTableCH = client.channels.get(config.channels.bossTable);
-        scheduleWarning(mainCH);
-        //warnMessage(mainCH);\
+        
     });
 
     /* Get boss list for a specific day or today 
@@ -89,7 +89,6 @@ module.exports = function(client){
         }
         hour = time[current];
         while(!(table[n][hour])) {
-            console.log(table[n][hour]);
             if(current>time.length-1) {
                 current = 0;
                 n+= 1;
@@ -176,6 +175,7 @@ module.exports = function(client){
     /* Schedule to send warn messages */
     function scheduleWarning(channel) {
         var hour = getNextBoss()[1];
+        var bossNames = getNextBoss()[0];
         var now = new Date();
         now.setSeconds(0);
         var remain = hourToDay(hour) - now;
@@ -187,18 +187,16 @@ module.exports = function(client){
             }
         }
         else sent = true;
+        if (minRemain == 5) {
+            setTimeout(setTopic, (5*6e4 + 1e4), channel);
+        }
         setTimeout(scheduleWarning, 6e4, channel);
     }
 
-    /* Get last message from schedule channel */
-    function getImage() {
-        var lastID = bossTableCH.lastMessageID;
-        bossTableCH.fetchMessage(lastID)
-        .then(msg => {
-            let url = msg.attachments.array()[0].url;
-            mainChannel.send(url);
-        })
-        .catch(console.error);
+    function setTopic(channel) {
+        var hour = getNextBoss()[1];
+        var bossNames = getNextBoss()[0];
+        channel.setTopic(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`).catch(console.error);
     }
 
     /* Get a Boss time for a specific day */
