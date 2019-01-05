@@ -71,6 +71,7 @@ module.exports = function(client){
         var hour = time[current];
         if(now>hourToDay('23:00')) {
             let i = 0;
+			if(n > 5) n = 0;
             while(!(table[n+1][hour])) {
                 current = i++;
             }
