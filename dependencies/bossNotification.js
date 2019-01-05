@@ -71,13 +71,14 @@ module.exports = function(client){
         var hour = time[current];
         if(now>hourToDay('23:00')) {
             let i = 0;
-			if(n > 5) n = 0;
-            while(!(table[n+1][hour])) {
+			let nextDay = n+1;
+			if(nextDay > 6) nextDay = 0;
+            while(!(table[nextDay][hour])) {
                 current = i++;
             }
             hour = time[current];
-            let name = table[n+1][hour];
-            return [name, hour, n+1];
+            let name = table[nextDay][hour];
+            return [name, hour, nextDay];
         }
         for(i=0; i<time.length-1; i++) {
             if(now>hourToDay(time[i]) && now<hourToDay(time[i+1])) {
@@ -177,15 +178,15 @@ module.exports = function(client){
         now.setSeconds(0);
         var remain = hourToDay(hour) - now;
         var minRemain = Math.floor(remain/60000);
+		if (minRemain > 30) return;
         if (minRemain == 5 || minRemain == 10 || minRemain == 15 || minRemain == 30) {
             if(sent) {
                 warnMessage(channel, true, minRemain);
                 sent = false;
             }
-        }
-        else sent = true;
+        } else sent = true;
         if (minRemain == 5) {
-            setTimeout(setTopic, (5*6e4 + 1e4), channel);
+            setTimeout(setTopic, 6*6e4, channel);
         }
         setTimeout(scheduleWarning, 6e4, channel);
     }
