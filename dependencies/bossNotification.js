@@ -47,10 +47,6 @@ module.exports = function(client){
         }
     });
 
-    client.on('ready', async () => {
-        
-    });
-
     /* Get boss list for a specific day or today 
      * @param {Date} date
      * @return {array}
@@ -196,7 +192,7 @@ module.exports = function(client){
     function setTopic(channel) {
         var hour = getNextBoss()[1];
         var bossNames = getNextBoss()[0];
-        channel.setTopic(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`).catch(console.error);
+        channel.setTopic(`👉 Boss kế tiếp **${bossNames}** vào lúc ${hour}! 👌`).catch(console.error);
     }
 
     /* Get a Boss time for a specific day */
