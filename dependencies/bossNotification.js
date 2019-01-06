@@ -179,9 +179,8 @@ module.exports = function(client){
         now.setSeconds(0);
         var remain = hourToDay(hour) - now;
         var minRemain = Math.floor(remain/60000);
-        console.log(minRemain);
 		if (minRemain > 30) {
-            setTimeout(scheduleWarning, 6e3, channel);
+            setTimeout(scheduleWarning, 6e4, channel);
             return;
         }
         if (minRemain == 5 || minRemain == 10 || minRemain == 15 || minRemain == 30) {
