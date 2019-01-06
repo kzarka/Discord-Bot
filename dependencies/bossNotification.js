@@ -47,6 +47,7 @@ module.exports = function(client){
         }
     });
 
+
     /* Get boss list for a specific day or today 
      * @param {Date} date
      * @return {array}
