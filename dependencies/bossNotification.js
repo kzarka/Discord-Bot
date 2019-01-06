@@ -179,7 +179,11 @@ module.exports = function(client){
         now.setSeconds(0);
         var remain = hourToDay(hour) - now;
         var minRemain = Math.floor(remain/60000);
-		if (minRemain > 30) return;
+        console.log(minRemain);
+		if (minRemain > 30) {
+            setTimeout(scheduleWarning, 6e3, channel);
+            return;
+        }
         if (minRemain == 5 || minRemain == 10 || minRemain == 15 || minRemain == 30) {
             if(sent) {
                 warnMessage(channel, true, minRemain);
