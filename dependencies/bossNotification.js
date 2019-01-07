@@ -1,40 +1,39 @@
 const Discord = require('discord.js');
 const config = require("../config/config.json");
-const table = require('../data/boss/table.json');
-const msgStr = require('../data/boss/message.json');
+
+const datDir = '/data/dependencies/';
+const table = require(`..${datDir}boss/table.json`);
+const msgStr = require(`..${datDir}boss/message.json`);
 /* Load webhook */
 //const bossHook = new Discord.WebhookClient(config.bossHook.ID, config.bossHook.token);
 
 /* Global variables */
-var guildCH = null;
-var mainCH = null;
-var bossTableCH = null;
-var sent = true;
+let sent = true;
 
-module.exports = function(client){
+module.exports = function(client, helper){
 
-    mainCH = client.channels.get(config.channels.main);
-    scheduleWarning(mainCH);
-    setTopic(mainCH);
+    scheduleWarning();
+    setTopic();
 
 	client.on('message', async message => {
     	if(message.author.bot) return;
         let ask = matchAsk(message);
+        console.log(ask);
         switch (ask) {
             case 'all':
-                warnMessage(message.channel);
+                warnMessage();
                 break;
             case 'karanda':
-                bossListMessage(message.channel, 'Karanda');
+                bossListMessage(message, 'Karanda');
                 break;
             case 'kzarka':
-                bossListMessage(message.channel, 'Kzarka');
+                bossListMessage(message, 'Kzarka');
                 break;
             case 'kutum':
-                bossListMessage(message.channel, 'Kutum');
+                bossListMessage(message, 'Kutum');
                 break;
             case 'nouver':
-                bossListMessage(message.channel, 'Nouver');
+                bossListMessage(message, 'Nouver');
                 break;
             default:
                 break;
@@ -113,7 +112,7 @@ module.exports = function(client){
     }
 
     /* Send list for a boss message */
-    function bossListMessage(channel, bossName){
+    function bossListMessage(message, bossName){
         var times = getBoss(bossName);
         var msgContent = '';
         var now = new Date();
@@ -121,7 +120,7 @@ module.exports = function(client){
         if(times.length == 0) {
             tomorrow.setDate(now.getDate()+1);
             tmrTimes = getBoss(bossName, tomorrow);
-            channel.send(`**${bossName}** không spawn vào hôm nay, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
+            message.channel.send(`**${bossName}** không spawn vào hôm nay, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
             return;
         }
         if(times.length==1) {
@@ -129,11 +128,11 @@ module.exports = function(client){
                 tomorrow = new Date();
                 tomorrow.setDate(now.getDate()+1);
                 tmrTimes = getBoss(bossName, tomorrow);
-                channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
+                message.channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
                 return;
             }
             if(now<hourToDay(times[0])) {
-                channel.send(`**${bossName}** sẽ spawn vào ${times[0]}!`);
+                message.channel.send(`**${bossName}** sẽ spawn vào ${times[0]}!`);
                 return;
             }
         }
@@ -142,12 +141,12 @@ module.exports = function(client){
                 tomorrow = new Date();
                 tomorrow.setDate(now.getDate()+1);
                 tmrTimes = getBoss(bossName, tomorrow);
-                channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
+                message.channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
                 return;
             }
 
             if(now<hourToDay(times[0])) {
-                channel.send(`**${bossName}** sẽ spawn vào ${times[0]}!`);
+                message.channel.send(`**${bossName}** sẽ spawn vào ${times[0]}!`);
                 return;
             }
             var time2 = [];
@@ -156,23 +155,26 @@ module.exports = function(client){
                     time2.push(times[x]);
                 }
             }
-            channel.send(`**${bossName}** sẽ spawn vào ${time2.join(', ')}!`);
+            message.channel.send(`**${bossName}** sẽ spawn vào ${time2.join(', ')}!`);
             return;
         }
     }
 
     /* Send warn message */
-    function warnMessage(channel, schedule = null, minRemain = 0){
+    function warnMessage(schedule = null, minRemain = 0){
         var bossNames = getNextBoss()[0];
         var hour = getNextBoss()[1];        
         if(schedule) {
-            channel.send(`**${bossNames}** sẽ spawn sau ${minRemain} phút!`);
+            helper.sendMessageToGuilds(`**${bossNames}** sẽ spawn sau ${minRemain} phút!`, client);
         }
-        else channel.send(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`);
+        else {
+            console.log('boss cmd');
+            helper.sendMessageToGuilds(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`, client)
+        }
     }
 
     /* Schedule to send warn messages */
-    function scheduleWarning(channel) {
+    function scheduleWarning() {
         var hour = getNextBoss()[1];
         var bossNames = getNextBoss()[0];
         var now = new Date();
@@ -180,25 +182,25 @@ module.exports = function(client){
         var remain = hourToDay(hour) - now;
         var minRemain = Math.floor(remain/60000);
 		if (minRemain > 30) {
-            setTimeout(scheduleWarning, 6e4, channel);
+            setTimeout(scheduleWarning, 6e4);
             return;
         }
         if (minRemain == 5 || minRemain == 10 || minRemain == 15 || minRemain == 30) {
             if(sent) {
-                warnMessage(channel, true, minRemain);
+                warnMessage(true, minRemain);
                 sent = false;
             }
         } else sent = true;
         if (minRemain == 5) {
-            setTimeout(setTopic, 6*6e4, channel);
+            setTimeout(setTopic, 6*6e4);
         }
-        setTimeout(scheduleWarning, 6e4, channel);
+        setTimeout(scheduleWarning, 6e4);
     }
 
-    function setTopic(channel) {
+    function setTopic() {
         var hour = getNextBoss()[1];
         var bossNames = getNextBoss()[0];
-        channel.setTopic(`👉 Boss kế tiếp **${bossNames}** vào lúc ${hour}! 👌`).catch(console.error);
+        helper.setGuildsTopic(`👉 Boss kế tiếp **${bossNames}** vào lúc ${hour}! 👌`, client);
     }
 
     /* Get a Boss time for a specific day */

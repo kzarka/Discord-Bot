@@ -13,11 +13,31 @@ module.exports = {
         return (user.id === '166795785915203584');
     },
 
-    /**
-     * Create an configuration file. :)
-     *
-     * @param {fs}
-     */
+    /* Send message to all guilds in main channel */
+    sendMessageToGuilds: function (message, client) {
+        let guilds = client.guilds;
+        if(!guilds) return;
+        guilds.tap(function (guild) {
+            let channel = guild.channels.find(function(ch) {
+                return ch.name === 'general' || ch.name === 'chat';
+            });
+            if(!channel) return;
+            channel.send(message);
+        });
+    },
+
+    /* Send message to all guilds in main channel */
+    setGuildsTopic: function (message, client) {
+        let guilds = client.guilds;
+        if(!guilds) return;
+        guilds.tap(function (guild) {
+            let channel = guild.channels.find(ch => ch.name === 'general' || ch.name === 'chat');
+            if(!channel) return;
+            channel.setTopic(message).catch(console.error);
+        });
+    },
+
+    /* Create main config */
     createMainConfig: function(fs) {
         var json = {
             "bot": {
@@ -35,11 +55,7 @@ module.exports = {
         console.log("Create");
     },
 
-    /**
-     * Save an configuration file. :)
-     *
-     * @param {fs}
-     */
+    /* Save an configuration file. :) */
     saveMainConfig: function(fs, json) {
         json = JSON.stringify(json, null, 4);
         fs.writeFile('./config.json', json, (err) => {
@@ -49,9 +65,7 @@ module.exports = {
         });
     },
 
-    /*
-     * Create loaded module config
-    */
+    /* Create loaded module config */
     saveCommandConfig: function(fs, client) {
         let json = {};
         client.commands.keyArray().forEach(function(cmd) {

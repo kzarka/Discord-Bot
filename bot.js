@@ -4,6 +4,8 @@ const Enmap = require("enmap");
 
 const core = require('./core/core');
 const config = require("./config/config.json");
+const helper = require("./core/helper");
+
 client.modules = new Enmap();
 client.commands = new Enmap();
 
@@ -20,7 +22,7 @@ client.on("ready", () => {
 	core.loadAll(client);
 	// Loading dependencies...
 	const dependencies = require("./dependencies/init");
-	dependencies(client);
+	dependencies(client, helper);
 });
  
 client.on("message", (message) => {

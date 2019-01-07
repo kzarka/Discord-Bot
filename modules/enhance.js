@@ -1,6 +1,7 @@
 'use strict';
 
-const caphras  = require('../data/enhance/caphras.json');
+const dataDir = '/data/modules/enhance/';
+const caphras  = require(`..${dataDir}caphras.json`);
 
 var modules = {
 	description: 'Music module'
