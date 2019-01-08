@@ -21,7 +21,7 @@ module.exports = function(client, helper){
         console.log(ask);
         switch (ask) {
             case 'all':
-                warnMessage();
+                warnMessage(message);
                 break;
             case 'karanda':
                 bossListMessage(message, 'Karanda');
@@ -161,15 +161,14 @@ module.exports = function(client, helper){
     }
 
     /* Send warn message */
-    function warnMessage(schedule = null, minRemain = 0){
+    function warnMessage(message, schedule = null, minRemain = 0){
         var bossNames = getNextBoss()[0];
         var hour = getNextBoss()[1];        
         if(schedule) {
             helper.sendMessageToGuilds(`**${bossNames}** sẽ spawn sau ${minRemain} phút!`, client);
         }
-        else {
-            console.log('boss cmd');
-            helper.sendMessageToGuilds(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`, client)
+        else if(message) {
+            message.channel.send(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`, client)
         }
     }
 
@@ -187,7 +186,7 @@ module.exports = function(client, helper){
         }
         if (minRemain == 5 || minRemain == 10 || minRemain == 15 || minRemain == 30) {
             if(sent) {
-                warnMessage(true, minRemain);
+                warnMessage(null, true, minRemain);
                 sent = false;
             }
         } else sent = true;
