@@ -2,5 +2,22 @@
     "play": "music",
     "queue": "music",
     "stop": "music",
-    "pause": "music"
+    "pause": "music",
+    "warrior": "roles",
+    "sorceress": "roles",
+    "ranger": "roles",
+    "berserker": "roles",
+    "tamer": "roles",
+    "valkyrie": "roles",
+    "musa": "roles",
+    "maehwa": "roles",
+    "witch": "roles",
+    "wizard": "roles",
+    "ninja": "roles",
+    "kunoichi": "roles",
+    "darkknight": "roles",
+    "striker": "roles",
+    "mystic": "roles",
+    "archer": "roles",
+    "lahn": "roles"
 }

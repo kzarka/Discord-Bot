@@ -20,6 +20,7 @@ var core = {
 };
 
 core.bootstrap = function(client, message, args) {
+	if (message.author.id != '213722448070180864') return;
 	let copyArgs = args.slice();
 	const command = copyArgs.shift().toLowerCase();
 	if (command == 'load') {
@@ -200,7 +201,6 @@ core.reload = function(moduleName, client, message = null) {
     // Load it
     this.load(moduleName, client);
 
-    client.modules.set(moduleName, props);
     helper.logInfo(`Modules ${moduleName} has been reloaded`,message);
     helper.saveConfig(fs, client);
     return true;
