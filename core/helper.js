@@ -37,6 +37,14 @@ module.exports = {
         });
     },
 
+    /* Send a help message */
+    sendHelpMessage(message, content, cover = false) {
+        let coverBox = '';
+        if(cover) {
+            coverBox = '```';
+        }
+        message.channel.send(coverBox + content + coverBox);
+    },
     /* Create main config */
     createMainConfig: function(fs) {
         var json = {
@@ -98,6 +106,11 @@ module.exports = {
     saveConfig: function(fs, client) {
         this.saveCommandConfig(fs, client);
         this.saveModuleConfig(fs, client);
-    }
+    },
+
+    isNormalInteger: function(str) {
+        let n = Math.floor(Number(str));
+        return n !== Infinity && n >= 0;
+    },
 
 };

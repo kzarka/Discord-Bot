@@ -3,7 +3,7 @@ const config = require("../config/config.json");
 
 /* Greeting member when they join our guild */
 const greetingChannel = 'guests';
-module.exports = function(client, helper = null){
+module.exports = function(client){
 
 	client.on('guildMemberAdd', member => {
         let channel = member.guild.channels.find(function(ch) {

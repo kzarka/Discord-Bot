@@ -22,7 +22,8 @@ client.on("ready", () => {
 	core.loadAll(client);
 	// Loading dependencies...
 	const dependencies = require("./dependencies/init");
-	dependencies(client, helper);
+	client.helper = helper;
+	dependencies(client);
 });
  
 client.on("message", (message) => {

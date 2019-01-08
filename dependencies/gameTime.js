@@ -8,7 +8,7 @@ let start = '6';
 let end = '10';
 let str = null;
 
-module.exports = function(client, helper = null){
+module.exports = function(client){
     setGameTime();
 
     /* Set game time */

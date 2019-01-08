@@ -2,7 +2,7 @@
 const fs = require("fs");
 const dependenciesDir = '/dependencies/'
 
-module.exports = function(client, helper = null){
+module.exports = function(client){
 	fs.readdir(`.${dependenciesDir}`, (err, files) => {
   		if (err) console.log(err);
   		console.log('\n----------------');
@@ -12,7 +12,7 @@ module.exports = function(client, helper = null){
 	    	if (!file.endsWith(".js")) return;
 	    	if(file.indexOf('init') !== -1) return;
 	    	try {
-	    		require(`..${dependenciesDir}${file}`)(client, helper);
+	    		require(`..${dependenciesDir}${file}`)(client);
 	    	} catch (e) {
 	    		console.log(`Can not load file ${file}`);
 	    		return;

@@ -10,8 +10,8 @@ const msgStr = require(`..${datDir}boss/message.json`);
 /* Global variables */
 let sent = true;
 
-module.exports = function(client, helper){
-
+module.exports = function(client){
+    let helper = client.helper;
     scheduleWarning();
     setTopic();
 
