@@ -18,7 +18,6 @@ module.exports = function(client, helper){
 	client.on('message', async message => {
     	if(message.author.bot) return;
         let ask = matchAsk(message);
-        console.log(ask);
         switch (ask) {
             case 'all':
                 warnMessage(message);
