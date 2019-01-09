@@ -1,10 +1,4 @@
 {
-    "play": "music",
-    "queue": "music",
-    "stop": "music",
-    "pause": "music",
-    "volume": "music",
-    "resume": "music",
     "warrior": "roles",
     "sorceress": "roles",
     "ranger": "roles",
@@ -23,5 +17,16 @@
     "archer": "roles",
     "lahn": "roles",
     "caphras": "enhance",
-    "caph": "enhance"
+    "caph": "enhance",
+    "play": "music",
+    "queue": "music",
+    "stop": "music",
+    "pause": "music",
+    "skip": "music",
+    "remove": "music",
+    "volume": "music",
+    "leave": "music",
+    "repeat": "music",
+    "clearqueue": "music",
+    "resume": "music"
 }

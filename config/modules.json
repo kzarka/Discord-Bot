@@ -1,5 +1,5 @@
 {
-    "music": true,
     "roles": true,
-    "enhance": true
+    "enhance": true,
+    "music": true
 }

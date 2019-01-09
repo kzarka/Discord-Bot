@@ -54,18 +54,18 @@ modules.play = function(client, message, args) {
 
 	// Get the video information.
 	message.channel.send('🔎 Đang tìm...').then(response => {
-		let searchstring = args[0];
+		let searchstring = args.join(' ').trim();
 		if (!args[0].toLowerCase().startsWith('http')) {
-			searchstring = 'gvsearch1:' + args[0];
+			searchstring = 'ytsearch:' + searchstring + '';
 		}
+		console.log(searchstring);
 		YoutubeDL.getInfo(searchstring, ['-q', '--no-warnings', '--force-ipv4'], (err, info) => {
 			// Verify the info.
 			if (err || info.format_id === undefined || info.format_id.startsWith('0')) {
 				return response.edit('Video gì thế này!');
 			}
 
-			info.requester = message.author.id;
-
+			info.requester = message.member.nickname || message.author.username;
 			// Queue the video.
 			response.edit(`📝 Thêm vào hàng đợi: **${info.title}**  | Thời lượng: ${correctTime(info.duration)}`).then(() => {
 				queue.push(info);
@@ -94,12 +94,12 @@ modules.queue = function(client, message, args) {
 		text += `\nTrang 1 trên ${maxPage} (${queue.length-1} bài hát):\n`;
 		if(maxPage==1){
 			for(i=1;i<queue.length;i++){
-				text+=`\n#${i} **${queue[i].title}**  [${correctTime(queue[i].duration)}] | Yêu cầu bởi *${idToName(queue[i].requester)}*`;
+				text+=`\n#${i} **${queue[i].title}**  [${correctTime(queue[i].duration)}] | Yêu cầu bởi *${queue[i].requester}*`;
 			}
 		}
 		else {
 			for(i=1;i<=maxPerPage;i++){
-				text+=`\n#${i} **${queue[i].title}**  [${correctTime(queue[i].duration)}] | Yêu cầu bởi *${idToName(queue[i].requester)}*`;
+				text+=`\n#${i} **${queue[i].title}**  [${correctTime(queue[i].duration)}] | Yêu cầu bởi *${queue[i].requester}*`;
 			}
 		}
 	}
@@ -107,7 +107,7 @@ modules.queue = function(client, message, args) {
 	if(args[0] == 'all'){
 		text += `\nTrang 1 trên ${maxPage} (${queue.length-1} bài hát):\n\n`;
 		for(i=1;i<queue.length;i++){
-				text+=`\n#${i} **${queue[i].title}**  [${correctTime(queue[i].duration)}] | Yêu cầu bởi *${idToName(queue[i].requester)}*`;
+				text+=`\n#${i} **${queue[i].title}**  [${correctTime(queue[i].duration)}] | Yêu cầu bởi *${queue[i].requester}*`;
 		}
 	}
 	else if(!isNaN(args[0])){
@@ -119,13 +119,13 @@ modules.queue = function(client, message, args) {
 		if(page == maxPage){
 			text += `\nTrang ${page} trên ${maxPage} (${queue.length-1} bài hát):\n`;
 			for(i=(1+(page-1)*maxPerPage);i<queue.length;i++){
-			text+=`\n#${i} **${queue[i].title}**  [${correctTime(queue[i].duration)}] | Yêu cầu bởi *${idToName(queue[i].requester)}*`;
+			text+=`\n#${i} **${queue[i].title}**  [${correctTime(queue[i].duration)}] | Yêu cầu bởi *${queue[i].requester}*`;
 			}
 		}
 		else if(page<maxPage){
 			text += `\nTrang ${page} trên ${maxPage} (${queue.length-1} bài hát):\n`;
 			for(i=(1+(page-1)*maxPerPage);i<(1+page*maxPerPage);i++){
-			text+=`\n#${i} **${queue[i].title}**  [${correctTime(queue[i].duration)}] | Yêu cầu bởi *${idToName(queue[i].requester)}*`;
+			text+=`\n#${i} **${queue[i].title}**  [${correctTime(queue[i].duration)}] | Yêu cầu bởi *${queue[i].requester}*`;
 			}
 		}
 
@@ -166,9 +166,13 @@ modules.stop = function(client, message, args) {
 	queue.splice(0, queue.length);
 
 	// End the stream and disconnect.
-	voiceConnection.player.dispatcher.end();
-	voiceConnection.disconnect();
-	return message.channel.send('Dừng phát và rời voice channel!');
+	try {
+		voiceConnection.player.dispatcher.end();
+		voiceConnection.disconnect();
+		return message.channel.send('Dừng phát và rời voice channel!');
+	} catch(e) {
+		message.channel.send('Error!');
+	}
 };
 
 modules.pause = function(client, message, args) {
@@ -181,7 +185,73 @@ modules.pause = function(client, message, args) {
 	// Pause.
 	message.channel.send('⏸ Đã tạm dừng!');
 	const dispatcher = voiceConnection.player.dispatcher;
-	if (!dispatcher.paused) dispatcher.pause();
+	try {
+		if (!dispatcher.paused) dispatcher.pause();
+	} catch(e) {}
+};
+
+//skip a song from queue
+modules.skip = function(client, message, args) {
+	// Get the voice connection.
+	const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == message.guild.id);
+	if (voiceConnection === null) return message.channel.send('Có gì để phát đâu mà skip!');
+	if (voiceConnection != null && voiceConnection.channel != message.member.voiceChannel) {
+		return message.channel.send('Mình ở kênh khác rồi!');
+	}
+	// Get the queue.
+	const queue = getQueue(message.guild.id);
+	let song = queue[0];
+	if (!canSkip(message.member, queue, 0)) return message.channel.send(`Không thể bỏ qua bài này vì bạn không yêu cầu nó, yêu cầu bởi ${idToName(song.requester)}`).then((response) => {
+		response.delete(5000);
+	});
+	if(loop==1){
+		loop=0;
+	}
+	queue.splice(0, 0);
+
+	// Resume and stop playing.
+	const dispatcher = voiceConnection.player.dispatcher;
+	if (voiceConnection.paused) dispatcher.resume();
+	try {
+		return dispatcher.end();
+	} catch(e) {
+		console.log(e);
+	}
+
+	message.channel.send(`⏭ Đã bỏ qua **${queue[0].title}**!`);
+};
+
+modules.remove = function(client, message, args) {
+	// Get the voice connection.
+	const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == message.guild.id);
+	if (voiceConnection === null) return message.channel.send('Có bài nào đâu mà xóa!');
+	if (voiceConnection != null && voiceConnection.channel != message.member.voiceChannel) {
+		return message.reply('Mình ở kênh khác rồi nhé!');
+	}
+	if(args.length == 0) {
+		return message.channel.send('Chọn số thứ tự bài cần xóa khỏi hàng đợi!');
+	}
+	let position = args.shift();
+	if(isNaN(position)) return message.channel.send('Chọn số thứ tự bài cần xóa khỏi hàng đợi!');
+	// Get the queue.
+	const queue = getQueue(message.guild.id);
+
+	let toSkip = parseInt(position);
+	if(toSkip<=0){
+		return message.reply('Có bài đó trong hàng đợi à?');
+	}
+	if (toSkip >= queue.length) {
+		return message.channel.send('Có bài đó trong hàng đợi à');
+	}
+	let song = queue[toSkip];
+	if (!canSkip(message.member, queue, toSkip)) return message.channel.send(`Không thể xóa vì bạn không yêu cầu nó, yêu cầu bởi ${idToName(song.requester)}`).then((response) => {
+		response.delete(5000);
+	});
+	
+	// Skip.
+	queue.splice(toSkip, 1);
+
+	message.channel.send('📝 Đã xóa **' + song.title + '** khỏi hàng đợi!');
 };
 
 /**
@@ -215,7 +285,9 @@ modules.volume = function(client, message, args) {
 	});
 
 	message.reply(`🔊 Âm lượng  ${args[0]}`);
-	dispatcher.setVolume((args[0]/100));
+	try {
+		dispatcher.setVolume((args[0]/100));
+	} catch(e) {}
 }
 
 /**
@@ -237,8 +309,10 @@ modules.leave = function(client, message, args) {
 	queue.splice(0, queue.length);
 
 	// End the stream and disconnect.
-	voiceConnection.player.dispatcher.end();
-	voiceConnection.disconnect();
+	try {
+		voiceConnection.player.dispatcher.end();
+		voiceConnection.disconnect();
+	} catch(e) {}
 }
 
 //loop
@@ -311,7 +385,12 @@ modules.resume = function(client, message, args) {
 	// Resume.
 	message.channel.send('▶ Tiếp tục phát!');
 	const dispatcher = voiceConnection.player.dispatcher;
-	if (dispatcher.paused) dispatcher.resume();
+	try{
+		if (dispatcher.paused) return dispatcher.resume();
+	} catch(e) {
+		console.log(e);
+	}
+	
 }
 
 /**
@@ -322,13 +401,17 @@ modules.resume = function(client, message, args) {
  * @returns {<promise>} - The voice channel.
  */
 function executeQueue(message, queue, client) {
-	// If the queue is empty, finish.
-	if (queue.length === 0) {
-		message.channel.send('⏹ No song to play, Im gonna leave!');
+	// If the queue is empty, wait 10s then finish.
+	if (queue.length === 0 ) {
+		setTimeout(function(message, queue, client) {
+			if (queue.length === 0 ) {
+				message.channel.send('⏹ No song to play, Im gonna leave!');
 
-		// Leave the voice channel.
-		const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == message.guild.id);
-		if (voiceConnection !== null) return voiceConnection.disconnect();
+				// Leave the voice channel.
+				const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == message.guild.id);
+				if (voiceConnection !== null) return voiceConnection.disconnect();
+			}
+		}, 10000, message, queue, client);
 	}
 
 	new Promise((resolve, reject) => {
@@ -356,8 +439,6 @@ function executeQueue(message, queue, client) {
 		// Get the first item in the queue.
 		const video = queue[0];
 
-		//console.log(video.webpage_url);
-
 		// Play the video.
 		message.channel.send(`🎼 Đang phát: **${video.title}**!`).then(() => {
 			let dispatcher = connection.playStream(ytdl(video.webpage_url, {filter: 'audioonly'}), {seek: 0, volume: (DEFAULT_VOLUME/100)});
@@ -366,14 +447,14 @@ function executeQueue(message, queue, client) {
 				// Skip to the next song.
 				console.log(error);
 				queue.shift();
-				executeQueue(message, queue);
+				executeQueue(message, queue, client);
 			});
 
 			dispatcher.on('error', (error) => {
 				// Skip to the next song.
 				console.log(error);
 				queue.shift();
-				executeQueue(message, queue);
+				executeQueue(message, queue, client);
 			});
 
 			dispatcher.on('end', () => {
@@ -390,7 +471,7 @@ function executeQueue(message, queue, client) {
 							queue.push(song);
 						}
 						// Play the next song in the queue.
-						executeQueue(message, queue);
+						executeQueue(message, queue, client);
 					}
 					else loop = 0;
 				}, 1000);
@@ -401,14 +482,6 @@ function executeQueue(message, queue, client) {
 	}).catch((error) => {
 		console.log(error);
 	});
-}
-function idToName(id){
-	let ids = id+"";
-	let user = client.users.get(ids);
-	let message = user.lastMessage;
-	let member = message.member;
-	//return user.username;
-	return member.nickname;
 }
 
 //get loop status
@@ -432,11 +505,20 @@ function strToDate(date){
 }
 //to get duration time
 function correctTime(str){
+	if(str == 0) return str;
 	var numb = str.match(/\d+/g).map(Number);
 	if(numb[1]<10){
 		return `${numb[0]}:0${numb[1]}`;
 	}
-	else return str;
+	if(numb.length == 1) return `0:${numb[0]}`;
+	return str;
+}
+
+function canSkip(member, queue, id) {
+	return true;
+	if (ALLOW_ALL_SKIP) return true;
+	else if (queue[id].requester === member.id) return true;
+	else return false;
 }
 
 module.exports = modules;
