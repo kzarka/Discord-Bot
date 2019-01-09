@@ -39,11 +39,10 @@ module.exports = {
 
     /* Send a help message */
     sendHelpMessage(message, content, cover = false) {
-        let coverBox = '';
         if(cover) {
-            coverBox = '```';
+            content = this.wrap(content);
         }
-        message.channel.send(coverBox + content + coverBox);
+        message.channel.send(content);
     },
     /* Create main config */
     createMainConfig: function(fs) {
@@ -112,5 +111,13 @@ module.exports = {
         let n = Math.floor(Number(str));
         return n !== Infinity && n >= 0;
     },
-
+    /*
+     * Wrap text in a code block and escape grave characters.
+     * 
+     * @param {string} text - The input text.
+     * @returns {string} - The wrapped text.
+     */
+    wrap: function(text) {
+        return '```\n' + text.replace(/`/g, '`' + String.fromCharCode(8203)) + '\n```';
+    },
 };

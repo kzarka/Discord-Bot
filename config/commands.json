@@ -3,6 +3,8 @@
     "queue": "music",
     "stop": "music",
     "pause": "music",
+    "volume": "music",
+    "resume": "music",
     "warrior": "roles",
     "sorceress": "roles",
     "ranger": "roles",

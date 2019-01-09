@@ -9,6 +9,7 @@ var modules = {
 };
 
 let queues = {};
+let loop = 0;
 
 let GLOBAL = (options && options.global) || false;
 let MAX_QUEUE_SIZE = (options && options.maxQueueSize) || 20;
@@ -89,7 +90,7 @@ modules.queue = function(client, message, args) {
 		maxPage = 1;
 	}
 	else maxPage = Math.ceil((queue.length-1)/maxPerPage);
-	if(args[0].length==0){
+	if(args.length == 0){
 		text += `\nTrang 1 trên ${maxPage} (${queue.length-1} bài hát):\n`;
 		if(maxPage==1){
 			for(i=1;i<queue.length;i++){
@@ -140,7 +141,7 @@ modules.queue = function(client, message, args) {
 		//queueStatus = dispatcher.paused ? '⏸' : '▶';
 	}
 
-	const embedQueue = new Discord.RichEmbed();
+	const embedQueue = new client.Discord.RichEmbed();
     embedQueue.setColor(0xff00ff);
     embedQueue.setTitle(`🎧 **Danh sách hàng đợi**`);
     
@@ -167,6 +168,7 @@ modules.stop = function(client, message, args) {
 	// End the stream and disconnect.
 	voiceConnection.player.dispatcher.end();
 	voiceConnection.disconnect();
+	return message.channel.send('Dừng phát và rời voice channel!');
 };
 
 modules.pause = function(client, message, args) {
@@ -189,20 +191,24 @@ modules.pause = function(client, message, args) {
  * @param {string} args[0] - Command args[0].
  * @returns {<promise>} - The response message.
  */
-function volume(message, args) {
+modules.volume = function(client, message, args) {
 	// Get the voice connection.
 	const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == message.guild.id);
 	if (voiceConnection === null) return message.reply('Hiện không phát bài nào!');
 	if (voiceConnection != null && voiceConnection.channel != message.member.voiceChannel) {
 		return message.reply('Mình ở kênh khác rồi!');
 	}
+	// Get the dispatcher
+	const dispatcher = voiceConnection.player.dispatcher;
+	if(args.length == 0) {
+		return message.channel.send(client.helper.wrap(`Âm lượng hiện tại ${dispatcher.volume*100}`));
+	}
 	/*
 	if (!isAdmin(message.member))
 		return message.channel.sendMessage(wrap('You are not authorized to use this.'));
 	*/
 	if(isNaN(args[0])) return message.reply('Âm lượng từ 1-200. Vui lòng chọn lại!')
-	// Get the dispatcher
-	const dispatcher = voiceConnection.player.dispatcher;
+	
 
 	if (args[0] > 200 || args[0] < 0) return message.reply('Âm lượng lớn hơn 200, mời chọn lại!').then((response) => {
 		response.delete(5000);
@@ -210,6 +216,102 @@ function volume(message, args) {
 
 	message.reply(`🔊 Âm lượng  ${args[0]}`);
 	dispatcher.setVolume((args[0]/100));
+}
+
+/**
+ * The command for leaving the channel and clearing the queue.
+ * 
+ * @param {Message} message - Original message.
+ * @param {array} args - Command args.
+ * @returns {<promise>} - The response message.
+ */
+modules.leave = function(client, message, args) {
+	
+	const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == message.guild.id);
+	if (voiceConnection === null) return message.channel.send('Mình chẳng ở kênh nào cả');
+	if (voiceConnection != null && voiceConnection.channel != message.member.voiceChannel) {
+		return message.reply('Mình ở kênh khác rồi!');
+	}
+	// Clear the queue.
+	const queue = getQueue(message.guild.id);
+	queue.splice(0, queue.length);
+
+	// End the stream and disconnect.
+	voiceConnection.player.dispatcher.end();
+	voiceConnection.disconnect();
+}
+
+//loop
+
+modules.repeat = function(client, message, args){
+	const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == message.guild.id);
+	if (voiceConnection === null) return message.channel.send('Mình chẳng ở kênh nào cả!');
+	if (voiceConnection != null && voiceConnection.channel != message.member.voiceChannel) {
+		return message.reply('Mình ở kênh khác rồi!');
+	}
+	let type = null;
+	if(args.length > 0) type = args.shift();
+	if(!type){
+		if(loop!=1){
+			loop = 1;
+			return message.channel.send('🔂 Bật phát lại 1 bài!');
+		}
+		else {
+			loop = 0;
+			return message.channel.send('▶ Tắt phát lại!');
+		}
+	}
+	if(type == "all"){
+		if(loop!=2){
+			loop = 2;
+			return message.channel.send('🔁 Bật phát lại hàng đợi!');
+		}
+		else {
+			loop = 0;
+			return message.channel.send('▶ Tắt phát lại!');
+		}
+	}
+}
+
+/**
+ * The command for clearing the song queue.
+ * 
+ * @param {Message} message - Original message.
+ * @param {string} args - Command args.
+ */
+modules.clearqueue = function(client, message, args) {
+	if (isAdmin(message.member)) {
+		const queue = getQueue(message.guild.id);
+
+		queue.splice(0, queue.length);
+		message.channel.send('Queue cleared!');
+	} else {
+		message.channel.send('You don\'t have permission to use that command!');
+	}
+}
+
+/**
+ * The command for resuming the current song.
+ * 
+ * @param {Message} message - Original message.
+ * @param {array} args - Command args.
+ * @returns {<promise>} - The response message.
+ */
+modules.resume = function(client, message, args) {
+	// Get the voice connection.
+	const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id == message.guild.id);
+	if (voiceConnection === null) return message.reply('Không phát bài nào!');
+	if (voiceConnection != null && voiceConnection.channel != message.member.voiceChannel) {
+		return message.reply('Mình ở kênh khác rồi!');
+	}
+	/*
+	if (!isAdmin(message.member))
+		return message.channel.sendMessage(wrap('You are not authorized to use this.'));
+	*/
+	// Resume.
+	message.channel.send('▶ Tiếp tục phát!');
+	const dispatcher = voiceConnection.player.dispatcher;
+	if (dispatcher.paused) dispatcher.resume();
 }
 
 /**
@@ -309,12 +411,6 @@ function idToName(id){
 	return member.nickname;
 }
 
-/*
- * Wrap text in a code block and escape grave characters.
- * 
- * @param {string} text - The input text.
- * @returns {string} - The wrapped text.
- */
 //get loop status
 function isLoop(){
 	switch(loop){
@@ -342,7 +438,5 @@ function correctTime(str){
 	}
 	else return str;
 }
-function wrap(text) {
-	return '```\n' + text.replace(/`/g, '`' + String.fromCharCode(8203)) + '\n```';
-}
+
 module.exports = modules;

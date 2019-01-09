@@ -23,6 +23,7 @@ client.on("ready", () => {
 	// Loading dependencies...
 	const dependencies = require("./dependencies/init");
 	client.helper = helper;
+	client.Discord = Discord;
 	dependencies(client);
 });
  
