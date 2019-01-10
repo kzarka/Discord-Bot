@@ -13,6 +13,37 @@ module.exports = {
         return (user.id === '166795785915203584');
     },
 
+    /* Send message to all guild using webhook */
+    sendMessageWebhook(message, change = null, client) {
+        let guilds = client.guilds;
+        if(!guilds) return false;
+        guilds.tap(function (guild) {
+            let channel = guild.channels.find(function(ch) {
+                return ch.name === 'general' || ch.name === 'chat';
+            });
+            if(!channel) return;
+            guild.fetchWebhooks().then(webhooks => {
+                let webhook = webhooks.find(function(item) {
+                    return item.channelID == channel.id;
+                });
+                if(!webhook) {
+                    module.exports.sendMessageToGuilds(message, client);
+                    return;
+                };
+                /* If require to change webhook name */
+                if(change) {
+                    webhook.edit(change.name, change.image).then(webhook => {
+                        webhook.send(message);
+                    }).catch(error => {
+                        console.log(error);  
+                    });
+                } else {
+                    webhook.send(message);
+                }
+            }).catch(console.error);
+        });
+    },
+
     /* Send message to all guilds in main channel */
     sendMessageToGuilds: function (message, client) {
         let guilds = client.guilds;

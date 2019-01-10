@@ -161,13 +161,18 @@ module.exports = function(client){
 
     /* Send warn message */
     function warnMessage(message, schedule = null, minRemain = 0){
-        var bossNames = getNextBoss()[0];
-        var hour = getNextBoss()[1];        
+        let bossNames = getNextBoss()[0];
+        let hour = getNextBoss()[1];
+        let firstName = bossNames.split('|')[0];
+        let change = {
+            name: firstName,
+            image: getBossImage(firstName)
+        }
         if(schedule) {
-            helper.sendMessageToGuilds(`**${bossNames}** sẽ spawn sau ${minRemain} phút!`, client);
+            helper.sendMessageWebhook(`**${bossNames}** sẽ spawn sau ${minRemain} phút!`, change, client);
         }
         else if(message) {
-            message.channel.send(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`, client)
+            helper.sendMessageWebhook(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`, change, client)
         }
     }
 
@@ -274,6 +279,25 @@ module.exports = function(client){
             if(msg.indexOf(questions[x]) != -1) {
                 return 'nouver';
             }
+        }
+    }
+
+    function getBossImage(name) {
+        name = name.toLowerCase();
+        if(name == 'kzarka') {
+            return 'https://bddatabase.net/items/ui_artwork/ic_04082.png';
+        }
+        if(name == 'karanda') {
+            return 'https://bddatabase.net/items/ui_artwork/ic_04370.png';
+        }
+        if(name == 'nouver') {
+            return 'https://bddatabase.net/items/ui_artwork/ic_04920.png';
+        }
+        if(name == 'kutum') {
+            return 'https://bddatabase.net/items/ui_artwork/ic_04389.png';
+        }
+        if(name == 'offin') {
+            return 'https://bddatabase.net/items/ui_artwork/ic_05054.png';
         }
     }
 }
