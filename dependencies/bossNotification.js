@@ -165,14 +165,14 @@ module.exports = function(client){
         let hour = getNextBoss()[1];
         let firstName = bossNames.split('|')[0];
         let change = {
-            name: firstName,
+            name: getBossFullName(bossNames),
             image: getBossImage(firstName)
         }
         if(schedule) {
             helper.sendMessageWebhook(`**${bossNames}** sẽ spawn sau ${minRemain} phút!`, change, client);
         }
         else if(message) {
-            helper.sendMessageWebhook(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`, change, client)
+            message.channel.send(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`, client)
         }
     }
 
@@ -298,6 +298,27 @@ module.exports = function(client){
         }
         if(name == 'offin') {
             return 'https://bddatabase.net/items/ui_artwork/ic_05054.png';
+        }
+    }
+
+    function getBossFullName(name) {
+        let names = name.split('|');
+        if(names.length == 2) return name;
+        name =  names[0].toLowerCase();
+        if(name == 'kzarka') {
+            return 'Kzarka - The Lord Of Corruption';
+        }
+        if(name == 'karanda') {
+            return 'Karanda - The Fraud Bird';
+        }
+        if(name == 'nouver') {
+            return 'Nouver -  The King Of Desert';
+        }
+        if(name == 'kutum') {
+            return 'Ancient Kutum';
+        }
+        if(name == 'offin') {
+            return 'Mirumok Destroyer Offin';
         }
     }
 }
