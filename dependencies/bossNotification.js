@@ -112,6 +112,9 @@ module.exports = function(client){
 
     /* Send list for a boss message */
     function bossListMessage(message, bossName){
+        if(message.author.id == '236134764313182208') {
+            return message.channel.send("STFU " + message.author + " !");
+        }
         var times = getBoss(bossName);
         var msgContent = '';
         var now = new Date();
@@ -167,6 +170,9 @@ module.exports = function(client){
             helper.sendMessageToGuilds(`**${bossNames}** sẽ spawn sau ${minRemain} phút!`, client);
         }
         else if(message) {
+            if(message.author.id == '236134764313182208') {
+                return message.channel.send("STFU " + message.author + " !");
+            }
             message.channel.send(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`, client)
         }
     }
