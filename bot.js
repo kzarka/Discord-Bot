@@ -41,5 +41,7 @@ client.on("message", (message) => {
   	if (typeof cmd !== 'function') return;
   	cmd(client, message, args)
 });
+
+client.on("error", (e) => console.error(e));
  
 client.login(config.token);
