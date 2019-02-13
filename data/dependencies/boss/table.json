@@ -19,8 +19,8 @@
 		"0:30" : "Nouver",
 		"6:00" : "Kutum",
 		"10:00" : "Kzarka|Karanda",
-		"14:00" : "Kutum",
-		"19:00" : "Nouver",
+		"14:00" : "Kutum|Nouver",
+		"19:00" : "Muraka|Quint",
 		"23:00" : "Kutum|Nouver"
 	},
 	"3" : {
