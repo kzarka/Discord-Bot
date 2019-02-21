@@ -4,6 +4,7 @@
 		"6:00" : "Kutum",
 		"10:00" : "Kzarka|Karanda",
 		"14:00" : "Kutum|Nouver",
+		"15:00"	: "Vell, the Heart of the Ocean",
 		"19:00" : "Karanda",
 		"23:00" : "Kutum|Nouver"
 	},
@@ -12,6 +13,7 @@
 		"6:00" : "Karanda",
 		"10:00" : "",
 		"14:00" : "Nouver",
+		"15:00"	: "",
 		"19:00" : "Kzarka",
 		"23:00" : "Offin"
 	},
@@ -20,6 +22,7 @@
 		"6:00" : "Kutum",
 		"10:00" : "Kzarka|Karanda",
 		"14:00" : "Kutum|Nouver",
+		"15:00"	: "",
 		"19:00" : "Muraka|Quint",
 		"23:00" : "Kutum|Nouver"
 	},
@@ -28,6 +31,7 @@
 		"6:00" : "",
 		"10:00" : "Kzarka",
 		"14:00" : "Karanda",
+		"15:00"	: "",
 		"19:00" : "Kutum",
 		"23:00" : "Offin"
 	},
@@ -36,6 +40,7 @@
 		"6:00" : "Nouver",
 		"10:00" : "Kzarka",
 		"14:00" : "Kutum",
+		"15:00"	: "",
 		"19:00" : "Kzarka|Karanda",
 		"23:00" : "Kzarka|Nouver"
 	},
@@ -44,6 +49,7 @@
 		"6:00" : "",
 		"10:00" : "Kutum",
 		"14:00" : "Kzarka",
+		"15:00"	: "",
 		"19:00" : "Nouver",
 		"23:00" : "Offin"
 	},
@@ -52,6 +58,7 @@
 		"6:00" : "Nouver",
 		"10:00" : "Kutum|Kzarka",
 		"14:00" : "Karanda|Nouver",
+		"15:00"	: "",
 		"19:00" : "Muraka|Quint",
 		"23:00" : ""
 	}

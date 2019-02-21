@@ -65,7 +65,7 @@ module.exports = function(client){
     function getNextBoss(){
         var now = new Date();
         var n = now.getDay();
-        var time = ["0:30", "6:00", "10:00", "14:00", "19:00", "23:00"];
+        var time = ["0:30", "6:00", "10:00", "14:00", "15:00", "19:00", "23:00"];
         var current = 0;
         var hour = time[current];
         if(now>hourToDay('23:00')) {
@@ -173,7 +173,11 @@ module.exports = function(client){
             if(message.author.id == '236134764313182208') {
                 return message.channel.send("STFU " + message.author + " !");
             }
-            message.channel.send(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!`, client)
+            let information = '';
+            if(bossNames.toLowerCase().indexOf('vell') >= 0) {
+                information = '\nVell sẽ spawn ở servers Balenos-2, Serendia-2, và Calpheon-2'
+            }
+            message.channel.send(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!${information}`, client)
         }
     }
 
