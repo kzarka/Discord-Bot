@@ -9,6 +9,8 @@ module.exports = function(client){
         let channel = member.guild.channels.find(function(ch) {
             return ch.name === 'guests';
         });
-        channel.send(`Xin chào ${member}. Chúc bạn một ngày vui vẻ!`);
+        channel.send(`Xin chào ${member}. Đây là Discord của Guild Fury.
+        	Vui lòng DM Officer trong danh sách đang online hoặc mention *@Officer* để được invite vào Guild. 
+        	Chúc bạn một ngày vui vẻ!`);
     });
 }
