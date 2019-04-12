@@ -443,6 +443,7 @@ function executeQueue(message, queue, client) {
 		let title = video.title;
 		console.log(title);
 		message.channel.send(`🎼 Đang phát: **${title}**!`).then(() => {
+			console.log('playing');
 			let dispatcher = connection.playStream(ytdl(video.webpage_url, {filter: 'audioonly'}), {seek: 0, volume: (DEFAULT_VOLUME/100)});
 
 			connection.on('error', (error) => {
@@ -460,6 +461,7 @@ function executeQueue(message, queue, client) {
 			});
 
 			dispatcher.on('end', () => {
+				console.log('end');
 				// Wait a second.
 				setTimeout(() => {
 					let song = null;
