@@ -3,7 +3,6 @@
 const YoutubeDL = require('youtube-dl');
 const ytdl = require('ytdl-core');
 const options = require('../config/config.json');
-const pathChange = require('path');
 
 var modules = {
 	description: 'Music module'
@@ -439,13 +438,12 @@ function executeQueue(message, queue, client) {
 	}).then(connection => {
 		// Get the first item in the queue.
 		const video = queue[0];
-		console.log('1');
-		// Play the video.
-		console.log(video.webpage_url);
-		message.channel.send(`🎼 Đang phát: **${video.title}**!`).then(() => {
-			console.log('playing');
-			let dispatcher = connection.playStream(ytdl(pathChange.resolve(video.webpage_url), {filter: 'audioonly'}), {seek: 0, volume: (DEFAULT_VOLUME/100)});
 
+		// Play the video.
+		message.channel.send(`🎼 Đang phát: **${video.title}**!`).then(() => {
+			let dispatcher = connection.playStream(ytdl(video.webpage_url, {filter: 'audioonly'}), {seek: 0, volume: (DEFAULT_VOLUME/100)});
+
+			console.log(dispatcher);
 			connection.on('error', (error) => {
 				// Skip to the next song.
 				console.log(error);
@@ -461,7 +459,6 @@ function executeQueue(message, queue, client) {
 			});
 
 			dispatcher.on('end', () => {
-				console.log('end');
 				// Wait a second.
 				setTimeout(() => {
 					let song = null;
