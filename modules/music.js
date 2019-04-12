@@ -438,12 +438,11 @@ function executeQueue(message, queue, client) {
 	}).then(connection => {
 		// Get the first item in the queue.
 		const video = queue[0];
-
+		console.log(ytdl(video.webpage_url, {filter: 'audioonly'}));
 		// Play the video.
 		message.channel.send(`🎼 Đang phát: **${video.title}**!`).then(() => {
 			let dispatcher = connection.playStream(ytdl(video.webpage_url, {filter: 'audioonly'}), {seek: 0, volume: (DEFAULT_VOLUME/100)});
 
-			console.log(dispatcher);
 			connection.on('error', (error) => {
 				// Skip to the next song.
 				console.log(error);
