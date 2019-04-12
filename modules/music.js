@@ -442,7 +442,7 @@ function executeQueue(message, queue, client) {
 		console.log('1');
 		// Play the video.
 		console.log(video.webpage_url);
-		message.channel.send(`🎼 Đang phát: **${title}**!`).then(() => {
+		message.channel.send(`🎼 Đang phát: **${video.title}**!`).then(() => {
 			console.log('playing');
 			let dispatcher = connection.playStream(ytdl(pathChange.resolve(video.webpage_url), {filter: 'audioonly'}), {seek: 0, volume: (DEFAULT_VOLUME/100)});
 
