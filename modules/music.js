@@ -438,7 +438,9 @@ function executeQueue(message, queue, client) {
 	}).then(connection => {
 		// Get the first item in the queue.
 		const video = queue[0];
-		console.log(ytdl.getInfo(video.webpage_url, {filter: 'audioonly'}));
+		ytdl.getInfo(video.webpage_url, [], function (err, info) {
+		    console.log(info);
+		});
 		// Play the video.
 		message.channel.send(`🎼 Đang phát: **${video.title}**!`).then(() => {
 			let dispatcher = connection.playStream(ytdl(video.webpage_url, {filter: 'audioonly'}), {seek: 0, volume: (DEFAULT_VOLUME/100)});
