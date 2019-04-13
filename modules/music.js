@@ -400,7 +400,7 @@ modules.resume = function(client, message, args) {
  * @param {object} queue - The song queue for this server.
  * @returns {<promise>} - The voice channel.
  */
-function executeQueue(message, queue, client) {
+async function executeQueue(message, queue, client) {
 	// If the queue is empty, wait 10s then finish.
 	if (queue.length === 0 ) {
 		setTimeout(function(message, queue, client) {
@@ -439,8 +439,8 @@ function executeQueue(message, queue, client) {
 		// Get the first item in the queue.
 		const video = queue[0];
 		// Play the video.
-		message.channel.send(`🎼 Đang phát: **${video.title}**!`).then(() => {
-			let dispatcher = connection.playStream(ytdl(video.webpage_url, {filter: 'audioonly'}), {seek: 0, volume: (DEFAULT_VOLUME/100)});
+		message.channel.send(`🎼 Đang phát: **${video.title}**!`).then(async () => {
+			let dispatcher = await connection.playStream(ytdl(video.webpage_url, {filter: 'audioonly'}), {seek: 0, volume: (DEFAULT_VOLUME/100)});
 
 			connection.on('error', (error) => {
 				// Skip to the next song.
