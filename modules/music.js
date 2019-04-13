@@ -442,7 +442,7 @@ function executeQueue(message, queue, client) {
 		// create stream
 		let streamAudio = null;
 		try {
-			streamAudio = ytdl(video.webpage_url, {filter: 'audioonly'});
+			streamAudio = ytdl.downloadFromInfo(video, {filter: 'audioonly'});
 		}
 		catch(error) {
 			console.log(error);
