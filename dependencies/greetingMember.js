@@ -11,6 +11,6 @@ module.exports = function(client){
         });
         channel.send(`Xin chào ${member}. Đây là Discord của Guild Fury.`
         	+ '\nVui lòng DM Officer trong danh sách đang online hoặc mention **@Officer** để được invite vào Guild.'
-        	+ '\nChúc bạn một ngày vui vẻ!';
+        	+ '\nChúc bạn một ngày vui vẻ!');
     });
 }
