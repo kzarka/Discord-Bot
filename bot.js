@@ -24,6 +24,10 @@ client.on("ready", () => {
 	const dependencies = require("./dependencies/init");
 	client.helper = helper;
 	client.Discord = Discord;
+	client.war = {
+		"war": false,
+		"joined": null
+	}
 	dependencies(client);
 });
  

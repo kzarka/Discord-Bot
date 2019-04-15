@@ -33,8 +33,12 @@ module.exports = function(client){
 
 	}
 	client.on('ready', () => {
-        // Hook that var to client, hope i can get it later
-        client.war = war;
+        // check for war mode
+        // load list member
+        // if key date match today or after war match next day
+        // turn war on
+        // show list members
+        // disable send message if not in war or out of war time
     });
 
     client.on('message', async message => {
@@ -42,11 +46,24 @@ module.exports = function(client){
     	if(message.author.bot) return;
     	// if in war time return;
         let now = Date.now();
-        if(now >= hourToDay(warStart).getTime() && now <= hourToDay(warEnd).getTime()) {
-
+        if(!inWarTime()) {
+        	message.delete();
+        	return;
         }
+
+        // if in war, receive join and thanks for join, joined then say st
+        // reload list joined map by id
+        // need map with stats member
     });
 
+}
+
+function inWarTime() {
+	let now = Date.now();
+    if(now >= hourToDay(warStart).getTime() && now <= hourToDay(warEnd).getTime()) {
+    	return true;
+    }
+    return false;
 }
 
 function hourToDay(hour){
