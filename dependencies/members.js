@@ -233,7 +233,11 @@ function buildList(client) {
     for(let x = 0; x < client.war.joined.length; x++) {
         let id = client.war.joined[x];
         if(!client.war.members[id]) {
-            let username = client.users.get(id).username || '???';
+            let user = client.users.get(id)
+            let username = '???';
+            if(user && user.username) {
+                username = user.username;
+            }
             listString += `${x+1} ${username} ?? ??/??/??\n`;
             continue;
         }
