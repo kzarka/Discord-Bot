@@ -21,12 +21,13 @@ client.on("ready", () => {
     console.log('----------------\n');
 	core.loadAll(client);
 	// Loading dependencies...
-	const dependencies = require("./dependencies/init");
+	const dependencies = require("./dependencies/war");
 	client.helper = helper;
 	client.Discord = Discord;
 	client.war = {
 		"war": false,
-		"joined": null
+		"joined": null,
+		"members": null
 	}
 	dependencies(client);
 });
