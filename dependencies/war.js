@@ -76,6 +76,7 @@ module.exports = function(client){
             return;
         }
         let authorId = message.author.id;
+        if(!client.war.joined) client.war.joined = [];
         if(client.war.joined.indexOf(authorId) >= 0) {
             message.reply("You've already signed for the war").then(msg => {
                 msg.delete(deleteMessageTime)
