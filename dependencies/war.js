@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const config = require("../config/config.json");
+const fs = require("fs");
 
 const datDir = '/data/dependencies/war';
 /* Greeting member when they join our guild */
@@ -26,7 +27,7 @@ try {
 }
 
 // joined member 
-var joined = [];
+var joined = {};
 let channelObject = null;
 module.exports = function(client){
     // get channel
@@ -39,7 +40,6 @@ module.exports = function(client){
     client.war.members = memberLists;
 
 	if(availableToVote(warInfo)) {
-        console.log('true');
         client.war.war = true;
         client.war.joined = joined;
 	}
@@ -89,6 +89,20 @@ module.exports = function(client){
         message.delete(deleteMessageTime);
         // save to the file
         client.war.joined.push(authorId);
+        let dateString = null;
+        if(now > hourToDay(warEnd).getTime()) {
+            dateString = dayString(true);
+        } else dateString = dayString();
+        let data = {
+            "inwar": true
+        }
+        data[dateString] = client.war.joined;
+        data = JSON.stringify(data, null, 4);
+        fs.writeFileSync(`.${datDir}/war.json`, data, 'utf8', 'w', (err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
         reloadTopMessage(channelObject, client);
         return;
     });
@@ -104,26 +118,18 @@ function inWarTime() {
 }
 
 function availableToVote(war) {
-    console.log(war);
     if(war == void(0)) return false;
     if(war.inwar == void(0) || war.inwar == false) return false;
     let now = Date.now();
     // if current time before war start
     if(now < hourToDay(warStart).getTime()) {
-        console.log('Before');
-        console.log(dayString());
-        // if joined array not exist
-        if(war[dayString()] == void(0)) return false;
-        joined = war[dayString()];
+        joined = war[dayString()] || [];
         return true;
     }
     // if current time after war end obviously
     if(now > hourToDay(warEnd).getTime()) {
-        console.log('After');
-        console.log(dayString());
-        // if joined array not exist
-        if(war[dayString(true)] == void(0)) return false;
-        joined = war[dayString(true)];
+
+        joined = war[dayString(true)] || [];
         return true;
     }
 }
@@ -151,12 +157,21 @@ function reloadTopMessage(channelObject, client) {
             let topMessage = messages.filter(msg => msg.author.bot).last();
             if(topMessage) {
                 let embed = topMessage.embeds[0];
-                console.log(embed.fields[0].value);
-                let list = buildList(client.war);
+                let list = buildList(client);
                 embed.fields = null;
+                
                 const newEmbed = new Discord.RichEmbed(embed);
-                newEmbed.addField("DANH SÁCH NODE WAR", list)
+                if(client.war.war == false) {
+                    newEmbed.setDescription("Hiện không có war nào!");
+                } else {
+                    let info = `Node: ${client.war.node || 'TBD'}\n`;
+                    if(client.war.message) {
+                        info += `Message: ${client.war.message}`;
+                    }
+                    newEmbed.setDescription(info);
+                    newEmbed.addField("DANH SÁCH NODE WAR", list)
                     .addBlankField(true).addBlankField(true);
+                }
                 topMessage.edit('', newEmbed).catch(console.error);
             }
         }).catch(err => {
@@ -177,24 +192,39 @@ function buildEmbed(client) {
         //.setImage("http://i.imgur.com/yVpymuV.png")
         .setThumbnail("https://i.imgur.com/ZkoC0RM.png")
         .setTimestamp();
-    if(client.war.message) {
-        embed.setDescription(client.var.message);
-    }
+
     if(!client.war.war) {
-        embed.setDescription("Hiện không có war nào!")
+        embed.setDescription("Hiện không có war nào!");
         return embed;
     }
-    let list = buildList(client.war);
+    if(client.war.message) {
+        let info = `Node: ${client.war.node || 'TBD'}`;
+        if(client.war.message) {
+            info += `Message: ${client.war.message}`;
+        }
+        embed.setDescription(info);
+    }
+    let list = buildList(client);
     embed.addField("DANH SÁCH NODE WAR", list)
         .addBlankField(true).addBlankField(true);
     return embed;
 }
 
-function buildList(list) {
-    if(list.joined == void(0) || list.joined.length == 0) {
+function buildList(client) {
+    if(client.war.joined == void(0) || client.war.joined.length == 0) {
         return "1. ---";
     }
-    // list.joined
-    // list.member
-    return 'abc';
+    let listString = '';
+    for(let x = 0; x < client.war.joined.length; x++) {
+        let id = client.war.joined[x];
+        if(!client.war.members[id]) {
+            let username = client.users.get(x).username || '???';
+            listString += `${x+1} ${username} ?? ??/??/??`;
+            continue;
+        }
+        let member = client.war.members[id];
+
+        listString += `${x+1} ${member.family}/${member.main || '??'} ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}`;
+    }
+    return listString;
 }

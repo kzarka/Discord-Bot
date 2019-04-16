@@ -21,7 +21,7 @@ client.on("ready", () => {
     console.log('----------------\n');
 	core.loadAll(client);
 	// Loading dependencies...
-	const dependencies = require("./dependencies/war");
+	const dependencies = require("./dependencies/init");
 	client.helper = helper;
 	client.Discord = Discord;
 	client.war = {
