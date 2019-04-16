@@ -233,12 +233,13 @@ function buildList(client) {
     for(let x = 0; x < client.war.joined.length; x++) {
         let id = client.war.joined[x];
         if(!client.war.members[id]) {
-            let username = client.users.get(x).username || '???';
-            listString += `${x+1} ${username} ?? ??/??/??`;
+            let username = client.users.get(id).username || '???';
+            listString += `${x+1} ${username} ?? ??/??/??\n`;
             continue;
         }
         let member = client.war.members[id];
-        listString += `${x+1} ${member.family}/${member.main || '??'} ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}`;
+
+        listString += `${x+1} ${member.family}/${member.main || '??'} ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}\n`;
     }
     return listString;
 }

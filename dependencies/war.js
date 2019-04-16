@@ -220,12 +220,12 @@ function buildList(client) {
         let id = client.war.joined[x];
         if(!client.war.members[id]) {
             let username = client.users.get(id).username || '???';
-            listString += `${x+1} ${username} ?? ??/??/??`;
+            listString += `${x+1} ${username} ?? ??/??/??\n`;
             continue;
         }
         let member = client.war.members[id];
 
-        listString += `${x+1} ${member.family}/${member.main || '??'} ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}`;
+        listString += `${x+1} ${member.family}/${member.main || '??'} ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}\n`;
     }
     return listString;
 }
