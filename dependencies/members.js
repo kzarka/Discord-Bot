@@ -44,7 +44,7 @@ module.exports = function(client){
         member.ap = params[3] || null;
         member.awk = params[4] || null;
         member.dp = params[5] || null;
-        if(client.war.members == void(0)) {
+        if(!client.war.members) {
             client.war.members = {};
         }
         client.war.members[message.author.id] = member;
@@ -233,18 +233,18 @@ function buildList(client) {
     let listString = '';
     for(let x = 0; x < client.war.joined.length; x++) {
         let id = client.war.joined[x];
-        if(!client.war.members[id]) {
+        if(client.war.members[id] == void(0)) {
             let user = client.users.get(id)
             let username = '???';
             if(user && user.username) {
                 username = user.username;
             }
-            listString += `${x+1} ${username} ?? ??/??/??\n`;
+            listString += `${x+1}. **${username}**  ?? ??/??/??\n`;
             continue;
         }
         let member = client.war.members[id];
 
-        listString += `${x+1} ${member.family}/${member.main || '??'} ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}\n`;
+        listString += `${x+1}. **${member.family}/${member.main || '??'}**  ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}\n`;
     }
     return listString;
 }

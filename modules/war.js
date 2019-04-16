@@ -61,6 +61,7 @@ modules.war = function(client, message, args) {
         collector.on('collect', message => {
             if (message.content == "yes") {
             	client.war.war = false
+                client.war.joined = {}
             	let data = {
 					"inwar": false
 				}
@@ -123,12 +124,12 @@ function buildList(client) {
             if(user && user.username) {
                 username = user.username;
             }
-            listString += `${x+1} ${username} ?? ??/??/??\n`;
+            listString += `${x+1}. **${username}**  ?? ??/??/??\n`;
             continue;
         }
         let member = client.war.members[id];
 
-        listString += `${x+1} ${member.family}/${member.main || '??'} ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}\n`;
+        listString += `${x+1}. **${member.family}/${member.main || '??'}**  ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}\n`;
     }
     return listString;
 }
