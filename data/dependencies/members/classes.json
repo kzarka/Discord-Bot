@@ -1,0 +1,21 @@
+{
+	"class" : {
+		"witch" : "witch,wit",
+		"wizard" : "wizard,wiz",
+		"valkyrie" : "valkyrie,valk",
+		"warrior" : "warrior,war",
+		"berserker" : "berserker,ber,giant,gia",
+		"ranger" : "ranger,rang,ran",
+		"musa" : "musa",
+		"maehwa" : "maehwa,plum,mae",
+		"sorceress" : "sorceress,sorc",
+		"tamer" : "tamer,loli,tam",
+		"kunoichi" : "kunoichi,kui,kuno",
+		"ninja" : "ninja,nin",
+		"dk" : "dk,dark,dark knight",
+		"mystic" : "mystic,mys,mystake",
+		"striker" : "striker,stri",
+		"archer" : "archer,arch,arc",
+		"lahn" : "lahn,lah"
+	}
+}
