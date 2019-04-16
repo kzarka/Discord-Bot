@@ -27,7 +27,8 @@ module.exports = function(client){
             message.channel.send('Sai cú pháp, nhập: `Tên_Class Family Main_Char AP AWK DP` để cập nhật thông tin ');
             return;
         }
-        let params = message.content.trim().split(' ');
+
+        let params = message.content.trim().replace(/\s\s+/g, ' ').split(' ');
         let member = {};
         if(!params[1]) {
             message.channel.send('Sai cú pháp, nhập: `Tên_Class Family Main_Char AP AWK DP` để cập nhật thông tin ');
