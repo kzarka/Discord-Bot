@@ -61,7 +61,7 @@ modules.war = function(client, message, args) {
         collector.on('collect', message => {
             if (message.content == "yes") {
             	client.war.war = false
-                client.war.joined = {}
+                client.war.joined = [];
             	let data = {
 					"inwar": false
 				}
