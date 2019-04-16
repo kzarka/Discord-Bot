@@ -9,7 +9,7 @@ const datDir = '/data/dependencies/war';
 const warVoteChannel = 'war-attendance';
 
 const warStart = '20:00'
-const warEnd = '22:00'
+const warEnd = '21:00'
 
 var channelWar = null;
 // Global variable for member stats

@@ -6,7 +6,7 @@ const datDir = '/data/dependencies/war';
 /* Greeting member when they join our guild */
 const warVoteChannel = 'war-attendance';
 const warStart = '20:00'
-const warEnd = '22:00'
+const warEnd = '21:00'
 
 // time wait to delete message
 const deleteMessageTime = 3000;
