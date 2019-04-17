@@ -161,6 +161,9 @@ function buildEmbed(client) {
         .setThumbnail("https://i.imgur.com/ZkoC0RM.png")
         .setTimestamp();
 
+    let list = helper.buildList(client);
+    embed.addField("DANH SÁCH NODE WAR", list)
+        .addBlankField(true).addBlankField(true);
     if(!client.war.war) {
         embed.setDescription("Hiện không có war nào!")
         .addBlankField(true).addBlankField(true);
@@ -173,8 +176,5 @@ function buildEmbed(client) {
         }
         embed.setDescription(info);
     }
-    let list = helper.buildList(client);
-    embed.addField("DANH SÁCH NODE WAR", list)
-        .addBlankField(true).addBlankField(true);
     return embed;
 }

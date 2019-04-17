@@ -72,7 +72,7 @@ modules.war = function(client, message, args) {
 		                console.log(err);
 		            }
 		        });
-		        reloadTopMessage(channelWar, client);
+		        helper.reloadTopMessage(channelWar, client);
                 message.channel.send("Đã hủy bỏ war!");
             }
         })

@@ -15,17 +15,16 @@ helper.reloadTopMessage = function(channelObject, client) {
                 
                 const newEmbed = new client.Discord.RichEmbed(embed);
                 if(client.war.war == false) {
-                    newEmbed.setDescription("Hiện không có war nào!")
-                    .addBlankField(true).addBlankField(true);
+                    newEmbed.setDescription("Hiện không có war nào!");
                 } else {
                     let info = `Node: ${client.war.node || 'TBD'}\n`;
                     if(client.war.message) {
                         info += `Message: ${client.war.message}`;
                     }
                     newEmbed.setDescription(info);
-                    newEmbed.addField("DANH SÁCH NODE WAR", list)
-                    .addBlankField(true).addBlankField(true);
                 }
+                newEmbed.addField("DANH SÁCH NODE WAR", list)
+                newEmbed.addBlankField().addBlankField(true);
                 topMessage.edit('', newEmbed).catch(console.error);
             }
         }).catch(err => {
@@ -36,32 +35,36 @@ helper.reloadTopMessage = function(channelObject, client) {
 }
 
 helper.buildList = function(client) {
-    let maxLength = this.getlongestNameLenght(client);
-    console.log(maxLength)
+    let maxNameLength = this.getlongestNameLenght(client) + 5;
+    let maxClassLength = this.getMaxClassNameLength() + 5;
+
+    let listString = '``' +`${'STT'.padEnd(4,' ')} Family/${'Character'.padEnd((maxNameLength - 'Family'.length),' ')}  ${'Class'.padEnd((maxClassLength), ' ')} AP/AWK/DP\n` + '``';
     if(client.war.joined == void(0) || client.war.joined.length == 0) {
-        return "1. ---";
+        return listString;
     }
-    let listString = '';
     for(let x = 0; x < client.war.joined.length; x++) {
 
         let id = client.war.joined[x];
+        let positition = (x+1) + '.';
         if(!client.war.members[id]) {
             let user = client.users.get(id)
             let username = '???';
             if(user && user.username) {
                 username = user.username;
             }
-            listString += `${x+1}. **${username}**  ?? ??/??/??\n`;
+            listString += '``' + `${positition.padEnd(4,' ')} ${username.padEnd((maxNameLength),' ')}  ${'???'.padEnd((maxClassLength), ' ')} ??/??/??\n` + '``';
             continue;
         }
         let member = client.war.members[id];
-        listString += `${x+1}. **${member.family}/${member.character || '??'}**  **${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}**\n`;
+        let character = member.character || '???';
+        let className = member.class || '???';
+        listString += ` ${positition.padEnd(4 ,' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd((maxClassLength),' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}\n`;
     }
     return listString;
 }
 
 helper.getlongestNameLenght = function (client) {
-    let maxLength = 0;
+    let maxLength = 'FamilyCharacter'.length;
     let members = client.war.members
     for(let i in members) {
         let thisLength = members[i].family.length;
@@ -72,7 +75,11 @@ helper.getlongestNameLenght = function (client) {
             maxLength = thisLength;
         }
     }
-    return (maxLength + 1);
+    return maxLength;
+}
+
+helper.getMaxClassNameLength = function() {
+    return 'dark knight'.length;
 }
 
 module.exports = helper;
