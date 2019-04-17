@@ -59,7 +59,7 @@ helper.buildList = function(client) {
         let character = member.character || '???';
         let className = member.class || '???';
         listString += '``' + ` ${positition.padEnd(4 ,' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd((maxClassLength),' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}` + '``\n';
-        totalGS += member.awk + member.dp;
+        totalGS += parseInt(member.awk) + parseInt(member.dp);
         totalReported++;
     }
     listString += '\n``Average GS: ' + Math.ceil(totalGS/totalReported) + '``';
