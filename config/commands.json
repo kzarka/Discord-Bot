@@ -28,6 +28,5 @@
     "leave": "music",
     "repeat": "music",
     "clearqueue": "music",
-    "resume": "music",
-    "war": "war"
+    "resume": "music"
 }

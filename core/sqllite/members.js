@@ -9,6 +9,7 @@ members.init = function() {
 	const sql = `
     CREATE TABLE IF NOT EXISTS members (
       	id INTEGER PRIMARY KEY AUTOINCREMENT,
+      	level INTEGER,
       	userId TEXT,
       	family TEXT,
       	character TEXT,
@@ -26,19 +27,20 @@ members.init = function() {
 }
 /* Insert new record, or update exist one */
 members.insert = function(data = []) {
-	var sql = `INSERT INTO members (userId, family, character, class, ap, awk, dp)
+	var sql = `INSERT INTO members (userId, family, character, class, ap, awk, dp, level)
     	VALUES ('${data.userId}', '${data.family}', '${data.character}', '${data.class || null}', 
-    	${data.ap || null}, ${data.awk || null}, ${data.dp || null})`;
+    	${data.ap || null}, ${data.awk || null}, ${data.dp || null}, ${data.level || null})`;
 
     db.run(sql, [], (err) => {
 	  	if (err && err.message.indexOf('SQLITE_CONSTRAINT') ==0) {
 	    	sql = `UPDATE members
-      			SET family = '${data.userId}',
+      			SET family = '${data.family}',
 		        character = '${data.character || null}',
 		        class = '${data.class || null}',
 		        ap = '${data.ap || null}',
 		        awk = '${data.awk || null}',
-		        dp = '${data.dp || null}'
+		        dp = '${data.dp || null}',
+		        level = '${data.level || null}'
 		      	WHERE userId =  '${data.userId}'`;
 		    db.run(sql, [], (err) => {
 		    	if(err) {
@@ -66,7 +68,8 @@ members.loadAll = function() {
 					"class": rows[x].class || null,
 					"ap": rows[x].ap || null,
 					"awk": rows[x].awk || null,
-					"dp": rows[x].dp || null
+					"dp": rows[x].dp || null,
+					"level": rows[x].level || null
 				}
 			}
 			resolve(items);

@@ -13,6 +13,10 @@ const classString = require(`..${datDir}/classes.json`);
 const memberChannel = "gear-verification"
 const warVoteChannel = 'war-attendance';
 
+// validate constant
+const nameMaxLength = 16;
+const nameMinLength = 3;
+
 module.exports = function(client){
 
     try {
@@ -26,26 +30,81 @@ module.exports = function(client){
     	if(message.author.bot) return;
     	let className = matchClass(message);
         if(!className) {
-            message.channel.send('Sai cú pháp, nhập: `Tên_Class Family Main_Char AP AWK DP` để cập nhật thông tin ');
+            message.channel.send('Sai cú pháp, nhập: `Tên_Class Family Main_Char Level AP AWK DP` để cập nhật thông tin ');
             return;
         }
 
         let params = message.content.trim().replace(/\s\s+/g, ' ').split(' ');
         let member = {};
         if(!params[1]) {
-            message.channel.send('Sai cú pháp, nhập: `Tên_Class Family Main_Char AP AWK DP` để cập nhật thông tin ');
+            message.channel.send('Sai cú pháp, nhập: `Tên_Class Family Main_Char Level AP AWK DP` để cập nhật thông tin ');
             return;
         }
-        if(params[1].length <= 3) {
-            message.channel.send('Tên Family quá ngắn');
+        if(params[1].length < nameMinLength) {
+            message.channel.send('Tên Family quá ngắn, tối thiểu 3 ký tự');
+            return;
+        }
+        if(params[1].length > nameMaxLength) {
+            message.channel.send('Tên Family quá dài, tối đa 16 ký tự!');
             return;
         }
         member.class = className;
         member.family = capitalizeFirstLetter(params[1]);
         member.character = capitalizeFirstLetter(params[2]) || null;
-        member.ap = params[3] || null;
-        member.awk = params[4] || null;
-        member.dp = params[5] || null;
+        member.level = params[3] || null;
+        member.ap = params[4] || null;
+        member.awk = params[5] || null;
+        member.dp = params[6] || null;
+        // validate for optional param
+        if(member.character != null && (member.character.length <= nameMinLength)) {
+            message.channel.send('Tên Character quá ngắn, tối thiểu 3 ký tự');
+            return;
+        }
+        if(member.character != null && (member.character.length > nameMaxLength)) {
+            message.channel.send('Tên Character quá dài, tối đa 16 ký tự!');
+            return;
+        }
+        // validate AP
+        if(member.ap != null && isNaN(member.ap)) {
+            message.channel.send('Attack Power AP phải là số, từ 0-350!');
+            return;
+        }
+
+        if(member.ap != null && (member.ap > 350 || member.ap < 0)) {
+            message.channel.send('Attack Power AP phải là số, từ 0-350!');
+            return;
+        }
+        // validate AWK
+        if(member.awk != null && isNaN(member.awk)) {
+            message.channel.send('Awaken Attack Power phải là số, từ 0-350!');
+            return;
+        }
+
+        if(member.awk != null && (member.awk > 350 || member.awk < 0)) {
+            message.channel.send('Awaken Attack Power phải là số, từ 0-350!');
+            return;
+        }
+        // validate DP
+        if(member.dp != null && isNaN(member.dp)) {
+            message.channel.send('Defense Power AP phải là số, từ 0-350!');
+            return;
+        }
+
+        if(member.dp != null && (member.dp > 350 || member.dp < 0)) {
+            message.channel.send('Defense Power DP phải là số, từ 0-350!');
+            return;
+        }
+        // validate Level
+        if(member.level != null && isNaN(member.level)) {
+            message.channel.send('Level phải là số, từ 0-64!');
+            return;
+        }
+
+        if(member.level != null && (member.level > 64 || member.level < 0)) {
+            message.channel.send('Level phải là số, từ 0-64!');
+            return;
+        }
+
         if(!client.war.members) {
             client.war.members = {};
         }
@@ -54,7 +113,7 @@ module.exports = function(client){
         member.userId = message.author.id;
         membersModel.insert(member);
         message.channel.send('Thông tin của bạn đã được lưu lại!\n'
-            + '```' + `Family/Character: ${member.family}/${member.character || '???'}\nClass: ${member.class}\n`
+            + '```' + `Family/Character: ${member.family}/${member.character || '???'}\nClass: ${member.class}  Level: ${member.level || '???'}\n`
             + `AP/AWK/DP: ${member.ap || '???'}/${member.awk || '???'}/${member.dp || '???'}` + '```'
         );
         helper.reloadTopMessage(channelWar, client);

@@ -6,6 +6,7 @@ let db = new sqlite3.Database('./data/sql/bot.db');
 const sql = `
 CREATE TABLE IF NOT EXISTS members (
   	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	level INTEGER,
   	userId TEXT,
   	family TEXT,
   	character TEXT,
