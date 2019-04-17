@@ -36,7 +36,6 @@ helper.reloadTopMessage = function(channelObject, client) {
 helper.buildList = function(client) {
     let maxNameLength = this.getlongestNameLength(client) + 5;
     let maxClassLength = this.getMaxClassNameLength() + 5;
-    console.log(maxNameLength);
     let listString = '``' +`${'STT'.padEnd(4,' ')} Family/${'Character'.padEnd((maxNameLength - 'Family'.length),' ')} ${'Class'.padEnd((maxClassLength), ' ')} AP/AWK/DP\n` + '``\n';
     if(client.war.joined == void(0) || client.war.joined.length == 0) {
         return listString;
