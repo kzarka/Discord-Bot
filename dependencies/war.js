@@ -166,7 +166,6 @@ function buildEmbed(client) {
         .addBlankField(true)
     if(!client.war.war) {
         embed.setDescription("Hiện không có war nào!");
-        //.addBlankField(true).addBlankField(true);
         return embed;
     }
     if(client.war.message) {

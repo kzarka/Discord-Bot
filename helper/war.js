@@ -23,8 +23,7 @@ helper.reloadTopMessage = function(channelObject, client) {
                     }
                     newEmbed.setDescription(info);
                 }
-                newEmbed.addField("DANH SÁCH NODE WAR", list)
-                //newEmbed.addBlankField().addBlankField(true);
+                newEmbed.addField("DANH SÁCH NODE WAR", list).addBlankField(true);
                 topMessage.edit('', newEmbed).catch(console.error);
             }
         }).catch(err => {
