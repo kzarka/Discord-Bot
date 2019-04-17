@@ -10,7 +10,7 @@ const datDir = '/data/dependencies/war';
 const warVoteChannel = 'war-attendance';
 
 const warStart = '20:00'
-const warEnd = '21:00'
+const warEnd = '22:00'
 
 var channelWar = null;
 // Global variable for member stats
@@ -22,10 +22,10 @@ modules.war = function(client, message, args) {
         console.log(e)
     }
 	if(args.length == 0) {
-		message.channel.send('Sử dụng `war enable [node] [message]` để kích hoạt vote war!');
+		message.channel.send('Sử dụng `war off [node] [message]` để kích hoạt vote war!');
 		return;
 	}
-	if(args[0] == 'enable') {
+	if(args[0] == 'on') {
 		if(client.war.war == true) {
 			message.channel.send('War đã mở từ trước');
 			return;
@@ -52,7 +52,7 @@ modules.war = function(client, message, args) {
         message.channel.send('Đã khởi động war!');
 		return;
 	}
-	if(args[0] == 'disable') {
+	if(args[0] == 'off') {
 		if(client.war.war == false) {
 			message.channel.send('War hiện không mở');
 			return;
