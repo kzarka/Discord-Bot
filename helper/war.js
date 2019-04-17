@@ -37,7 +37,6 @@ helper.reloadTopMessage = function(channelObject, client) {
 helper.buildList = function(client) {
     let maxNameLength = this.getlongestNameLenght(client) + 5;
     let maxClassLength = this.getMaxClassNameLength() + 5;
-
     let listString = '``' +`${'STT'.padEnd(4,' ')} Family/${'Character'.padEnd((maxNameLength - 'Family'.length),' ')} ${'Class'.padEnd((maxClassLength), ' ')} AP/AWK/DP\n` + '``\n';
     if(client.war.joined == void(0) || client.war.joined.length == 0) {
         return listString;
@@ -65,11 +64,27 @@ helper.buildList = function(client) {
 
 helper.getlongestNameLenght = function (client) {
     let maxLength = 'FamilyCharacter'.length;
-    let members = client.war.members
-    for(let i in members) {
-        let thisLength = members[i].family.length;
-        if(members[i].character) {
-            thisLength += members[i].character.length;
+    let joined = client.war.joined;
+    let members = client.war.members;
+    if(!joined || joined.length == 0) return 'FamilyCharacter'.length;
+    for(let id in joined) {
+
+        let thisLength = 0;
+        
+        // case not report gs
+        if(!client.war.members[id]) {
+            let user = client.users.get(id);
+            if(!user) continue;
+            thisLength = user.username.length;
+            if(thisLength > maxLength) {
+                maxLength = thisLength;
+                continue;
+            }
+        }
+        // case gs reported
+        thisLength =  members[id].family.length;
+        if(members[id].character) {
+            thisLength += members[id].character.length;
         }
         if(thisLength > maxLength) {
             maxLength = thisLength;
