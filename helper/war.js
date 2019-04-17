@@ -38,7 +38,7 @@ helper.buildList = function(client) {
     let maxNameLength = this.getlongestNameLenght(client) + 5;
     let maxClassLength = this.getMaxClassNameLength() + 5;
 
-    let listString = '``' +`${'STT'.padEnd(4,' ')} Family/${'Character'.padEnd((maxNameLength - 'Family'.length),' ')} ${'Class'.padEnd((maxClassLength), ' ')} AP/AWK/DP\n` + '``';
+    let listString = '``' +`${'STT'.padEnd(4,' ')} Family/${'Character'.padEnd((maxNameLength - 'Family'.length),' ')} ${'Class'.padEnd((maxClassLength), ' ')} AP/AWK/DP\n` + '``\n';
     if(client.war.joined == void(0) || client.war.joined.length == 0) {
         return listString;
     }
@@ -58,7 +58,7 @@ helper.buildList = function(client) {
         let member = client.war.members[id];
         let character = member.character || '???';
         let className = member.class || '???';
-        listString += '``' + ` ${positition.padEnd(4 ,' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd((maxClassLength),' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'} + '``'\n`;
+        listString += '``' + ` ${positition.padEnd(4 ,' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd((maxClassLength),' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}` + '``\n';
     }
     return listString;
 }
