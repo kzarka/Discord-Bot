@@ -1,6 +1,10 @@
 const Discord = require('discord.js');
 const config = require("../config/config.json");
+const helper = require("../helper/war.js");
+
+const membersModel = require("../core/sqllite/members.js");
 const fs = require("fs");
+
 
 const datDir = '/data/dependencies/war';
 /* Greeting member when they join our guild */
@@ -10,14 +14,6 @@ const warEnd = '21:00'
 
 // time wait to delete message
 const deleteMessageTime = 3000;
-
-var memberLists = {};
-try {
-	memberLists =  require(`..${datDir}/members.json`);
-} catch (e) {
-	console.log('Its first start obviously');
-}
-
 
 var warInfo = null;
 try {
@@ -29,15 +25,16 @@ try {
 // joined member 
 var joined = {};
 let channelObject = null;
-module.exports = function(client){
+module.exports = async function(client){
     // get channel
     try {
         channelObject = client.channels.find(x => x.name === warVoteChannel);
     } catch(e) {
         console.log(e)
     }
-
-    client.war.members = memberLists;
+    //membersModel.init();
+    let mem = await membersModel.loadAll();
+    client.war.members = mem//memberLists;
 
 	if(availableToVote(warInfo)) {
         client.war.war = true;
@@ -77,7 +74,6 @@ module.exports = function(client){
         }
         let authorId = message.author.id;
         if(!client.war.joined) client.war.joined = [];
-        console.log(client.war.joined);
         if(client.war.joined.indexOf(authorId) >= 0) {
             message.reply("You've already signed for the war").then(msg => {
                 msg.delete(deleteMessageTime)
@@ -105,7 +101,7 @@ module.exports = function(client){
                 console.log(err);
             }
         });
-        reloadTopMessage(channelObject, client);
+        helper.reloadTopMessage(channelObject, client);
         return;
     });
 
@@ -153,36 +149,6 @@ function dayString(nextDay = false) {
     return `${date.getFullYear()}${date.getMonth()+1}${date.getDate()}`;
 }
 
-function reloadTopMessage(channelObject, client) {
-    if(channelObject) {
-        channelObject.fetchMessages().then(messages => {
-            let topMessage = messages.filter(msg => msg.author.bot).last();
-            if(topMessage) {
-                let embed = topMessage.embeds[0];
-                let list = buildList(client);
-                embed.fields = null;
-                
-                const newEmbed = new Discord.RichEmbed(embed);
-                if(client.war.war == false) {
-                    newEmbed.setDescription("Hiện không có war nào!");
-                } else {
-                    let info = `Node: ${client.war.node || 'TBD'}\n`;
-                    if(client.war.message) {
-                        info += `Message: ${client.war.message}`;
-                    }
-                    newEmbed.setDescription(info);
-                    newEmbed.addField("DANH SÁCH NODE WAR", list)
-                    .addBlankField(true).addBlankField(true);
-                }
-                topMessage.edit('', newEmbed).catch(console.error);
-            }
-        }).catch(err => {
-            console.log('Error while doing edit messages');
-            console.log(err);
-        });
-    }
-}
-
 function buildEmbed(client) {
     const embed = new Discord.RichEmbed()
         //.setTitle("This is your title, it can hold 256 characters")
@@ -196,7 +162,8 @@ function buildEmbed(client) {
         .setTimestamp();
 
     if(!client.war.war) {
-        embed.setDescription("Hiện không có war nào!");
+        embed.setDescription("Hiện không có war nào!")
+        .addBlankField(true).addBlankField(true);
         return embed;
     }
     if(client.war.message) {
@@ -206,31 +173,8 @@ function buildEmbed(client) {
         }
         embed.setDescription(info);
     }
-    let list = buildList(client);
+    let list = helper.buildList(client);
     embed.addField("DANH SÁCH NODE WAR", list)
         .addBlankField(true).addBlankField(true);
     return embed;
-}
-
-function buildList(client) {
-    if(client.war.joined == void(0) || client.war.joined.length == 0) {
-        return "1. ---";
-    }
-    let listString = '';
-    for(let x = 0; x < client.war.joined.length; x++) {
-        let id = client.war.joined[x];
-        if(!client.war.members[id]) {
-            let user = client.users.get(id)
-            let username = '???';
-            if(user && user.username) {
-                username = user.username;
-            }
-            listString += `${x+1}. **${username}**  ?? ??/??/??\n`;
-            continue;
-        }
-        let member = client.war.members[id];
-
-        listString += `${x+1}. **${member.family}/${member.main || '??'}**  **${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}**\n`;
-    }
-    return listString;
 }

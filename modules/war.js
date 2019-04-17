@@ -1,6 +1,7 @@
 'use strict';
 const fs = require("fs");
 const Discord = require("discord.js");
+const helper = require("../helper/war.js");
 
 var modules = {
 	description: 'War Module'
@@ -47,7 +48,7 @@ modules.war = function(client, message, args) {
                 console.log(err);
             }
         });
-        reloadTopMessage(channelWar, client);
+        helper.reloadTopMessage(channelWar, client);
         message.channel.send('Đã khởi động war!');
 		return;
 	}
@@ -80,59 +81,6 @@ modules.war = function(client, message, args) {
 };
 
 module.exports = modules;
-
-function reloadTopMessage(channelObject, client) {
-    if(channelObject) {
-        channelObject.fetchMessages().then(messages => {
-            let topMessage = messages.filter(msg => msg.author.bot).last();
-            if(topMessage) {
-                let embed = topMessage.embeds[0];
-                let list = buildList(client);
-                embed.fields = null;
-                
-                const newEmbed = new Discord.RichEmbed(embed);
-                if(client.war.war == false) {
-                    newEmbed.setDescription("Hiện không có war nào!");
-                } else {
-                    let info = `Node: ${client.war.node || 'TBD'}\n`;
-                    if(client.war.message) {
-                        info += `Message: ${client.war.message}`;
-                    }
-                    newEmbed.setDescription(info);
-                    newEmbed.addField("DANH SÁCH NODE WAR", list)
-                    .addBlankField(true).addBlankField(true);
-                }
-                topMessage.edit('', newEmbed).catch(console.error);
-            }
-        }).catch(err => {
-            console.log('Error while doing edit messages');
-            console.log(err);
-        });
-    }
-}
-
-function buildList(client) {
-    if(client.war.joined == void(0) || client.war.joined.length == 0) {
-        return "1. ---";
-    }
-    let listString = '';
-    for(let x = 0; x < client.war.joined.length; x++) {
-        let id = client.war.joined[x];
-        if(!client.war.members[id]) {
-            let user = client.users.get(id)
-            let username = '???';
-            if(user && user.username) {
-                username = user.username;
-            }
-            listString += `${x+1}. **${username}**  ?? ??/??/??\n`;
-            continue;
-        }
-        let member = client.war.members[id];
-
-        listString += `${x+1}. **${member.family}/${member.main || '??'}**  ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}\n`;
-    }
-    return listString;
-}
 
 function hourToDay(hour){
     var day = new Date();

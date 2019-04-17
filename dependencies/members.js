@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const config = require("../config/config.json");
 const fs = require("fs");
+const membersModel = require("../core/sqllite/members.js");
+const helper = require("../helper/war.js");
 
 
 const datDirWar = '/data/dependencies/war';
@@ -40,25 +42,22 @@ module.exports = function(client){
         }
         member.class = className;
         member.family = capitalizeFirstLetter(params[1]);
-        member.main = capitalizeFirstLetter(params[2]) || null;
+        member.character = capitalizeFirstLetter(params[2]) || null;
         member.ap = params[3] || null;
         member.awk = params[4] || null;
         member.dp = params[5] || null;
         if(!client.war.members) {
             client.war.members = {};
         }
+
         client.war.members[message.author.id] = member;
-        let data = JSON.stringify(client.war.members, null, 4);
-        fs.writeFileSync(`.${datDirWar}/members.json`, data, 'utf8', 'w', (err) => {
-            if (err) {
-                console.log(err);
-            }
-        });
+        member.userId = message.author.id;
+        membersModel.insert(member);
         message.channel.send('Thông tin của bạn đã được lưu lại!\n'
-            + '```' + `Family/Character: ${member.family}/${member.main || '???'}\nClass: ${member.class}\n`
+            + '```' + `Family/Character: ${member.family}/${member.character || '???'}\nClass: ${member.class}\n`
             + `AP/AWK/DP: ${member.ap || '???'}/${member.awk || '???'}/${member.dp || '???'}` + '```'
         );
-        reloadTopMessage(channelWar, client);
+        helper.reloadTopMessage(channelWar, client);
         return;
     });
 
@@ -193,58 +192,4 @@ function matchClass(message) {
 function capitalizeFirstLetter(string) {
     if(!string) return null;
     return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function reloadTopMessage(channelObject, client) {
-    if(channelObject) {
-        channelObject.fetchMessages().then(messages => {
-            let topMessage = messages.filter(msg => msg.author.bot).last();
-            if(topMessage) {
-                let embed = topMessage.embeds[0];
-
-                let list = buildList(client);
-                embed.fields = null;
-                
-                const newEmbed = new Discord.RichEmbed(embed);
-                if(client.war.war == false) {
-                    newEmbed.setDescription("Hiện không có war nào!");
-                } else {
-                    let info = `Node: ${client.war.node || 'TBD'}\n`;
-                    if(client.war.message) {
-                        info += `Message: ${client.war.message}`;
-                    }
-                    newEmbed.setDescription(info);
-                    newEmbed.addField("DANH SÁCH NODE WAR", list)
-                    .addBlankField(true).addBlankField(true);
-                }
-                topMessage.edit('', newEmbed).catch(console.error);
-            }
-        }).catch(err => {
-            console.log('Error while doing edit messages');
-            console.log(err);
-        });
-    }
-}
-
-function buildList(client) {
-    if(client.war.joined == void(0) || client.war.joined.length == 0) {
-        return "1. ---";
-    }
-    let listString = '';
-    for(let x = 0; x < client.war.joined.length; x++) {
-        let id = client.war.joined[x];
-        if(client.war.members[id] == void(0)) {
-            let user = client.users.get(id)
-            let username = '???';
-            if(user && user.username) {
-                username = user.username;
-            }
-            listString += `${x+1}. **${username}**  ?? ??/??/??\n`;
-            continue;
-        }
-        let member = client.war.members[id];
-
-        listString += `${x+1}. **${member.family}/${member.main || '??'}**  ${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}\n`;
-    }
-    return listString;
 }
