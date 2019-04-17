@@ -24,7 +24,7 @@ helper.reloadTopMessage = function(channelObject, client) {
                     newEmbed.setDescription(info);
                 }
                 newEmbed.addField("DANH SÁCH NODE WAR", list)
-                newEmbed.addBlankField().addBlankField(true);
+                //newEmbed.addBlankField().addBlankField(true);
                 topMessage.edit('', newEmbed).catch(console.error);
             }
         }).catch(err => {
@@ -35,12 +35,15 @@ helper.reloadTopMessage = function(channelObject, client) {
 }
 
 helper.buildList = function(client) {
-    let maxNameLength = this.getlongestNameLenght(client) + 5;
+    let maxNameLength = this.getlongestNameLength(client) + 5;
     let maxClassLength = this.getMaxClassNameLength() + 5;
+    console.log(maxNameLength);
     let listString = '``' +`${'STT'.padEnd(4,' ')} Family/${'Character'.padEnd((maxNameLength - 'Family'.length),' ')} ${'Class'.padEnd((maxClassLength), ' ')} AP/AWK/DP\n` + '``\n';
     if(client.war.joined == void(0) || client.war.joined.length == 0) {
         return listString;
     }
+    let totalGS = 0;
+    let totalReported = 0;
     for(let x = 0; x < client.war.joined.length; x++) {
 
         let id = client.war.joined[x];
@@ -58,17 +61,20 @@ helper.buildList = function(client) {
         let character = member.character || '???';
         let className = member.class || '???';
         listString += '``' + ` ${positition.padEnd(4 ,' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd((maxClassLength),' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}` + '``\n';
+        totalGS += member.awk + member.dp;
+        totalReported++;
     }
+    listString += '\n``Average GS: ' + Math.ceil(totalGS/totalReported) + '``';
     return listString;
 }
 
-helper.getlongestNameLenght = function (client) {
+helper.getlongestNameLength = function (client) {
     let maxLength = 'FamilyCharacter'.length;
     let joined = client.war.joined;
     let members = client.war.members;
     if(!joined || joined.length == 0) return 'FamilyCharacter'.length;
-    for(let id in joined) {
-
+    for(let i in joined) {
+        let id = joined[i];
         let thisLength = 0;
         
         // case not report gs

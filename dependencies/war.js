@@ -163,10 +163,10 @@ function buildEmbed(client) {
 
     let list = helper.buildList(client);
     embed.addField("DANH SÁCH NODE WAR", list)
-        .addBlankField(true).addBlankField(true);
+        .addBlankField(true)
     if(!client.war.war) {
-        embed.setDescription("Hiện không có war nào!")
-        .addBlankField(true).addBlankField(true);
+        embed.setDescription("Hiện không có war nào!");
+        //.addBlankField(true).addBlankField(true);
         return embed;
     }
     if(client.war.message) {
