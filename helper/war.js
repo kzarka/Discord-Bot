@@ -36,6 +36,8 @@ helper.reloadTopMessage = function(channelObject, client) {
 }
 
 helper.buildList = function(client) {
+    let maxLength = this.getlongestNameLenght(client);
+    console.log(maxLength)
     if(client.war.joined == void(0) || client.war.joined.length == 0) {
         return "1. ---";
     }
@@ -56,6 +58,21 @@ helper.buildList = function(client) {
         listString += `${x+1}. **${member.family}/${member.character || '??'}**  **${member.class || '??'} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}**\n`;
     }
     return listString;
+}
+
+helper.getlongestNameLenght = function (client) {
+    let maxLength = 0;
+    let members = client.war.members
+    for(let i in members) {
+        let thisLength = members[i].family.length;
+        if(members[i].character) {
+            thisLength += members[i].character.length;
+        }
+        if(thisLength > maxLength) {
+            maxLength = thisLength;
+        }
+    }
+    return (maxLength + 1);
 }
 
 module.exports = helper;
