@@ -38,7 +38,7 @@ helper.buildList = function(client) {
     let maxNameLength = this.getlongestNameLenght(client) + 5;
     let maxClassLength = this.getMaxClassNameLength() + 5;
 
-    let listString = '``' +`${'STT'.padEnd(4,' ')} Family/${'Character'.padEnd((maxNameLength - 'Family'.length),' ')}  ${'Class'.padEnd((maxClassLength), ' ')} AP/AWK/DP\n` + '``';
+    let listString = '``' +`${'STT'.padEnd(4,' ')} Family/${'Character'.padEnd((maxNameLength - 'Family'.length),' ')} ${'Class'.padEnd((maxClassLength), ' ')} AP/AWK/DP\n` + '``';
     if(client.war.joined == void(0) || client.war.joined.length == 0) {
         return listString;
     }
