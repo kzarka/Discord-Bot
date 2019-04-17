@@ -52,7 +52,7 @@ helper.buildList = function(client) {
             if(user && user.username) {
                 username = user.username;
             }
-            listString += '``' + `${positition.padEnd(4,' ')} ${username.padEnd((maxNameLength),' ')}  ${'???'.padEnd((maxClassLength), ' ')} ??/??/??\n` + '``';
+            listString += '``' + `${positition.padEnd(4,' ')} ${username.padEnd((maxNameLength+1),' ')}  ${'???'.padEnd((maxClassLength), ' ')} ??/??/??` + '``\n';
             continue;
         }
         let member = client.war.members[id];
