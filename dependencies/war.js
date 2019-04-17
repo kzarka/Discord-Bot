@@ -158,7 +158,7 @@ function buildEmbed(client) {
         //.setDescription("This is the main body of text, it can hold 2048 characters.")
         .setFooter("Xuan Bot", "https://i.imgur.com/h9cOtT9.png")
         //.setImage("http://i.imgur.com/yVpymuV.png")
-        .setThumbnail("https://i.imgur.com/ZkoC0RM.png")
+        //.setThumbnail("https://i.imgur.com/ZkoC0RM.png")
         .setTimestamp();
 
     let list = helper.buildList(client);

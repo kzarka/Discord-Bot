@@ -58,7 +58,7 @@ helper.buildList = function(client) {
         let member = client.war.members[id];
         let character = member.character || '???';
         let className = member.class || '???';
-        listString += ` ${positition.padEnd(4 ,' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd((maxClassLength),' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}\n`;
+        listString += '``' + ` ${positition.padEnd(4 ,' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd((maxClassLength),' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'} + '``'\n`;
     }
     return listString;
 }
