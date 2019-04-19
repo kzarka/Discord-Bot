@@ -10,7 +10,7 @@ const warStart = '20:00'
 const warEnd = '21:00';
 
 const maxDateWar = 7;
-const recheckWarMin = 10; // minute
+const recheckWarMin = 1; // minute
 
 helper.reloadTopMessage = function(channelObject, client) {
     if(channelObject) {
@@ -169,6 +169,7 @@ helper.hourToDay = function(hour){
 
 /* Auto shutdown war check */
 helper.warAutoShutdown = function(client, datDir) {
+    let that = this;
     if(!client.war.war) return;
     let now = new Date();
     let items = client.war.date.split('/');
@@ -181,7 +182,9 @@ helper.warAutoShutdown = function(client, datDir) {
         helper.saveWarInfo(client, datDir);
         return;
     }
-    setTimeout(this.warAutoShutdown, recheckWarMin*60000, client);
+    setTimeout(function() {
+        that.warAutoShutdown(client, datDir)
+    }, recheckWarMin*10000);
 }
 
 module.exports = helper;

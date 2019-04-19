@@ -96,6 +96,7 @@ function loadWar(client, war) {
     };
     if(war.war == void(0) || war.war == false) return false;
     client.war = war;
+    helper.warAutoShutdown(client, datDir);
     return true;
 }
 

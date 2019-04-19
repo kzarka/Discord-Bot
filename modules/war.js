@@ -43,7 +43,7 @@ modules.war = function(client, message, args) {
 		// reload top msg
         helper.reloadTopMessage(channelWar, client);
         // for auto shutdown war
-        helper.warAutoShutdown(client);
+        helper.warAutoShutdown(client, datDir);
         message.channel.send('```Đã lưu cài đặt!\nWar kế tiếp: 20:00 ' 
         	+ client.war.date + `!\nNode: ${client.war.node || 'TBD'}`
         	+ `\nMessage: ${client.war.message || ''}` + '```');
