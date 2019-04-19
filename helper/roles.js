@@ -4,7 +4,7 @@ var helper = {
     description: "War helper"
 }
 
-helper.reAsignRole = function(message, roleName) {
+helper.reAsignRole = async function(message, roleName) {
     let roleToKeep = ['VIP', 'Filthy Outsider', 'Carrying Fury Scrubs', 'Guest', 'Ng0k', '( ͡° ͜ʖ ͡°)'];
     let roles = message.member.roles;
     // first remove old role
@@ -23,7 +23,7 @@ helper.reAsignRole = function(message, roleName) {
             }
             return result;
         });
-        message.member.removeRoles(roles).catch(err => {
+        await message.member.removeRoles(roles).catch(err => {
             console.log(err);
         });
     }
@@ -32,7 +32,7 @@ helper.reAsignRole = function(message, roleName) {
     let role = message.guild.roles.find(r => r.name === roleName);
     if(!role) return;
     if(!message.member.roles.has(role.id)) {
-        message.member.addRole(role).catch((e) => {
+        await message.member.addRole(role).catch((e) => {
             console.log(e);
         });
     }
