@@ -3,6 +3,7 @@ const config = require("../config/config.json");
 const fs = require("fs");
 const membersModel = require("../core/sqllite/members.js");
 const helper = require("../helper/war.js");
+const roleHelper = require("../helper/roles.js");
 
 
 const datDirWar = '/data/dependencies/war';
@@ -116,6 +117,7 @@ module.exports = function(client){
             + '```' + `Family/Character: ${member.family}/${member.character || '???'}\nClass: ${member.class}  Level: ${member.level || '???'}\n`
             + `AP/AWK/DP: ${member.ap || '???'}/${member.awk || '???'}/${member.dp || '???'}` + '```'
         );
+        roleHelper.reAsignRole(message, member.class);
         helper.reloadTopMessage(channelWar, client);
         return;
     });

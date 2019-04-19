@@ -35,110 +35,115 @@ modules.role = function(client, message, args) {
         });
 	}
 	if(args[0] == 'off') {
-		this.allowToAsignRole = false;
+		modules.allowToAsignRole = false;
 		message.channel.send(`Disabled role commands!`);
+	}
+
+	if(args[0] == 'on') {
+		modules.allowToAsignRole = true;
+		message.channel.send(`Enabled role commands!`);
 	}
 };
 
 modules.warrior = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'warrior';
 	addRole(client, message, className);
 
 };
 
 modules.sorceress = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'sorceress';
 	addRole(client, message, className);
 };
 
 modules.ranger = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'ranger';
 	addRole(client, message, className);
 };
 
 modules.berserker = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'berserker';
 	addRole(client, message, className);
 };
 
 modules.tamer = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'tamer';
 	addRole(client, message, className);
 };
 
 modules.valkyrie = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'valkyrie';
 	addRole(client, message, className);
 };
 
 modules.musa = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'musa';
 	addRole(client, message, className);
 };
 
 modules.maehwa = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'maehwa';
 	addRole(client, message, className);
 };
 
 modules.witch = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'witch';
 	addRole(client, message, className);
 };
 
 modules.wizard = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'wizard';
 	addRole(client, message, className);
 };
 
 modules.ninja = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'ninja';
 	addRole(client, message, className);
 };
 
 modules.kunoichi = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'kunoichi';
 	addRole(client, message, className);
 };
 
 modules.darkknight = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'darkknight';
 	addRole(client, message, className);
 };
 
 modules.striker = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'striker';
 	addRole(client, message, className);
 };
 
 modules.mystic = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'mystic';
 	addRole(client, message, className);
 };
 
 modules.archer = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'archer';
 	addRole(client, message, className);
 };
 
 modules.lahn = function(client, message, args) {
-	if(!this.allowToAsignRole) return;
+	if(!modules.allowToAsignRole) return;
 	let className = 'lahn';
 	addRole(client, message, className);
 };
