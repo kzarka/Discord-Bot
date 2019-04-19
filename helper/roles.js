@@ -23,12 +23,13 @@ helper.reAsignRole = function(message, roleName) {
         if(roleToKeep.constructor !== Array) {
             return role.name !== roleToKeep;
         }
+        let result = true;
         for(let i in roleToKeep) {
             if(role.name == roleToKeep[i]){
-                return false;
+                result = false;
             }
-            return true;
         }
+        return result;
     });
     message.member.removeRoles(roles).catch(err => {
         console.log(err);
