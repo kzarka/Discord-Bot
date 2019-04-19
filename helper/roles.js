@@ -6,6 +6,7 @@ var helper = {
 
 helper.reAsignRole = function(message, roleName) {
     let roleToKeep = ['VIP', 'Filthy Outsider', 'Carrying Fury Scrubs', 'Guest', 'Ng0k', '( ͡° ͜ʖ ͡°)'];
+    let roles = message.member.roles;
     // first remove old role
     let isOfficer = roles.some(role => role.name === 'Officer');
     if(!isOfficer) {
@@ -28,7 +29,6 @@ helper.reAsignRole = function(message, roleName) {
     }
 
     /* Now add role to member */
-    let roles = message.member.roles;
     let role = message.guild.roles.find(r => r.name === roleName);
     if(!role) return;
     if(!message.member.roles.has(role.id)) {
