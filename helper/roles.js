@@ -11,6 +11,7 @@ helper.reAsignRole = function(message, roleName) {
     if(!role) return;
     if(!message.member.roles.has(role.id)) {
         console.log('Not has this role');
+        console.log(role.name);
         message.member.addRole(role).catch((e) => {
             console.log(e);
         });
