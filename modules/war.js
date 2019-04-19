@@ -10,7 +10,9 @@ const datDir = '/data/dependencies/war';
 const warVoteChannel = 'war-attendance';
 
 const warStart = '20:00'
-const warEnd = '21:00'
+const warEnd = '21:00';
+
+const maxDateWar = 7;
 
 var channelWar = null;
 // Global variable for member stats
@@ -99,7 +101,26 @@ function inWarTime() {
     return false;
 }
 
-function isValidDate(date) {
+function validDate(date) {
+	date = date.trim();
 	var pattern = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/;
-	return pattern.test(date)
+	// if passes basic test
+	if(!pattern.test(date)) return false;
+	let items = date.split('/');
+	let now = new Date();
+	let inputDate = parseInt(items[0]);
+	let inputMonth = parseInt(items[1]) - 1;
+	let inputYear = parseInt(items[2]);
+	if(inputYear != now.getFullYear()) return false;
+	let desireDate = new Date(inputYear, inputMonth, inputDate);
+	// if desire greater than 7 days from now return
+	if((now.getTime() - desireDate.getTime()) >= 7*24*3600*1000) return false;
+	console.log('pass3')
+	// if enable war in current day after war time return
+	if((now.getDate() == desireDate.getDate()) && (now.getMonth() == desireDate.getMonth())) {
+		console.log('about pass 4')
+		let endWarTime = new Date(inputYear, inputMonth, inputDate, 16);
+		if(endWarTime.getTime() <= now.getTime()) return false;
+	}
+	return `${desireDate.getDate()}/${desireDate.getMonth() + 1}/${desireDate.getFullYear()}`;
 }
