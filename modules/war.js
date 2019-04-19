@@ -22,7 +22,7 @@ modules.war = function(client, message, args) {
         console.log(e)
     }
 	if(args.length == 0) {
-		message.channel.send('Sử dụng `war off [node] [message]` để kích hoạt vote war!');
+		message.channel.send('Sử dụng `war off [dd/mm/yyyy]` để kích hoạt vote war!');
 		return;
 	}
 	if(args[0] == 'on') {
@@ -30,8 +30,8 @@ modules.war = function(client, message, args) {
 			message.channel.send('War đã mở từ trước');
 			return;
 		}
-		if(inWarTime()) {
-			message.channel.send('Không thể mở vote từ 20h-22h');
+		if(!args[1]) {
+			message.channel.send('Sử dụng `war off [dd/mm/yyyy]` để kích hoạt vote war!');
 			return;
 		}
 		client.war.war = true;
@@ -97,4 +97,9 @@ function inWarTime() {
     	return true;
     }
     return false;
+}
+
+function isValidDate(date) {
+	var pattern = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/;
+	return pattern.test(date)
 }
