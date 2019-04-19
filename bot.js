@@ -25,8 +25,9 @@ client.on("ready", () => {
 	client.helper = helper;
 	client.Discord = Discord;
 	client.war = {
-		"war": false,
-		"joined": [],
+		"war": false
+	}
+	client.members = {
 		"members": {}
 	}
 	dependencies(client);

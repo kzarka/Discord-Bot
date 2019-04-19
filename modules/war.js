@@ -1,5 +1,4 @@
 'use strict';
-const fs = require("fs");
 const Discord = require("discord.js");
 const helper = require("../helper/war.js");
 
@@ -8,11 +7,6 @@ var modules = {
 };
 const datDir = '/data/dependencies/war';
 const warVoteChannel = 'war-attendance';
-
-const warStart = '20:00'
-const warEnd = '21:00';
-
-const maxDateWar = 7;
 
 var channelWar = null;
 // Global variable for member stats
@@ -24,7 +18,7 @@ modules.war = function(client, message, args) {
         console.log(e)
     }
 	if(args.length == 0) {
-		message.channel.send('Sử dụng `war off [dd/mm/yyyy]` để kích hoạt vote war!');
+		message.channel.send('Sử dụng `war on [dd/mm/yyyy]` để kích hoạt vote war!');
 		return;
 	}
 	if(args[0] == 'on') {
@@ -33,26 +27,76 @@ modules.war = function(client, message, args) {
 			return;
 		}
 		if(!args[1]) {
-			message.channel.send('Sử dụng `war off [dd/mm/yyyy]` để kích hoạt vote war!');
+			message.channel.send('Sử dụng `war on [dd/mm/yyyy]` để kích hoạt vote war!');
+			return;
+		}
+		let warDate = helper.validDate(args[1]);
+		if(!warDate) {
+			message.channel.send('Sử dụng `war on [dd/mm/yyyy]` để kích hoạt vote war!\nNgày war không lớn hơn 7 ngày từ thời điểm hiện tại\nKhông thể set war sau 22h cùng ngày.');
 			return;
 		}
 		client.war.war = true;
-		client.war.node = args[1] || null;
-		client.war.message = args[2] || null;
-		let data = {
-			"inwar": true,
-			"node": client.war.node,
-			"message": client.war.message
-		}
-		data = JSON.stringify(data, null, 4);
-        fs.writeFileSync(`.${datDir}/war.json`, data, 'utf8', 'w', (err) => {
-            if (err) {
-                console.log(err);
-            }
-        });
+		client.war.date = warDate;
+		client.war.joined = [];
+		// save to file json
+		helper.saveWarInfo(client, datDir);
+		// reload top msg
         helper.reloadTopMessage(channelWar, client);
-        message.channel.send('Đã khởi động war!');
+        // for auto shutdown war
+        helper.warAutoShutdown(client);
+        message.channel.send('```Đã lưu cài đặt!\nWar kế tiếp: 20:00 ' 
+        	+ client.war.date + `!\nNode: ${client.war.node || 'TBD'}`
+        	+ `\nMessage: ${client.war.message || ''}` + '```');
 		return;
+	}
+	if(args[0] == 'set') {
+		if(client.war.war == false) {
+			message.channel.send('War hiện không mở');
+			return;
+		}
+		if(!args[1]) {
+			message.channel.send('Sử dụng `war set [node/message] [string]` để cài đặt thuộc tính!');
+			return;
+		}
+		if(args[1] == 'node') {
+			if(!args[2]) {
+				message.channel.send('Sử dụng `war node [node]` để set node!');
+				return;
+			}
+			let nodeName = '';
+			for(let i = 2; i < args.length; i++){
+				nodeName += ' ' + args[i];
+			}
+			if(nodeName.length > 60) {
+				message.channel.send('Tên Node quá dài!');
+				return;
+			}
+			client.war.node = nodeName.trim();
+			helper.saveWarInfo(client, datDir);
+			message.channel.send(`Đã lưu Node thành công. Node ${client.war.node}!`);
+			helper.reloadTopMessage(channelWar, client);
+			return;
+		}
+		// set message
+		if(args[1] == 'message') {
+			if(!args[2]) {
+				message.channel.send('Sử dụng `war message [message]` để set tin nhắn!');
+				return;
+			}
+			let messageContent = '';
+			for(let i = 2; i < args.length; i++){
+				messageContent += ' ' + args[i];
+			}
+			if(messageContent.length > 200) {
+				message.channel.send('Nội dung quá dài, tối đã 200 ký tự!');
+				return;
+			}
+			client.war.message = messageContent.trim();
+			helper.saveWarInfo(client, datDir);
+			message.channel.send(`Đã lưu tin nhắn thành công\nNội dung: ${client.war.message}!`);
+			helper.reloadTopMessage(channelWar, client);
+			return;
+		}
 	}
 	if(args[0] == 'off') {
 		if(client.war.war == false) {
@@ -60,20 +104,17 @@ modules.war = function(client, message, args) {
 			return;
 		}
 		message.channel.send('Mọi dữ liệu vote sẽ mất, gõ yes để xác nhận!');
+		let requestUserId = message.author.id;
 		const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 10000 });
         collector.on('collect', message => {
+        	if(message.author.bot) return;
+        	if(message.author.id != requestUserId) return;
             if (message.content == "yes") {
-            	client.war.war = false
-                client.war.joined = [];
-            	let data = {
-					"inwar": false
-				}
-				data = JSON.stringify(data, null, 4);
-		        fs.writeFileSync(`.${datDir}/war.json`, data, 'utf8', 'w', (err) => {
-		            if (err) {
-		                console.log(err);
-		            }
-		        });
+				client.war = {
+            		"war": false
+            	}
+				// save to file json
+				helper.saveWarInfo(client, datDir);
 		        helper.reloadTopMessage(channelWar, client);
                 message.channel.send("Đã hủy bỏ war!");
             }
@@ -91,36 +132,4 @@ function hourToDay(hour){
     day.setHours(h);
     day.setMinutes(m);
     return day;
-}
-
-function inWarTime() {
-	let now = Date.now();
-    if(now >= hourToDay(warStart).getTime() && now <= hourToDay(warEnd).getTime()) {
-    	return true;
-    }
-    return false;
-}
-
-function validDate(date) {
-	date = date.trim();
-	var pattern = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/;
-	// if passes basic test
-	if(!pattern.test(date)) return false;
-	let items = date.split('/');
-	let now = new Date();
-	let inputDate = parseInt(items[0]);
-	let inputMonth = parseInt(items[1]) - 1;
-	let inputYear = parseInt(items[2]);
-	if(inputYear != now.getFullYear()) return false;
-	let desireDate = new Date(inputYear, inputMonth, inputDate);
-	// if desire greater than 7 days from now return
-	if((now.getTime() - desireDate.getTime()) >= 7*24*3600*1000) return false;
-	console.log('pass3')
-	// if enable war in current day after war time return
-	if((now.getDate() == desireDate.getDate()) && (now.getMonth() == desireDate.getMonth())) {
-		console.log('about pass 4')
-		let endWarTime = new Date(inputYear, inputMonth, inputDate, 16);
-		if(endWarTime.getTime() <= now.getTime()) return false;
-	}
-	return `${desireDate.getDate()}/${desireDate.getMonth() + 1}/${desireDate.getFullYear()}`;
 }

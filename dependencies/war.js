@@ -3,14 +3,10 @@ const config = require("../config/config.json");
 const helper = require("../helper/war.js");
 
 const membersModel = require("../core/sqllite/members.js");
-const fs = require("fs");
-
 
 const datDir = '/data/dependencies/war';
 /* Greeting member when they join our guild */
 const warVoteChannel = 'war-attendance';
-const warStart = '20:00'
-const warEnd = '21:00'
 
 // time wait to delete message
 const deleteMessageTime = 3000;
@@ -34,12 +30,9 @@ module.exports = async function(client){
     }
     //membersModel.init();
     let mem = await membersModel.loadAll();
-    client.war.members = mem//memberLists;
+    client.members = mem//memberLists;
 
-	if(availableToVote(warInfo)) {
-        client.war.war = true;
-        client.war.joined = joined;
-	}
+	loadWar(client, warInfo);
     let embed = buildEmbed(client);
     if(channelObject) {
         channelObject.fetchMessages().then(messages => {
@@ -57,7 +50,7 @@ module.exports = async function(client){
     	if(message.author.bot) return;
     	// if in war time return or war is not activated
         let now = Date.now();
-        if(inWarTime() || client.war.war == false) {
+        if(helper.inWarTime() || client.war.war == false) {
             message.reply('Not in vote time!').then(msg => {
                 msg.delete(deleteMessageTime)
             }).catch(e => {console.log(e)});
@@ -87,49 +80,23 @@ module.exports = async function(client){
         message.delete(deleteMessageTime);
         // save to the file
         client.war.joined.push(authorId);
-        let dateString = null;
-        if(now > hourToDay(warEnd).getTime()) {
-            dateString = dayString(true);
-        } else dateString = dayString();
-        let data = {
-            "inwar": true
-        }
-        data[dateString] = client.war.joined;
-        data = JSON.stringify(data, null, 4);
-        fs.writeFileSync(`.${datDir}/war.json`, data, 'utf8', 'w', (err) => {
-            if (err) {
-                console.log(err);
-            }
-        });
+        // save to file json
+        helper.saveWarInfo(client, datDir);
         helper.reloadTopMessage(channelObject, client);
         return;
     });
 
 }
 
-function inWarTime() {
-	let now = Date.now();
-    if(now >= hourToDay(warStart).getTime() && now <= hourToDay(warEnd).getTime()) {
-    	return true;
-    }
-    return false;
-}
 
-function availableToVote(war) {
-    if(war == void(0)) return false;
-    if(war.inwar == void(0) || war.inwar == false) return false;
-    let now = Date.now();
-    // if current time before war start
-    if(now < hourToDay(warStart).getTime()) {
-        joined = war[dayString()] || [];
-        return true;
-    }
-    // if current time after war end obviously
-    if(now > hourToDay(warEnd).getTime()) {
-
-        joined = war[dayString(true)] || [];
-        return true;
-    }
+function loadWar(client, war) {
+    if(war == void(0) || !helper.validDate(war.date)) {
+        helper.saveWarInfo(client, datDir);
+        return false;
+    };
+    if(war.war == void(0) || war.war == false) return false;
+    client.war = war;
+    return true;
 }
 
 function hourToDay(hour){
@@ -168,12 +135,7 @@ function buildEmbed(client) {
         embed.setDescription("Hiện không có war nào!");
         return embed;
     }
-    if(client.war.message) {
-        let info = `Node: ${client.war.node || 'TBD'}`;
-        if(client.war.message) {
-            info += `Message: ${client.war.message}`;
-        }
-        embed.setDescription(info);
-    }
+    let info = helper.buildDescription(client);
+    embed.setDescription(info);
     return embed;
 }

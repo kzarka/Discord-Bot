@@ -106,11 +106,11 @@ module.exports = function(client){
             return;
         }
 
-        if(!client.war.members) {
-            client.war.members = {};
+        if(!client.members) {
+            client.members = {};
         }
 
-        client.war.members[message.author.id] = member;
+        client.members[message.author.id] = member;
         member.userId = message.author.id;
         membersModel.insert(member);
         message.channel.send('Thông tin của bạn đã được lưu lại!\n'
