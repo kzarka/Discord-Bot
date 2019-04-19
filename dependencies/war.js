@@ -50,7 +50,7 @@ module.exports = async function(client){
     	if(message.author.bot) return;
     	// if in war time return or war is not activated
         let now = Date.now();
-        if(helper.inWarTime() || client.war.war == false) {
+        if(client.war.war == false) {
             message.reply('Not in vote time!').then(msg => {
                 msg.delete(deleteMessageTime)
             }).catch(e => {console.log(e)});
