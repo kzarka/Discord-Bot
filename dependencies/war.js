@@ -33,7 +33,7 @@ module.exports = async function(client){
     client.members = mem//memberLists;
 
 	loadWar(client, warInfo);
-    let embed = buildEmbed(client);
+    let embed = helper.buildEmbed(client);
     if(channelObject) {
         channelObject.fetchMessages().then(messages => {
             channelObject.bulkDelete(messages);
@@ -115,28 +115,4 @@ function dayString(nextDay = false) {
         date.setDate(date.getDate()+1);
     }
     return `${date.getFullYear()}${date.getMonth()+1}${date.getDate()}`;
-}
-
-function buildEmbed(client) {
-    const embed = new Discord.RichEmbed()
-        //.setTitle("This is your title, it can hold 256 characters")
-        //.setURL("https://discord.js.org/#/docs/main/indev/class/RichEmbed")
-        .setAuthor("Node War", "https://i.imgur.com/h9cOtT9.png")
-        .setColor(0x00AE86)
-        //.setDescription("This is the main body of text, it can hold 2048 characters.")
-        .setFooter("Xuan Bot", "https://i.imgur.com/h9cOtT9.png")
-        //.setImage("http://i.imgur.com/yVpymuV.png")
-        //.setThumbnail("https://i.imgur.com/ZkoC0RM.png")
-        .setTimestamp();
-
-    let list = helper.buildList(client);
-    embed.addField("DANH SÁCH NODE WAR", list)
-        .addBlankField(true)
-    if(!client.war.war) {
-        embed.setDescription("Hiện không có war nào!");
-        return embed;
-    }
-    let info = helper.buildDescription(client);
-    embed.setDescription(info);
-    return embed;
 }

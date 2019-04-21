@@ -12,23 +12,14 @@ const warEnd = '21:00';
 const maxDateWar = 7;
 const recheckWarMin = 1; // minute
 
+const rowPerPage = 10;
+
 helper.reloadTopMessage = function(channelObject, client) {
     if(channelObject) {
         channelObject.fetchMessages().then(messages => {
             let topMessage = messages.filter(msg => msg.author.bot).last();
             if(topMessage) {
-                let embed = topMessage.embeds[0];
-                let list = this.buildList(client);
-                embed.fields = null;
-                
-                const newEmbed = new client.Discord.RichEmbed(embed);
-                if(client.war.war == false) {
-                    newEmbed.setDescription("Hiện không có war nào!");
-                } else {
-                    let info = this.buildDescription(client);
-                    newEmbed.setDescription(info);
-                }
-                newEmbed.addField("DANH SÁCH NODE WAR", list).addBlankField(true);
+                let newEmbed = this.buildEmbed(client);
                 topMessage.edit('', newEmbed).catch(console.error);
             }
         }).catch(err => {
@@ -39,27 +30,38 @@ helper.reloadTopMessage = function(channelObject, client) {
 }
 
 helper.buildList = function(client) {
+    /* array for storing pages */
+    let pages = [];
     let maxNameLength = this.getlongestNameLength(client) + 1;
     let maxClassLength = this.getMaxClassNameLength() + 1;
     let maxLengthLevel = 'Level'.length + 4;
     let maxLengthPosition = 3;
     let listString = '``' +`${'STT'.padEnd(maxLengthPosition, ' ')} Family/${'Character'.padEnd((maxNameLength - 'Family'.length),' ')} ${'Class'.padEnd(maxClassLength, ' ')} ${'Level'.padEnd(maxLengthLevel, ' ')} AP/AWK/DP\n` + '``\n';
     if(client.war.joined == void(0) || client.war.joined.length == 0) {
-        return listString;
+        pages.push(listString);
+        return pages;
     }
     let totalGS = 0;
     let totalReported = 0;
-    for(let x = 0; x < client.war.joined.length; x++) {
-
-        let id = client.war.joined[x];
-        let positition = (x+1) + '.';
+    // asign to var to prevent some exception
+    let joined = client.war.joined;
+    for(let x = 0; x < joined.length; x++) {
+        let id = joined[x];
+        let positition = (x+1);
+        let posititionString = positition + '.';
         if(!client.members[id]) {
             let user = client.users.get(id)
             let username = '???';
             if(user && user.username) {
                 username = user.username;
             }
-            listString += '``' + `${positition.padEnd(maxLengthPosition, ' ')} ${username.padEnd((maxNameLength+1),' ')}  ${'???'.padEnd(maxClassLength, ' ')} ${'??'.padEnd(maxLengthLevel, ' ')} ??/??/??` + '``\n';
+            listString += '``' + `${posititionString.padEnd(maxLengthPosition, ' ')} ${username.padEnd((maxNameLength+1),' ')}  ${'???'.padEnd(maxClassLength, ' ')} ${'??'.padEnd(maxLengthLevel, ' ')} ??/??/??` + '``\n';
+            // go next here so check asign array
+            if((positition % rowPerPage == 0) || (positition == joined.length)) {
+                pages.push(listString);
+                listString = '';
+            }
+            // then continue
             continue;
         }
         let member = client.members[id];
@@ -67,12 +69,56 @@ helper.buildList = function(client) {
         let className = member.class || '???';
         let level = member.level || '??';
         level = level + '';
-        listString += '``' + ` ${positition.padEnd(maxLengthPosition, ' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd(maxClassLength,' ')} ${level.padEnd(maxLengthLevel, ' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}` + '``\n';
+        listString += '``' + ` ${posititionString.padEnd(maxLengthPosition, ' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd(maxClassLength,' ')} ${level.padEnd(maxLengthLevel, ' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}` + '``\n';
         totalGS += parseInt(member.awk) + parseInt(member.dp);
         totalReported++;
+        // go next here so check again
+        if((positition % rowPerPage == 0) || (positition == joined.length)) {
+            pages.push(listString);
+            listString = '';
+        }
+
     }
-    listString += '\n``Average GS: ' + Math.ceil(totalGS/totalReported) + '``';
-    return listString;
+    // if empty then no GS
+    if(joined.length && joined.length > 0) {
+       pages.push('\n``Average GS: ' + Math.ceil(totalGS/totalReported) + '``');
+    }
+    return pages;
+}
+
+helper.buildEmbed = function(client) {
+    const embed = new client.Discord.RichEmbed()
+        //.setTitle("This is your title, it can hold 256 characters")
+        //.setURL("https://discord.js.org/#/docs/main/indev/class/RichEmbed")
+        .setAuthor("Node War", "https://i.imgur.com/h9cOtT9.png")
+        .setColor(0x00AE86)
+        //.setDescription("This is the main body of text, it can hold 2048 characters.")
+        .setFooter("Xuan Bot", "https://i.imgur.com/h9cOtT9.png")
+        //.setImage("http://i.imgur.com/yVpymuV.png")
+        //.setThumbnail("https://i.imgur.com/ZkoC0RM.png")
+        .setTimestamp();
+
+    let list = this.buildList(client);
+    // set fields
+    for(let i = 0; i < list.length; i++) {
+        if(i == 0) {
+            embed.addField("DANH SÁCH NODE WAR", list[i]);
+            continue;
+        }
+        embed.addField("\u200B", list[i]);
+    }
+    embed.addBlankField(true);
+    // add description
+    if(!client.war.war) {
+        embed.setDescription("Hiện không có war nào!");
+        return embed;
+    }
+    let info = `Node: ${client.war.node || 'TBD'} - ${client.war.date}\n`;
+    if(client.war.message) {
+        info += `Message: ${client.war.message || ''}`;
+    }
+    embed.setDescription(info);
+    return embed;
 }
 
 helper.getlongestNameLength = function (client) {
@@ -148,14 +194,6 @@ helper.inWarTime = function() {
         return true;
     }
     return false;
-}
-
-helper.buildDescription = function(client) {
-    let info = `Node: ${client.war.node || 'TBD'} - ${client.war.date}\n`;
-    if(client.war.message) {
-        info += `Message: ${client.war.message || ''}`;
-    }
-    return info;
 }
 
 helper.hourToDay = function(hour){
