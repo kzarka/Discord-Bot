@@ -5,10 +5,11 @@ const config = require("../config/config.json");
 const greetingChannel = 'guests';
 module.exports = function(client){
 
-	client.on('guildMemberAdd', member => {
-        let channel = member.guild.channels.find(function(ch) {
+	client.on('guildMemberAdd', async member => {
+        let channel = await member.guild.channels.find(function(ch) {
             return ch.name === 'guests';
         });
+        if(!channel) return;
         channel.send(`Xin chào ${member}. Đây là Discord của Guild Fury.`
         	+ '\nVui lòng DM Officer trong danh sách đang online hoặc mention **@Officer** để được invite vào Guild.'
         	+ '\nChúc bạn một ngày vui vẻ!');
