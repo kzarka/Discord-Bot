@@ -211,7 +211,7 @@ helper.warAutoShutdown = function(client, datDir) {
     if(!client.war.war) return;
     let now = new Date();
     let items = client.war.date.split('/');
-    let endWarTime = new Date(items[2], items[1], items[0], 22);
+    let endWarTime = new Date(items[2], (items[1] - 1), items[0], 22);
     // war end on desire day
     if(now.getTime() >= endWarTime.getTime()) {
         client.war = {
