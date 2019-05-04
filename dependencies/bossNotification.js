@@ -34,6 +34,15 @@ module.exports = function(client){
             case 'nouver':
                 bossListMessage(message, 'Nouver');
                 break;
+            case 'muraka':
+                bossListMessage(message, 'Muraka');
+                break;
+            case 'quint':
+                bossListMessage(message, 'Quint');
+                break;
+            case 'vell':
+                bossListMessage(message, 'Vell');
+                break;    
             default:
                 break;
         }
@@ -122,7 +131,24 @@ module.exports = function(client){
         if(times.length == 0) {
             tomorrow.setDate(now.getDate()+1);
             tmrTimes = getBoss(bossName, tomorrow);
-            message.channel.send(`**${bossName}** không spawn vào hôm nay, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
+            if(tmrTimes.length != 0) {
+                return message.channel.send(`**${bossName}** không spawn vào hôm nay, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
+            }
+            tomorrow.setDate(now.getDate()+2);
+            tmrTimes = getBoss(bossName, tomorrow);
+            if(tmrTimes.length != 0) {
+                return message.channel.send(`**${bossName}** không spawn vào hôm nay, spawn lần kế lúc ${tmrTimes[0]} ngày kia!`);
+            }
+            tomorrow.setDate(now.getDate()+3);
+            tmrTimes = getBoss(bossName, tomorrow);
+            if(tmrTimes.length != 0) {
+                return message.channel.send(`**${bossName}** không spawn vào hôm nay, spawn lần kế lúc ${tmrTimes[0]} ngày kìa!`);
+            }
+            tomorrow.setDate(now.getDate()+4);
+            tmrTimes = getBoss(bossName, tomorrow);
+            if(tmrTimes.length != 0) {
+                return message.channel.send(`**${bossName}** không spawn vào hôm nay, spawn lần kế lúc ${tmrTimes[0]} 4 ngày nữa!`);
+            }
             return;
         }
         if(times.length==1) {
@@ -130,25 +156,62 @@ module.exports = function(client){
                 tomorrow = new Date();
                 tomorrow.setDate(now.getDate()+1);
                 tmrTimes = getBoss(bossName, tomorrow);
-                message.channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
+                if(tmrTimes.length != 0) {
+                    return message.channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
+                }
+                tomorrow.setDate(now.getDate()+2);
+                tmrTimes = getBoss(bossName, tomorrow);
+                if(tmrTimes.length != 0) {
+                    return message.channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} ngày kia!`);
+                }
+                tomorrow.setDate(now.getDate()+3);
+                tmrTimes = getBoss(bossName, tomorrow);
+                if(tmrTimes.length != 0) {
+                    return message.channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} ngày kìa!`);
+                }
+                tomorrow.setDate(now.getDate()+4);
+                tmrTimes = getBoss(bossName, tomorrow);
+                if(tmrTimes.length != 0) {
+                    return message.channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} 4 ngày nữa!`);
+                }
                 return;
             }
             if(now<hourToDay(times[0])) {
                 message.channel.send(`**${bossName}** sẽ spawn vào ${times[0]}!`);
+                vell(message, bossName);
                 return;
             }
         }
         if(times.length>1) {
             if(now>hourToDay(times[times.length-1])) {
+                let timeLength = times.length;
                 tomorrow = new Date();
                 tomorrow.setDate(now.getDate()+1);
                 tmrTimes = getBoss(bossName, tomorrow);
-                message.channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
+                if(tmrTimes.length != 0) {
+                    return message.channel.send(`**${bossName}** đã spawn vào ${times[timeLength]}, spawn lần kế lúc ${tmrTimes[0]} ngày mai!`);
+                }
+                tomorrow.setDate(now.getDate()+2);
+                tmrTimes = getBoss(bossName, tomorrow);
+                if(tmrTimes.length != 0) {
+                    return message.channel.send(`**${bossName}** đã spawn vào ${times[timeLength]}, spawn lần kế lúc ${tmrTimes[0]} ngày kia!`);
+                }
+                tomorrow.setDate(now.getDate()+3);
+                tmrTimes = getBoss(bossName, tomorrow);
+                if(tmrTimes.length != 0) {
+                    return message.channel.send(`**${bossName}** đã spawn vào ${times[timeLength]}, spawn lần kế lúc ${tmrTimes[0]} ngày kìa!`);
+                }
+                tomorrow.setDate(now.getDate()+4);
+                tmrTimes = getBoss(bossName, tomorrow);
+                if(tmrTimes.length != 0) {
+                    return message.channel.send(`**${bossName}** đã spawn vào ${times[timeLength]}, spawn lần kế lúc ${tmrTimes[0]} 4 ngày nữa!`);
+                }
                 return;
             }
 
             if(now<hourToDay(times[0])) {
                 message.channel.send(`**${bossName}** sẽ spawn vào ${times[0]}!`);
+                vell(message, bossName);
                 return;
             }
             var time2 = [];
@@ -175,7 +238,7 @@ module.exports = function(client){
             }
             let information = '';
             if(bossNames.toLowerCase().indexOf('vell') >= 0) {
-                information = '\nVell sẽ spawn ở servers Balenos-2, Serendia-2, và Calpheon-2'
+                information = '\nVell sẽ spawn ở servers Balenos-2, Serendia-2, và Calpheon-2, Heidel-1'
             }
             message.channel.send(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!${information}`, client)
         }
@@ -278,12 +341,33 @@ module.exports = function(client){
             }
         }
 
-        // Match nouver
-        questions = msgStr.ask.nouver.split(',');
+        // Match quint
+        questions = msgStr.ask.quint.split(',');
         for(x in questions) {
             if(msg.indexOf(questions[x]) != -1) {
-                return 'nouver';
+                return 'quint';
             }
         }
+
+        // Match muraka
+        questions = msgStr.ask.muraka.split(',');
+        for(x in questions) {
+            if(msg.indexOf(questions[x]) != -1) {
+                return 'muraka';
+            }
+        }
+
+        // Match vells
+        questions = msgStr.ask.vell.split(',');
+        for(x in questions) {
+            if(msg.indexOf(questions[x]) != -1) {
+                return 'vell';
+            }
+        }
+    }
+
+    function vell(message, bossName) {
+        if(bossName.toLowerCase().indexOf('vell') != 0) return;
+        message.channel.send(`Anh em tập trung 2h30 ở Balenos-2 cảng Olvia đi Vell nha\nhttps://i.imgur.com/rQkHElN.jpg`);
     }
 }
