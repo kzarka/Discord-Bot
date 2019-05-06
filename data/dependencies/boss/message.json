@@ -3,6 +3,7 @@
 		"nextBoss" : "boss gi,boss?,boss nao,boss k,boss?,boss j,boss bro,boss tiep,boss spawn,boss sap,boss vay",
 		"karanda" : "karanda vay,chim vay,bird vay,karanda?,bird?,chim?,karanda spawn,karanda khong,karanda k,co karanda,karanda the,karanda may,chim spawn,chim may,chim k,co chim,bird may,bird spawn,bird k,co bird",
 		"kzarka" : "kzarka?,kza?,kzarka spawn,kzarka k,co kzarka,kzarka the,kza spawn,kza k,co kza,kza vay,kzarka vay",
+		"nouver" : "nouver?,nouver spawn,nouver k,co nouver,nouver the,nouver may,nouver vay",
 		"kutum" : "kutum?,giun?,kutum spawn,kutum k,co kutum,kutum the,giun spawn,giun k,co giun,giun may,kutum may,kutum vay,giun vay",
 		"muraka" : "muraka?,muraka spawn,muraka k,co muraka,muraka the,muraka may,muraka vay",
 		"quint" : "quint?,quint spawn,quint k,co quint,quint the,quint may,quint vay",
