@@ -149,7 +149,7 @@ module.exports = function(client){
             if(tmrTimes.length != 0) {
                 return message.channel.send(`**${bossName}** không spawn vào hôm nay, spawn lần kế lúc ${tmrTimes[0]} 4 ngày nữa!`);
             }
-            if(bossName.toLowerCase().indexOf('vell') != 0) {
+            if(bossName.toLowerCase().indexOf('vell') >= 0) {
                 return message.channel.send(`**${bossName}** spawn vào lúc ${tmrTimes[0]} Chủ Nhật!`);
             }
             return;
@@ -177,7 +177,7 @@ module.exports = function(client){
                 if(tmrTimes.length != 0) {
                     return message.channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} 4 ngày nữa!`);
                 }
-                if(bossName.toLowerCase().indexOf('vell') != 0) {
+                if(bossName.toLowerCase().indexOf('vell') >= 0) {
                     return message.channel.send(`**${bossName}** spawn vào lúc ${tmrTimes[0]} Chủ Nhật!`);
                 }
                 return;
@@ -212,7 +212,7 @@ module.exports = function(client){
                 if(tmrTimes.length != 0) {
                     return message.channel.send(`**${bossName}** đã spawn vào ${times[timeLength]}, spawn lần kế lúc ${tmrTimes[0]} 4 ngày nữa!`);
                 }
-                if(bossName.toLowerCase().indexOf('vell') != 0) {
+                if(bossName.toLowerCase().indexOf('vell') >= 0) {
                     return message.channel.send(`**${bossName}** spawn vào lúc ${tmrTimes[0]} Chủ Nhật!`);
                 }
                 return;
@@ -376,7 +376,7 @@ module.exports = function(client){
     }
 
     function vell(message, bossName) {
-        if(bossName.toLowerCase().indexOf('vell') != 0) return;
+        if(bossName.toLowerCase().indexOf('vell') == -1) return;
         message.channel.send(`Anh em tập trung 2h30 ở Balenos-2 cảng Olvia đi Vell nha\nhttps://i.imgur.com/rQkHElN.jpg`);
     }
 }
