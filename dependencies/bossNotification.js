@@ -149,6 +149,9 @@ module.exports = function(client){
             if(tmrTimes.length != 0) {
                 return message.channel.send(`**${bossName}** không spawn vào hôm nay, spawn lần kế lúc ${tmrTimes[0]} 4 ngày nữa!`);
             }
+            if(bossName.toLowerCase().indexOf('vell') != 0) {
+                return message.channel.send(`**${bossName}** spawn vào lúc ${tmrTimes[0]} Chủ Nhật!`);
+            }
             return;
         }
         if(times.length==1) {
@@ -173,6 +176,9 @@ module.exports = function(client){
                 tmrTimes = getBoss(bossName, tomorrow);
                 if(tmrTimes.length != 0) {
                     return message.channel.send(`**${bossName}** đã spawn vào ${times[0]}, spawn lần kế lúc ${tmrTimes[0]} 4 ngày nữa!`);
+                }
+                if(bossName.toLowerCase().indexOf('vell') != 0) {
+                    return message.channel.send(`**${bossName}** spawn vào lúc ${tmrTimes[0]} Chủ Nhật!`);
                 }
                 return;
             }
@@ -205,6 +211,9 @@ module.exports = function(client){
                 tmrTimes = getBoss(bossName, tomorrow);
                 if(tmrTimes.length != 0) {
                     return message.channel.send(`**${bossName}** đã spawn vào ${times[timeLength]}, spawn lần kế lúc ${tmrTimes[0]} 4 ngày nữa!`);
+                }
+                if(bossName.toLowerCase().indexOf('vell') != 0) {
+                    return message.channel.send(`**${bossName}** spawn vào lúc ${tmrTimes[0]} Chủ Nhật!`);
                 }
                 return;
             }
