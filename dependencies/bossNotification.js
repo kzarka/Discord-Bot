@@ -184,7 +184,7 @@ module.exports = function(client){
         }
         if(times.length>1) {
             if(now>hourToDay(times[times.length-1])) {
-                let timeLength = times.length;
+                let timeLength = times.length-1;
                 tomorrow = new Date();
                 tomorrow.setDate(now.getDate()+1);
                 tmrTimes = getBoss(bossName, tomorrow);
