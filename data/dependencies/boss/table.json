@@ -10,19 +10,19 @@
 	},
 	"1" : {
 		"0:30" : "Kzarka",
-		"6:00" : "Karanda",
+		"6:00" : "Garmoth the Red Dragon",
 		"10:00" : "",
 		"14:00" : "Nouver",
-		"15:00"	: "",
+		"15:00"	: "Karanda",
 		"19:00" : "Kzarka",
 		"23:00" : "Offin"
 	},
 	"2" : {
 		"0:30" : "Nouver",
 		"6:00" : "Kutum",
-		"10:00" : "Kzarka|Karanda",
-		"14:00" : "Kutum|Nouver",
-		"15:00"	: "",
+		"10:00" : "Kzarka",
+		"14:00" : "Kutum",
+		"15:00"	: "Nouver",
 		"19:00" : "Muraka|Quint",
 		"23:00" : "Kutum|Nouver"
 	},
@@ -40,13 +40,13 @@
 		"6:00" : "Nouver",
 		"10:00" : "Kzarka",
 		"14:00" : "Kutum",
-		"15:00"	: "",
-		"19:00" : "Kzarka|Karanda",
+		"15:00"	: "Kzarka|Karanda",
+		"19:00" : "Garmoth the Red Dragon",
 		"23:00" : "Kzarka|Nouver"
 	},
 	"5" : {
 		"0:30" : "Kzarka",
-		"6:00" : "",
+		"6:00" : "Karanda",
 		"10:00" : "Kutum",
 		"14:00" : "Kzarka",
 		"15:00"	: "",
@@ -58,7 +58,7 @@
 		"6:00" : "Nouver",
 		"10:00" : "Kutum|Kzarka",
 		"14:00" : "Karanda|Nouver",
-		"15:00"	: "",
+		"15:00"	: "Garmoth the Red Dragon",
 		"19:00" : "Muraka|Quint",
 		"23:00" : ""
 	}

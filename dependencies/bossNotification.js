@@ -42,7 +42,10 @@ module.exports = function(client){
                 break;
             case 'vell':
                 bossListMessage(message, 'Vell');
-                break;    
+                break;
+            case 'garmoth':
+                bossListMessage(message, 'Garmoth');
+                break; 
             default:
                 break;
         }
@@ -366,11 +369,19 @@ module.exports = function(client){
             }
         }
 
-        // Match vells
+        // Match vell
         questions = msgStr.ask.vell.split(',');
         for(x in questions) {
             if(msg.indexOf(questions[x]) != -1) {
                 return 'vell';
+            }
+        }
+
+        // Match garmoth
+        questions = msgStr.ask.garmoth.split(',');
+        for(x in questions) {
+            if(msg.indexOf(questions[x]) != -1) {
+                return 'garmoth';
             }
         }
     }
