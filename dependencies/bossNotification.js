@@ -345,6 +345,14 @@ module.exports = function(client){
             }
         }
 
+        // Match nouver
+        questions = msgStr.ask.nouver.split(',');
+        for(x in questions) {
+            if(msg.indexOf(questions[x]) != -1) {
+                return 'nouver';
+            }
+        }
+
         // Match kutum
         questions = msgStr.ask.kutum.split(',');
         for(x in questions) {

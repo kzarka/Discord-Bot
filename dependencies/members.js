@@ -247,6 +247,13 @@ function matchClass(message) {
         }
     }
 
+    questions = classString.class.shai.split(',');
+    for(x in questions) {
+        if(content.indexOf(questions[x]) == 0) {
+            return 'Shai';
+        }
+    }
+
     return false;
 }
 
