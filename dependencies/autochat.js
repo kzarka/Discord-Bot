@@ -9,7 +9,6 @@ module.exports = function(client){
 		if(!mentionUser || mentionUser.id != client.user.id) return;
 		let msgContent = message.content;
 		msgContent = msgContent.replace(`<@${mentionUser.id}>`, "");
-		console.log(msgContent);
 		axios.get('http://api.minhhieu.asia/vi.php',{params:{text:msgContent}})
       		.then( response =>{
         		message.channel.send(response.data);
