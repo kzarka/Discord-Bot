@@ -13,7 +13,11 @@ module.exports = function(client){
 		if(msgContent == '') return message.channel.send(hi[Math.floor(Math.random() * (hi.length - 1)) + 1])
 		axios.get('http://api.minhhieu.asia/vi.php',{params:{text:msgContent}})
       		.then( response =>{
-        		message.channel.send(response.data);
+      			responseMsg = response.data;
+      			if(responseMsg.indexOf("http") == -1) {
+        			return message.channel.send(responseMsg);
+      			}
+      			return message.channel.send('Hold up!');
       		})
 		});
 }
