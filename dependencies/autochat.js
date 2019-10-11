@@ -10,9 +10,11 @@ module.exports = function(client){
 		if(!mentionUser || mentionUser.id != client.user.id) return;
 		let msgContent = message.content;
 		msgContent = msgContent.replace(`<@${mentionUser.id}>`, "").trim();
-		if(msgContent == '') return message.channel.send(hi[Math.floor(Math.random() * (hi.length - 1)) + 1])
+		if(msgContent == '') return message.channel.send(hi[Math.floor(Math.random() * (hi.length - 1)) + 1]);
+		message.channel.startTyping();
 		axios.get('http://api.minhhieu.asia/vi.php',{params:{text:msgContent}})
       		.then( response =>{
+      			message.channel.stopTyping()
       			responseMsg = response.data;
       			if(responseMsg.indexOf("http") == -1) {
         			return message.channel.send(responseMsg);
