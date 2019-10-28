@@ -12,10 +12,15 @@ module.exports = function(client){
 		msgContent = msgContent.replace(`<@${mentionUser.id}>`, "").trim();
 		if(msgContent == '') return message.channel.send(hi[Math.floor(Math.random() * (hi.length - 1)) + 1]);
 		message.channel.startTyping();
-		axios.get('http://api.minhhieu.asia/vi.php',{params:{text:msgContent}})
+		axios.get('http://bdovietnam.com/sisimi/sim.php',{params:{text:msgContent}})
       		.then( response =>{
-      			message.channel.stopTyping()
-      			responseMsg = response.data;
+      			message.channel.stopTyping();
+      			let responseMsg = 'Em bị lỗi rồi';
+      			try {
+      				responseMsg = response.data.messages[0].text;
+      			} catch (e) {
+      				return message.channel.send(responseMsg);
+      			}
       			if(responseMsg.indexOf("http") == -1) {
         			return message.channel.send(responseMsg);
       			}
