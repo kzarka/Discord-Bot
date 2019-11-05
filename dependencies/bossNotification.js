@@ -4,6 +4,7 @@ const config = require("../config/config.json");
 const datDir = '/data/dependencies/';
 const table = require(`..${datDir}boss/table.json`);
 const msgStr = require(`..${datDir}boss/message.json`);
+const Jimp = require('jimp');
 /* Load webhook */
 //const bossHook = new Discord.WebhookClient(config.bossHook.ID, config.bossHook.token);
 
@@ -21,6 +22,9 @@ module.exports = function(client){
         switch (ask) {
             case 'all':
                 warnMessage(message);
+                break;
+            case 'table':
+                showTable(message);
                 break;
             case 'karanda':
                 bossListMessage(message, 'Karanda');
@@ -329,6 +333,14 @@ module.exports = function(client){
             }
         }
 
+        // show boss table with hightlight
+        questions = msgStr.ask.tableBoss.split(',');
+        for(x in questions) {
+            if(msg.indexOf(questions[x]) != -1) {
+                return 'table';
+            }
+        }
+
         // Match karanda
         questions = msgStr.ask.karanda.split(',');
         for(x in questions) {
@@ -397,5 +409,13 @@ module.exports = function(client){
     function vell(message, bossName) {
         if(bossName.toLowerCase().indexOf('vell') == -1) return;
         message.channel.send(`Anh em tập trung 2h30 ở Balenos-2 cảng Olvia đi Vell nha\nhttps://i.imgur.com/rQkHElN.jpg`);
+    }
+
+    function drawImage(){
+
+    }
+
+    function showTable(message){
+        message.channel.send('test');
     }
 }
