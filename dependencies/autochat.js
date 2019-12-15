@@ -17,7 +17,7 @@ module.exports = function(client){
       			message.channel.stopTyping();
       			let responseMsg = 'Em bị lỗi rồi';
       			try {
-      				responseMsg = response.data.messages[0].text;
+      				responseMsg = response.data;
       			} catch (e) {
       				return message.channel.send(responseMsg);
       			}
