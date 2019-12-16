@@ -17,8 +17,9 @@ module.exports = {
     sendMessageToGuilds: function (message, client) {
         let guilds = client.guilds;
         if(!guilds) return;
+        var that = this;
         guilds.tap(function (guild) {
-            let channel = this.getMainChannel(guild);
+            let channel = that.getMainChannel(guild);
             if(!channel) return;
             channel.send(message).catch(console.error);
         });
@@ -28,8 +29,9 @@ module.exports = {
     setGuildsTopic: function (message, client) {
         let guilds = client.guilds;
         if(!guilds) return;
+        var that = this;
         guilds.tap(function (guild) {
-            let channel = this.getMainChannel(guild);
+            let channel = that.getMainChannel(guild);
             if(!channel) return;
             channel.setTopic(message).catch(console.error);
         });
