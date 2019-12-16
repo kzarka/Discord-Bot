@@ -18,7 +18,7 @@ module.exports = {
         let guilds = client.guilds;
         if(!guilds) return;
         guilds.tap(function (guild) {
-            let channel = guild.channels.find(ch => ch.name === 'general' || ch.name === 'chat' || ch.name === 'guild-chat'|| ch.name === 'chat-guild');
+            let channel = this.getMainChannel(guild);
             if(!channel) return;
             channel.send(message).catch(console.error);
         });
@@ -29,7 +29,7 @@ module.exports = {
         let guilds = client.guilds;
         if(!guilds) return;
         guilds.tap(function (guild) {
-            let channel = guild.channels.find(ch => ch.name === 'general' || ch.name === 'chat' || ch.name === 'guild-chat'|| ch.name === 'chat-guild');
+            let channel = this.getMainChannel(guild);
             if(!channel) return;
             channel.setTopic(message).catch(console.error);
         });
@@ -118,4 +118,15 @@ module.exports = {
     wrap: function(text) {
         return '```\n' + text.replace(/`/g, '`' + String.fromCharCode(8203)) + '\n```';
     },
+
+    getMainChannel: function(guild) {
+        let channel = guild.channels.find(ch => ch.name === 'general' || ch.name === 'chat' || ch.name === 'guild-chat'|| ch.name === 'chat-guild');
+        return channel;
+    },
+    canManage: function(message) {
+        let author = message.author
+        return author.hasPermission('ADMINISTRATOR') || 
+            author.hasPermission('MANAGE_CHANNELS') || 
+            author.hasPermission('MANAGE_GUILD ') || this.isMe(author);
+    }
 };
