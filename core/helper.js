@@ -18,11 +18,9 @@ module.exports = {
         let guilds = client.guilds;
         if(!guilds) return;
         guilds.tap(function (guild) {
-            let channel = guild.channels.find(function(ch) {
-                return ch.name === 'general' || ch.name === 'chat';
-            });
+            let channel = guild.channels.find(ch => ch.name === 'general' || ch.name === 'chat' || ch.name === 'guild-chat'|| ch.name === 'chat-guild');
             if(!channel) return;
-            channel.send(message);
+            channel.send(message).catch(console.error);
         });
     },
 
@@ -31,7 +29,7 @@ module.exports = {
         let guilds = client.guilds;
         if(!guilds) return;
         guilds.tap(function (guild) {
-            let channel = guild.channels.find(ch => ch.name === 'general' || ch.name === 'chat');
+            let channel = guild.channels.find(ch => ch.name === 'general' || ch.name === 'chat' || ch.name === 'guild-chat'|| ch.name === 'chat-guild');
             if(!channel) return;
             channel.setTopic(message).catch(console.error);
         });
