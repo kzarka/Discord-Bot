@@ -49,11 +49,11 @@ helper.exportSvg = async function() {
 
     let data = rows.join('\n');
     svg = svg + data;
-    fs.writeFileSync('./data/dependencies/boss/table-output.svg', svg);
+    fs.writeFileSync('./data/dependencies/boss/table-output.svg', svg, 'utf8');
 }
 
 helper.loadSvg = async function(nextBoss) {
-    let svg = fs.readFileSync('./data/dependencies/boss/table-output.svg','utf8');
+    let svg = fs.readFileSync('./data/dependencies/boss/table-output.svg', 'utf8');
     let rows = [];
     let hourIndex = time.indexOf(nextBoss[1]);
     let rectX = rectPositionX[nextBoss[2]];
