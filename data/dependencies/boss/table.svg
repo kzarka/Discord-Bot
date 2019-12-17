@@ -1,0 +1,111 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"> 
+<svg width="990" height="480" xmlns="http://www.w3.org/2000/svg">
+    <g id='reactGroup'>
+        <g id='rectGroupOne'>
+          <rect x='0' y='0' width='80' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='0' y='60' width='80' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='0' y='120' width='80' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='0' y='180' width='80' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='0' y='240' width='80' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='0' y='300' width='80' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='0' y='360' width='80' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='0' y='420' width='80' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+        </g>
+        <g id='rectGroupTwo'>
+          <rect x='80' y='0' width='130' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='80' y='60' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='80' y='120' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='80' y='180' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='80' y='240' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='80' y='300' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='80' y='360' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='80' y='420' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+        </g>
+        <g id='rectGroupTwo'>
+          <rect x='210' y='0' width='130' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='210' y='60' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='210' y='120' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='210' y='180' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='210' y='240' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='210' y='300' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='210' y='360' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='210' y='420' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+        </g>
+        <g id='rectGroupTwo'>
+          <rect x='340' y='0' width='130' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='340' y='60' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='340' y='120' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='340' y='180' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='340' y='240' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='340' y='300' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='340' y='360' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='340' y='420' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+        </g>
+        <g id='rectGroupTwo'>
+          <rect x='470' y='0' width='130' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='470' y='60' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='470' y='120' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='470' y='180' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='470' y='240' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='470' y='300' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='470' y='360' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='470' y='420' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+        </g>
+        <g id='rectGroupTwo'>
+          <rect x='600' y='0' width='130' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='600' y='60' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='600' y='120' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='600' y='180' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='600' y='240' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='600' y='300' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='600' y='360' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='600' y='420' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+        </g>
+        <g id='rectGroupTwo'>
+          <rect x='730' y='0' width='130' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='730' y='60' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='730' y='120' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='730' y='180' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='730' y='240' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='730' y='300' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='730' y='360' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='730' y='420' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+        </g>
+        <g id='rectGroupTwo'>
+          <rect x='860' y='0' width='130' height='60' style='fill:black;stroke:white;stroke-width:1'/>
+          <rect x='860' y='60' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='860' y='120' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='860' y='180' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='860' y='240' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='860' y='300' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='860' y='360' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+          <rect x='860' y='420' width='130' height='60' style='fill:dimgray;stroke:white;stroke-width:1'/>
+        </g>
+   </g>
+   
+   <g id="textGroup-x">
+        <text x='0' y='35' style="fill:white;text-anchor:middle;font-weight:bold;font-size:18px">
+            <tspan x='40' y='35'>DAY</tspan>
+            <tspan x='150' y='35'>Monday</tspan>
+            <tspan x='280' y='35'>Tueday</tspan>
+            <tspan x='410' y='35'>Wed</tspan>
+            <tspan x='540' y='35'>Thursday</tspan>
+            <tspan x='670' y='35'>Friday</tspan>
+            <tspan x='800' y='35'>Saturday</tspan>
+            <tspan x='930' y='35'>Sunday</tspan>
+        </text>
+   </g>
+   <g id="textGroup-y">
+        <text x='45' y='35' style="fill:white;text-anchor:middle;font-weight:bold;font-size:18px">
+            <tspan x='45' dy='60'>0:30</tspan>
+            <tspan x='45' dy='60'>6:00</tspan>
+            <tspan x='45' dy='60'>10:00</tspan>
+            <tspan x='45' dy='60'>14:00</tspan>
+            <tspan x='45' dy='60'>15:00</tspan>
+            <tspan x='45' dy='60'>19:00</tspan>
+            <tspan x='45' dy='60'>23:00</tspan>
+        </text>
+   </g>
+   
+<!-- </svg> -->

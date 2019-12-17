@@ -4,7 +4,11 @@ const config = require("../config/config.json");
 const datDir = '/data/dependencies/';
 const table = require(`..${datDir}boss/table.json`);
 const msgStr = require(`..${datDir}boss/message.json`);
-const Jimp = require('jimp');
+var svg2img = require('svg2img');
+
+const tableHelper = require("../helper/boss.js");
+const fs = require("fs");
+
 /* Load webhook */
 //const bossHook = new Discord.WebhookClient(config.bossHook.ID, config.bossHook.token);
 
@@ -415,7 +419,32 @@ module.exports = function(client){
 
     }
 
-    function showTable(message){
-        message.channel.send('test');
+    async function showTable(message){
+        let nextBoss = getNextBoss();
+        try {
+            if (!fs.existsSync('./data/dependencies/boss/table-output.svg')) {
+                await tableHelper.exportSvg();
+            }
+        } catch(err) {
+            console.error(err);
+            message.channel.send('Error!');
+            return;
+        }
+        let svg = await tableHelper.loadSvg(nextBoss);
+        svg2img(svg, function(error, buffer) {
+            if(error) {
+                message.channel.send('Error!');
+                return;
+            }
+            message.channel.send({
+                files: [{
+                    attachment: buffer,
+                    name: 'boss.png'
+                }]
+            });
+        }).catch(function() {
+            message.channel.send('Error!');
+            return;
+        });
     }
 }

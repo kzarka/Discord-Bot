@@ -4,13 +4,13 @@
 		"6:00" : "Kutum",
 		"10:00" : "Kzarka|Karanda",
 		"14:00" : "Kutum|Nouver",
-		"15:00"	: "Vell, the Heart of the Ocean",
+		"15:00"	: "Vell",
 		"19:00" : "Karanda",
 		"23:00" : "Kutum|Nouver"
 	},
 	"1" : {
 		"0:30" : "Kzarka",
-		"6:00" : "Garmoth the Red Dragon",
+		"6:00" : "Garmoth",
 		"10:00" : "",
 		"14:00" : "Nouver",
 		"15:00"	: "Karanda",
@@ -41,7 +41,7 @@
 		"10:00" : "Kzarka",
 		"14:00" : "Kutum",
 		"15:00"	: "Kzarka|Karanda",
-		"19:00" : "Garmoth the Red Dragon",
+		"19:00" : "Garmoth",
 		"23:00" : "Kzarka|Nouver"
 	},
 	"5" : {
@@ -58,7 +58,7 @@
 		"6:00" : "Nouver",
 		"10:00" : "Kutum|Kzarka",
 		"14:00" : "Karanda|Nouver",
-		"15:00"	: "Garmoth the Red Dragon",
+		"15:00"	: "Garmoth",
 		"19:00" : "Muraka|Quint",
 		"23:00" : ""
 	}
