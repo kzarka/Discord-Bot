@@ -14,11 +14,16 @@
     "opusscript": "0.0.6",
     "readline-sync": "^1.4.9",
     "sqlite3": "^4.0.6",
+    "svg-png-converter": "0.0.9",
     "svg2img": "^0.6.1",
     "youtube-dl": "^1.12.2",
     "ytdl-core": "^0.28.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.7.5",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/register": "^7.7.4"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
