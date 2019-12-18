@@ -28,16 +28,16 @@ helper.exportSvg = async function() {
             if(split.length > 1) {
                 if(double || subDy == 0) subDy += 10;
                 let currentDy = maxDy - subDy;
-                let row = `<tspan x='${positionX[date]}' dy='${currentDy}'>${split[0] || '-' }</tspan>`;
+                let row = `<tspan x='${positionX[date]}' dy='${currentDy}' style="fill:${getColor(split[0])};">${split[0] || '-' }</tspan>`;
                 rows.push(row);
-                row = `<tspan x='${positionX[date]}' dy='20'>${split[1] || '-' }</tspan>`;
+                row = `<tspan x='${positionX[date]}' dy='20' style="fill:${getColor(split[1])};">${split[1] || '-' }</tspan>`;
                 rows.push(row);
                 double = true;
             } else {
                 if(subDy != 0) subDy -= 10;
                 if(subDy == 0 && double) subDy = 10;
                 let currentDy = maxDy - subDy; 
-                let row = `<tspan x='${positionX[date]}' dy='${currentDy}'>${split[0] || '-' }</tspan>`;
+                let row = `<tspan x='${positionX[date]}' dy='${currentDy}' style="fill:${getColor(split[0])};">${split[0] || '-' }</tspan>`;
                 rows.push(row);
                 currentDy = 60;
                 double = false;
@@ -66,3 +66,34 @@ helper.loadSvg = async function(nextBoss) {
 }
 
 module.exports = helper;
+
+function getColor(name) {
+    name = name.toLowerCase();
+    if(name.indexOf('kzarka') != -1) {
+        return 'tomato';
+    }
+    if(name.indexOf('karanda') != -1) {
+        return 'lightskyblue';
+    }
+    if(name.indexOf('kutum') != -1) {
+        return 'mediumslateblue';
+    }
+    if(name.indexOf('nouver') != -1) {
+        return 'gold';
+    }
+    if(name.indexOf('muraka') != -1) {
+        return 'crimson';
+    }
+    if(name.indexOf('quint') != -1) {
+        return 'turquoise';
+    }
+    if(name.indexOf('garmoth') != -1) {
+        return 'orangered';
+    }
+    if(name.indexOf('vell') != -1) {
+        return 'darkorange';
+    }
+    if(name.indexOf('offin') != -1) {
+        return 'deepskyblue';
+    }
+}

@@ -4,7 +4,7 @@ const config = require("../config/config.json");
 const datDir = '/data/dependencies/';
 const table = require(`..${datDir}boss/table.json`);
 const msgStr = require(`..${datDir}boss/message.json`);
-const convert = require('svg-png-converter');
+var svg2img = require('svg2img');
 
 const tableHelper = require("../helper/boss.js");
 const fs = require("fs");
@@ -431,7 +431,7 @@ module.exports = function(client){
             return;
         }
         let svg = await tableHelper.loadSvg(nextBoss);
-        /*svg2img(svg, function(error, buffer) {
+        svg2img(svg, function(error, buffer) {
             if(error) {
                 message.channel.send('Error!');
                 return;
@@ -442,19 +442,6 @@ module.exports = function(client){
                     name: 'boss.png'
                 }]
             });
-        });*/
-
-        let outputBuffer = await convert.svg2png({ 
-            input: svg, 
-            encoding: 'buffer', 
-            format: 'png',
-        });
-
-        message.channel.send({
-            files: [{
-                attachment: outputBuffer,
-                name: 'boss.png'
-            }]
-        });
+        })
     }
 }
