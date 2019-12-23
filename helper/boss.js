@@ -6,7 +6,7 @@ var _ = require('lodash');
 let boss = require('../data/dependencies/boss/table.json');
 let positionX = [920, 140, 270, 400, 530, 660, 790];
 
-let rectPositionX = [760, 80, 210, 340, 470, 500, 630];
+let rectPositionX = [860, 80, 210, 340, 470, 600, 730];
 let rectPositionY = [60, 120, 180, 240, 300, 360, 420];
 var time = ["0:30", "6:00", "10:00", "14:00", "15:00", "19:00", "23:00"];
 
