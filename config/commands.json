@@ -30,5 +30,6 @@
     "mystic": "roles",
     "archer": "roles",
     "lahn": "roles",
-    "greet": "greeting"
+    "greet": "greeting",
+    "info": "misc"
 }

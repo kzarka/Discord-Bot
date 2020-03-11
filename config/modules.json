@@ -2,5 +2,6 @@
     "enhance": true,
     "music": true,
     "roles": true,
-    "greeting": true
+    "greeting": true,
+    "misc": true
 }
