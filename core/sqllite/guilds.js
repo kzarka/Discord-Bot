@@ -44,6 +44,7 @@ guilds.insert = function(data = []) {
 			    		resolve(false);
 			    		return;
 			    	}
+			    	client.guildsData = guilds.loadAll();
 			    	resolve(true);
 			    });  	
 		  	}
