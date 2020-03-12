@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
  
 // open the database
 let db = new sqlite3.Database('./data/sql/bot.db');
-
+const guildsModel = require("./core/sqllite/guilds.js");
 const sql = `
 CREATE TABLE IF NOT EXISTS members (
   	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,3 +21,5 @@ db.run(sql, [], (err) => {
     	console.log(err);
   	}
 });
+
+guildsModel.init();

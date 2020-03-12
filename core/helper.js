@@ -19,7 +19,7 @@ module.exports = {
         if(!guilds) return;
         var that = this;
         guilds.tap(function (guild) {
-            let channel = that.getMainChannel(guild);
+            let channel = that.getMainChannel(client, guild);
             if(!channel) return;
             channel.send(message).catch(console.error);
         });
@@ -31,7 +31,7 @@ module.exports = {
         if(!guilds) return;
         var that = this;
         guilds.tap(function (guild) {
-            let channel = that.getMainChannel(guild);
+            let channel = that.getMainChannel(client, guild);
             if(!channel) return;
             channel.setTopic(message).catch(console.error);
         });
@@ -121,8 +121,14 @@ module.exports = {
         return '```\n' + text.replace(/`/g, '`' + String.fromCharCode(8203)) + '\n```';
     },
 
-    getMainChannel: function(guild) {
-        let channel = guild.channels.find(ch => ch.name === 'general' || ch.name === 'chat' || ch.name === 'guild-chat'|| ch.name === 'chat-guild');
+    getMainChannel: function(client, guild) {
+        let guildData = client.guildsData[guild.id];
+        let channel = null;
+        if(guildData && guildData['main_channel']) {
+            channel = guild.channels.find(ch => ch.id == guildData['main_channel']);
+        } else {
+            channel = guild.channels.find(ch => ch.name === 'general' || ch.name === 'chat' || ch.name === 'guild-chat'|| ch.name === 'chat-guild');
+        }
         return channel;
     },
     canManage: function(message) {

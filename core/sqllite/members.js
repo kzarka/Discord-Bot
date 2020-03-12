@@ -57,7 +57,8 @@ members.loadAll = function() {
 		db.all(sql, [], (err, rows) => {
 			if (err) {
 				console.log(err);
-				reject(err);
+				members.init();
+				resolve(err);
 				return;
 			}
 			let items = {};

@@ -36,7 +36,7 @@ module.exports = async function(client){
     let embed = helper.buildEmbed(client);
     if(channelObject) {
         channelObject.fetchMessages().then(messages => {
-            channelObject.bulkDelete(messages);
+            channelObject.bulkDelete(messages).catch(console.error);
         }).catch(err => {
             console.log('Error while delete messages');
             console.log(err);
