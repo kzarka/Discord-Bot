@@ -48,6 +48,10 @@ client.on("message", (message) => {
   	cmd(client, message, args)
 });
 
+client.on("guildCreate", guild => {
+    client.guildsModel.insert({guild_id: guild.id}).catch(console.error);
+})
+
 client.on("error", (e) => console.error(e));
 
 client.login(config.token);
