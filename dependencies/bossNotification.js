@@ -25,6 +25,10 @@ module.exports = async function(client){
     scheduleWarning();
     setTopic();
 
+    client.on('reload_topic', async function() {
+        setTopic();
+    })
+
 	client.on('message', async message => {
     	if(message.author.bot) return;
         let ask = matchAsk(message);

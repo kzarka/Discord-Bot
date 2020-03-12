@@ -15,6 +15,7 @@ modules.set = async function(client, message, args) {
 		}
 		await client.guildsModel.update(message.guild.id, data); 
 		message.channel.send('Được chọn là channel chính.');
+		client.emit('reload_topic', []);
 	}
 
 	if(args[0] == 'guild') {
