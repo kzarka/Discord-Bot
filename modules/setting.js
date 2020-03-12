@@ -29,10 +29,9 @@ modules.set = async function(client, message, args) {
 module.exports = modules;
 
 function guildFunction(client, message, args) {
-	message.channel.send('abcd');
 	if(args.length == 0) return;
 	if(args[0] == 'init') {
-		message.channel.send('abc');
 		client.guildsModel.sync(client);
+		message.channel.send('Synced!');
 	}
 }
