@@ -49,7 +49,7 @@ client.on("message", (message) => {
 });
 
 client.on("guildCreate", guild => {
-    client.guildsModel.insert({guild_id: guild.id}).catch(console.error);
+    client.guildsModel.insert(client, {guild_id: guild.id, main_channel: 0}).catch(console.error);
 })
 
 client.on("error", (e) => console.error(e));

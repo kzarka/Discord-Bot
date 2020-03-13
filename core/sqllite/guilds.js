@@ -28,27 +28,30 @@ guilds.init = function() {
 	});
 }
 /* Insert new record, or update exist one */
-guilds.insert = function(data = []) {
-	return new Promise(function(resolve, reject) {
-		var sql = `INSERT INTO guilds (guild_id, join_date)
-	    	VALUES ('${data.guild_id}', '${Date.now()}')`;
+guilds.insert = async function(client, data = []) {
+	return new Promise(async function(resolve, reject) {
+		var sql = `INSERT INTO guilds (guild_id, main_channel, join_date)
+	    	VALUES ('${data.guild_id}', '${data.main_channel}', '${Date.now()}')`;
 
-	    db.run(sql, [], (err) => {
+	    db.run(sql, [], async (err) => {
+	    	console.log(err);
 		  	if (err && err.message.indexOf('SQLITE_CONSTRAINT') ==0) {
 		    	sql = `UPDATE guilds
 	      			SET join_date = '${Date.now()}',
+	      			main_channel = '${data.main_channel}'
 			      	WHERE guild_id =  '${data.guild_id}'`;
-			    db.run(sql, [], (err) => {
+			    db.run(sql, [], async (err) => {
 			    	if(err) {
 			    		console.log(err);
 			    		resolve(false);
 			    		return;
 			    	}
-			    	client.guildsData = guilds.loadAll();
-			    	resolve(true);
+			    	console.log('ABC');
 			    });  	
 		  	}
 		});
+		client.guildsData = await guilds.loadAll();
+		resolve(true);
 	});
 }
 /* Load all record to client */
@@ -96,16 +99,19 @@ guilds.update = function(guildId, data) {
 	});
 }
 
-guilds.sync = function(client) {
-	return new Promise(function(resolve, reject) {
+guilds.sync = async function(client) {
+	return new Promise(async function(resolve, reject) {
 		try {
-			guilds.init();
 			client.guilds.forEach(guild => {
+				let main_channel = 0;
+				if(client.guildsData[guild.id] && client.guildsData[guild.id].main_channel) {
+					main_channel = client.guildsData[guild.id].main_channel;
+				}
 				let data = {
+					main_channel: main_channel,
 					guild_id: guild.id
 				}
-				console.log(data);
-				guilds.insert(data);
+				guilds.insert(client, data);
 			});
 		} catch (e) {
 			console.log(e);
@@ -113,7 +119,7 @@ guilds.sync = function(client) {
 			return;
 		}
 
-		client.guildsData = guilds.loadAll();
+		client.guildsData = await guilds.loadAll();
 		resolve(true);
 	});
 }
