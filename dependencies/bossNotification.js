@@ -267,7 +267,7 @@ module.exports = async function(client){
             }
             let information = '';
             if(bossNames.toLowerCase().indexOf('vell') >= 0) {
-                information = '\nVell sẽ spawn ở servers Balenos-2, Serendia-2, và Calpheon-2, Heidel-1'
+                information = ''
             }
             message.channel.send(`Boss kế tiếp **${bossNames}** vào lúc ${hour}!${information}`, client)
         }
@@ -421,7 +421,7 @@ module.exports = async function(client){
 
     function vell(message, bossName) {
         if(bossName.toLowerCase().indexOf('vell') == -1) return;
-        message.channel.send(`Anh em tập trung 2h30 ở Balenos-2 cảng Olvia đi Vell nha\nhttps://i.imgur.com/rQkHElN.jpg`);
+        //message.channel.send(``);
     }
 
     function drawImage(){
