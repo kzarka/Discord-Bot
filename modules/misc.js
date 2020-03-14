@@ -19,12 +19,19 @@ modules.info = function(client, message, args) {
 module.exports = modules;
 
 function channel(client, message, args) {
-	let content = `Connected to ${client.guilds.array().length} servers with total ${client.channels.array().length} channels!\n`;
+	let msgIndex = 0;
+	let content[msgIndex] = `Connected to ${client.guilds.array().length} servers with total ${client.channels.array().length} channels!\n`;
 	let index = 1;
 	client.guilds.forEach(function(guild) {
-		content += `${index++}. ${guild.name} - ${guild.channels.array().length} channels - ${guild.memberCount} members\n`;
+		content[msgIndex] += `${index++}. ${guild.name} - ${guild.channels.array().length} channels - ${guild.memberCount} members\n`;
+		if(index % 10 == 0) {
+			msgIndex++;
+		}
 	});
-	message.channel.send(content);
+	for(let i = 0; i < msgIndex; i ++) {
+		message.channel.send(content[i]);
+	}
+	
 }
 
 function buildInfoEmbed(client, message) {
