@@ -20,7 +20,8 @@ module.exports = modules;
 
 function channel(client, message, args) {
 	let msgIndex = 0;
-	let content[msgIndex] = `Connected to ${client.guilds.array().length} servers with total ${client.channels.array().length} channels!\n`;
+	let content = {};
+	content[msgIndex] = `Connected to ${client.guilds.array().length} servers with total ${client.channels.array().length} channels!\n`;
 	let index = 1;
 	client.guilds.forEach(function(guild) {
 		let selected = 'not selected';
@@ -32,7 +33,7 @@ function channel(client, message, args) {
 			msgIndex++;
 		}
 	});
-	for(let i = 0; i < msgIndex; i ++) {
+	for(let i = 0; i <= msgIndex; i ++) {
 		message.channel.send(content[i]);
 	}
 	
