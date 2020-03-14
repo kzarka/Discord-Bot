@@ -20,7 +20,6 @@ modules.set = async function(client, message, args) {
 	}
 
 	if(args[0] == 'guild') {
-		message.channel.send('guild');
 		args.shift()
 		guildFunction(client, message, args);
 	}

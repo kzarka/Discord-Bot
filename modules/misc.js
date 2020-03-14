@@ -23,7 +23,11 @@ function channel(client, message, args) {
 	let content[msgIndex] = `Connected to ${client.guilds.array().length} servers with total ${client.channels.array().length} channels!\n`;
 	let index = 1;
 	client.guilds.forEach(function(guild) {
-		content[msgIndex] += `${index++}. ${guild.name} - ${guild.channels.array().length} channels - ${guild.memberCount} members\n`;
+		let selected = 'not selected';
+		if(client.guildsData[guild.id] && client.guildsData[guild.id].main_channel && client.guildsData[guild.id].main_channel != 0) {
+			selected = 'selected';
+		}
+		content[msgIndex] += `${index++}. ${guild.name} - ${guild.channels.array().length} channels - ${guild.memberCount} members | ${selected}\n`;
 		if(index % 10 == 0) {
 			msgIndex++;
 		}
