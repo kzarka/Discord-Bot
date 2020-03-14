@@ -20,7 +20,6 @@ module.exports = async function(client){
     client.guildsModel = guildsModel;
     let guilds = await guildsModel.loadAll();
     client.guildsData = guilds;
-
     let helper = client.helper;
     scheduleWarning();
     setTopic();

@@ -131,6 +131,18 @@ module.exports = {
         }
         return channel;
     },
+
+    getGuestChannel: function(client, guild) {
+        let guildData = client.guildsData[guild.id];
+        let channel = null;
+        if(guildData && guildData['welcome_channel']) {
+            channel = guild.channels.find(ch => ch.id == guildData['welcome_channel']);
+        } else {
+            channel = guild.channels.find(ch => ch.name === 'guests');
+        }
+        return channel;
+    },
+
     canManage: function(message) {
         let author = message.member 
         return author.hasPermission('ADMINISTRATOR') || 

@@ -13,6 +13,8 @@ guilds.init = function() {
 	      	main_channel TEXT DEFAULT 0,
 	      	guild_id TEXT,
 	      	welcome_message TEXT DEFAULT null,
+	      	welcome_enable TEXT DEFAULT 0,
+	      	welcome_channel TEXT DEFAULT 0,
 	      	join_date TEXT DEFAULT 0
 	      	)`;
 			// init table if not exist
@@ -70,7 +72,10 @@ guilds.loadAll = function() {
 				items[rows[x].guild_id] = {
 					"main_channel": rows[x].main_channel,
 					"welcome_message": rows[x].welcome_message || null,
+					"welcome_channel": rows[x].welcome_channel || null,
+					"welcome_enable": rows[x].welcome_enable || null,
 					"join_date": rows[x].join_date || null
+
 				}
 			}
 			resolve(items);
@@ -78,22 +83,22 @@ guilds.loadAll = function() {
 	});
 }
 
-guilds.update = function(guildId, data) {
-	return new Promise(function(resolve, reject) {
+guilds.update = async function(client, guildId, data) {
+	return new Promise(async function(resolve, reject) {
 		var sql = `UPDATE guilds SET`;
 		for(let index in data) {
-			sql += ` ${index} = ${data[index]},`;
+			sql += ` ${index} = "${data[index]}",`;
 		}
 		sql = sql.slice(0, -1);
 		sql += ` WHERE guild_id =  '${guildId}'`;
-
-		db.run(sql, [], (err) => {
+		db.run(sql, [], async (err) => {
 		  	if (err) {
 		    	throw err;
 		    	console.log(err);
 		    	resolve(err);
 		    	return;
 		  	}
+		  	client.guildsData = await guilds.loadAll();
 		  	resolve(true);
 		});
 	});

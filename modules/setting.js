@@ -14,7 +14,7 @@ modules.set = async function(client, message, args) {
 		let data = {
 			main_channel: message.channel.id
 		}
-		await client.guildsModel.update(message.guild.id, data); 
+		await client.guildsModel.update(client, message.guild.id, data); 
 		message.channel.send('Được chọn là channel chính.');
 		client.emit('reload_topic', []);
 	}

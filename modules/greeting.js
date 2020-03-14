@@ -5,7 +5,7 @@ var modules = {
 };
 const datDir = '/data/dependencies/greet';
 
-modules.greet = function(client, message, args) {
+modules.greet = async function(client, message, args) {
 	if(args.length == 0) {
 		return client.helper.sendHelpMessage(message, 'ABC', true);
 	}
@@ -13,37 +13,35 @@ modules.greet = function(client, message, args) {
 	if(subCommand == 'message') {
 		let msg = args.join(' ');
 		if(!msg) {
-			return message.channel.send('Nội dung hiện tại:\n`' + client.greet.message + '`\n\nSử dụng :member để tag user');
+			let currentMsg = client.guildsData[message.guild.id].welcome_message;
+			if(!currentMsg) {
+				return message.channel.send('Bạn chưa cài nội dung welcome.') 
+			}
+			return message.channel.send('Nội dung hiện tại:\n`' + currentMsg + '`\n\nSử dụng :member để tag user');
 		}
-		client.greet.message = msg;
-		let data = JSON.stringify(client.greet, null, 4);
-    	fs.writeFileSync(`.${datDir}/greet.json`, data, 'utf8', 'w', (err) => {
-	        if (err) {
-	            console.log(err);
-	        }
-    	});
-    	message.channel.send('Nội dung hiện tại:\n`' + client.greet.message + '`\n\nSử dụng :member để tag user');
+		console.log(msg);
+
+		let data = {
+			welcome_message: msg
+		}
+		await client.guildsModel.update(client, message.guild.id, data); 
+		
+    	message.channel.send('Nội dung hiện tại:\n`' + msg + '`\n\nSử dụng :member để tag user');
 	}
 
 	if(subCommand == 'enable') {
-		client.greet.enable = true;
-		let data = JSON.stringify(client.greet, null, 4);
-    	fs.writeFileSync(`.${datDir}/greet.json`, data, 'utf8', 'w', (err) => {
-	        if (err) {
-	            console.log(err);
-	        }
-    	});
+		let data = {
+			welcome_enable: 1
+		}
+		await client.guildsModel.update(client, message.guild.id, data); 
     	return message.channel.send('Đã bật message welcome!');
 	}
 
 	if(subCommand == 'disable') {
-		client.greet.enable = false;
-		let data = JSON.stringify(client.greet, null, 4);
-    	fs.writeFileSync(`.${datDir}/greet.json`, data, 'utf8', 'w', (err) => {
-	        if (err) {
-	            console.log(err);
-	        }
-    	});
+		let data = {
+			welcome_enable: 0
+		}
+		await client.guildsModel.update(client, message.guild.id, data); 
     	return message.channel.send('Đã tắt message welcome!');
 	}
 
@@ -56,9 +54,17 @@ modules.greet = function(client, message, args) {
 	}
 
 	if(subCommand == 'status') {
-		if(client.greet.enable)
+		if(client.guildsData[message.guild.id].welcome_enable)
 			return message.channel.send('Enable!');
 		message.channel.send('Disable!');
+	}
+
+	if(subCommand == 'channel') {
+		let data = {
+			welcome_channel: message.channel.id
+		}
+		await client.guildsModel.update(client, message.guild.id, data); 
+    	return message.channel.send('Kênh được chọn làm kênh guest!');
 	}
 };
 

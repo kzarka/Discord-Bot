@@ -15,30 +15,17 @@ try {
 }
 
 module.exports = function(client){
-	if(greeting) {
-		client.greet = greeting;
-	} else {
-		client.greet = {
-			"message": "Xin chào :member!",
-			"enable": true
-		};
-		let data = JSON.stringify(client.greet, null, 4);
-    	fs.writeFileSync(`.${datDir}/greet.json`, data, 'utf8', 'w', (err) => {
-	        if (err) {
-	            console.log(err);
-	        }
-    	});
-	}
+
 	client.on('guildMemberAdd', async member => {
-		if(!client.greet.enable) return; 
-        let channel = await member.guild.channels.find(function(ch) {
-            return ch.name === 'guests';
-        });
+		if(!client.guildsData[member.guild.id].welcome_enable) return;
+		if(!client.guildsData[member.guild.id].welcome_message) return;
+        let channel = client.helper.getGuestChannel(client, member.guild);
         if(!channel) return;
+        let welcome_message = client.guildsData[member.guild.id].welcome_message;
         /*channel.send(`Xin chào ${member}. Đây là Discord của Guild Fury.`
         	+ '\nVui lòng DM Officer trong danh sách đang online hoặc mention **@Officer** để được invite vào Guild.'
         	+ '\nChúc bạn một ngày vui vẻ!');*/
 
-        channel.send(client.greet.message.replace(":member", member));
+        channel.send(welcome_message.replace(":member", member));
     });
 }
