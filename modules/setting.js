@@ -20,7 +20,8 @@ modules.set = async function(client, message, args) {
 	}
 
 	if(args[0] == 'guild') {
-		args.shift()
+		if(!client.helper.isMe(message.member)) return;
+		args.shift();
 		guildFunction(client, message, args);
 	}
 };
