@@ -103,8 +103,6 @@ module.exports = function(client){
         if(!client.guildsData[member.guild_id].members) {
             client.guildsData[member.guild_id].members = {};
         }
-        console.log(member.guild_id);
-        console.log(message.author.id);
         client.guildsData[member.guild_id].members[message.author.id] = member;
         member.userId = message.author.id;
         membersModel.insert(member);
@@ -114,7 +112,7 @@ module.exports = function(client){
         );
         roleHelper.reAsignRole(message, member.class);
         try {
-            var channelWar = message.guild.find(x => x.name === warVoteChannel);
+            var channelWar = message.guild.channels.find(x => x.name === warVoteChannel);
         } catch(e) {
             console.log(e)
         }
