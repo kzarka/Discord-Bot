@@ -7,7 +7,7 @@ var members = {};
 
 members.init = function() {
 	const sql = `
-    CREATE TABLE IF NOT EXISTS members (
+    CREATE TABLE IF NOT EXISTS guild_members (
       	id INTEGER PRIMARY KEY AUTOINCREMENT,
       	level INTEGER,
       	userId TEXT,
@@ -16,7 +16,8 @@ members.init = function() {
       	class TEXT,
       	ap INTEGER DEFAULT 0,
       	awk INTEGER DEFAULT 0,
-      	dp INTEGER DEFAULT 0)`;
+      	dp INTEGER DEFAULT 0,
+      	guild_id TEXT)`;
 		// init table if not exist
 	db.run(sql, [], (err) => {
 	  	if (err) {
@@ -27,13 +28,13 @@ members.init = function() {
 }
 /* Insert new record, or update exist one */
 members.insert = function(data = []) {
-	var sql = `INSERT INTO members (userId, family, character, class, ap, awk, dp, level)
+	var sql = `INSERT INTO guild_members (userId, family, character, class, ap, awk, dp, level, guild_id)
     	VALUES ('${data.userId}', '${data.family}', '${data.character}', '${data.class || null}', 
-    	${data.ap || null}, ${data.awk || null}, ${data.dp || null}, ${data.level || null})`;
+    	${data.ap || null}, ${data.awk || null}, ${data.dp || null}, ${data.level || null}, ${data.guild_id || null})`;
 
     db.run(sql, [], (err) => {
 	  	if (err && err.message.indexOf('SQLITE_CONSTRAINT') ==0) {
-	    	sql = `UPDATE members
+	    	sql = `UPDATE guild_members
       			SET family = '${data.family}',
 		        character = '${data.character || null}',
 		        class = '${data.class || null}',
@@ -41,7 +42,9 @@ members.insert = function(data = []) {
 		        awk = '${data.awk || null}',
 		        dp = '${data.dp || null}',
 		        level = '${data.level || null}'
-		      	WHERE userId =  '${data.userId}'`;
+		        guild_id = '${data.guild_id || null}'
+		      	WHERE userId =  '${data.userId}'
+		      	AND guild_id = '${data.guild_id}'`;
 		    db.run(sql, [], (err) => {
 		    	if(err) {
 		    		console.log(err);
@@ -51,9 +54,12 @@ members.insert = function(data = []) {
 	});
 }
 /* Load all record to client */
-members.loadAll = function() {
+members.loadAll = function(guildId = null) {
 	return new Promise(function(resolve, reject) {
-		const sql = `SELECT * FROM members`;
+		let sql = `SELECT * FROM guild_members`;
+		if(guildId) {
+			sql += ` WHERE guild_id = '${guildId}'`;
+		}
 		db.all(sql, [], (err, rows) => {
 			if (err) {
 				console.log(err);
@@ -70,7 +76,8 @@ members.loadAll = function() {
 					"ap": rows[x].ap || null,
 					"awk": rows[x].awk || null,
 					"dp": rows[x].dp || null,
-					"level": rows[x].level || null
+					"level": rows[x].level || null,
+					"guild_id": rows[x].guild_id || null
 				}
 			}
 			resolve(items);

@@ -19,13 +19,6 @@ const nameMaxLength = 16;
 const nameMinLength = 3;
 
 module.exports = function(client){
-
-    try {
-        var channelWar = client.channels.find(x => x.name === warVoteChannel);
-    } catch(e) {
-        console.log(e)
-    }
-
     client.on('message', async message => {
     	if(message.channel.name != memberChannel) return;
     	if(message.author.bot) return;
@@ -56,6 +49,7 @@ module.exports = function(client){
         member.ap = params[4] || null;
         member.awk = params[5] || null;
         member.dp = params[6] || null;
+        member.guild_id = message.guild.id;
         // validate for optional param
         if(member.character != null && (member.character.length <= nameMinLength)) {
             message.channel.send('Tên Character quá ngắn, tối thiểu 3 ký tự');
@@ -106,11 +100,12 @@ module.exports = function(client){
             return;
         }
 
-        if(!client.members) {
-            client.members = {};
+        if(!client.guildsData[member.guild_id].members) {
+            client.guildsData[member.guild_id].members = {};
         }
-
-        client.members[message.author.id] = member;
+        console.log(member.guild_id);
+        console.log(message.author.id);
+        client.guildsData[member.guild_id].members[message.author.id] = member;
         member.userId = message.author.id;
         membersModel.insert(member);
         message.channel.send('Thông tin của bạn đã được lưu lại!\n'
@@ -118,6 +113,11 @@ module.exports = function(client){
             + `AP/AWK/DP: ${member.ap || '???'}/${member.awk || '???'}/${member.dp || '???'}` + '```'
         );
         roleHelper.reAsignRole(message, member.class);
+        try {
+            var channelWar = message.guild.find(x => x.name === warVoteChannel);
+        } catch(e) {
+            console.log(e)
+        }
         helper.reloadTopMessage(channelWar, client);
         return;
     });

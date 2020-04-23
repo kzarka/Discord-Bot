@@ -22,15 +22,13 @@ try {
 var joined = {};
 let channelObject = null;
 module.exports = async function(client){
+    loadMemberByGuilds(client);
     // get channel
     try {
         channelObject = client.channels.find(x => x.name === warVoteChannel);
     } catch(e) {
         console.log(e)
-    }
-    //membersModel.init();
-    let mem = await membersModel.loadAll();
-    client.members = mem//memberLists;
+    }    
 
 	loadWar(client, warInfo);
     let embed = helper.buildEmbed(client);
@@ -115,4 +113,22 @@ function dayString(nextDay = false) {
         date.setDate(date.getDate()+1);
     }
     return `${date.getFullYear()}${date.getMonth()+1}${date.getDate()}`;
+}
+
+function loadMemberByGuilds(client) {
+    client.guilds.forEach(async guild => {
+        let guildId = guild.id;
+        let mem = await membersModel.loadAll(guildId);
+        console.log(mem);
+        if(!client.guildsData) {
+            client.guildsData = {};
+        }
+        if(!client.guildsData[guildId]) {
+            client.guildsData[guildId] = {
+                members: {}
+            };
+        }
+        console.log(client.guildsData);
+        client.guildsData[guildId].members = mem;
+    });
 }
