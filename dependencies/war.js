@@ -119,7 +119,6 @@ function loadMemberByGuilds(client) {
     client.guilds.forEach(async guild => {
         let guildId = guild.id;
         let mem = await membersModel.loadAll(guildId);
-        console.log(mem);
         if(!client.guildsData) {
             client.guildsData = {};
         }
@@ -128,7 +127,6 @@ function loadMemberByGuilds(client) {
                 members: {}
             };
         }
-        console.log(client.guildsData);
         client.guildsData[guildId].members = mem;
     });
 }
