@@ -81,22 +81,22 @@ module.exports = function(client){
         }
         // validate DP
         if(member.dp != null && isNaN(member.dp)) {
-            message.channel.send('Defense Power AP phải là số, từ 0-350!');
+            message.channel.send('Defense Power AP phải là số, từ 0-600!');
             return;
         }
 
-        if(member.dp != null && (member.dp > 350 || member.dp < 0)) {
-            message.channel.send('Defense Power DP phải là số, từ 0-350!');
+        if(member.dp != null && (member.dp > 600 || member.dp < 0)) {
+            message.channel.send('Defense Power DP phải là số, từ 0-600!');
             return;
         }
         // validate Level
         if(member.level != null && isNaN(member.level)) {
-            message.channel.send('Level phải là số, từ 0-64!');
+            message.channel.send('Level phải là số, từ 0-65!');
             return;
         }
 
-        if(member.level != null && (member.level > 64 || member.level < 0)) {
-            message.channel.send('Level phải là số, từ 0-64!');
+        if(member.level != null && (member.level > 65 || member.level < 0)) {
+            message.channel.send('Level phải là số, từ 0-65!');
             return;
         }
 
@@ -249,6 +249,13 @@ function matchClass(message) {
     for(x in questions) {
         if(content.indexOf(questions[x]) == 0) {
             return 'Shai';
+        }
+    }
+
+    questions = classString.class.guardian.split(',');
+    for(x in questions) {
+        if(content.indexOf(questions[x]) == 0) {
+            return 'Guardian';
         }
     }
 
