@@ -75,7 +75,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 		for(let id in list) {
 			if(index == 0) {
 				data = '```';
-			} else if(index % 20 == 0 || index == total) {
+			} else if(index % 20 == 0 || index == total - 1) {
 				data += '```';
 				message.channel.send(data);
 				data = '```';
@@ -84,7 +84,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			let info = list[id];
 			console.log(user.displayName);
 			console.log(info);
-			data += `${++index}. ${list[id].family}/${list[id].character} Level:${list[id].level} Stats:${list[id].ap}/${list[id].awk}/${list[id].dp} Discord:${user.displayName}`;
+			data += `${++index}. ${list[id].family}/${list[id].character} Level:${list[id].level} Stats:${list[id].ap}/${list[id].awk}/${list[id].dp} Discord:${user.displayName}\n`;
 		};
 	} else {
 		for(let id in list) {
