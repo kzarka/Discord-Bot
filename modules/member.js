@@ -70,7 +70,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 	let total = Object.keys(list).length;
 	if(to > total) to = total;
 	let index = 0;
-	let header = `${'STT'.padEnd(3, ' ')} ${'Family/Character'.padEnd(35, ' ')} ${'Class'.padEnd(15, ' ')} ${'Level'.padEnd(10, ' ')} ${'AP/AWK/DP'.padEnd(18, ' ')} ${'Discord'}\n`;
+	let header = `${'STT'.padEnd(3, ' ')} ${'Family/Character'.padEnd(35, ' ')} ${'Class'.padEnd(15, ' ')} ${'Level'.padEnd(10, ' ')} ${'AP/AWK/DP'.padEnd(18, ' ')} ${'Discord'}\n\n`;
 	if(buildAll) {
 		let data = '';
 		for(let id in list) {
@@ -115,7 +115,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			}	
 		};
 
-		data += `Trang ${page}/${totalPage} | Tổng số ${total}`;
+		data += `\nTrang ${page}/${totalPage} | Tổng số ${total}`;
 	}
 
 	data += '```';
