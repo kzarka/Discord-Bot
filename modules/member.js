@@ -57,11 +57,11 @@ function getAllUsers(client, message, args) {
 	if(page > totalPage) page = totalPage;
 	if(page < 1) page = 1;
 	
-	buildListUser(userData, message, loadAll, page);
+	buildListUser(userData, message, loadAll, page, totalPage);
 
 }
 
-function buildListUser(list, message, buildAll = true, page = 0, totalPage) {
+function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) {
 	let data = '```';
 	let perPage = 10;
 	let from = 10*page-10;
