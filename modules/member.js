@@ -89,7 +89,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let className = `${list[id].class}`;
 			let discord = `${user.displayName}`;
-			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${className.padEnd(15, ' ')} ${level.padEnd(5, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
+			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${className.padEnd(15, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if (index == total) {
 				data += '```';
 				message.channel.send(data);
@@ -109,7 +109,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let className = `${list[id].class}`;
 			let discord = `${user.displayName}`;
-			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${className.padEnd(15, ' ')} ${level.padEnd(5, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
+			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${className.padEnd(15, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if(index >= to) {
 				break;
 			}	
