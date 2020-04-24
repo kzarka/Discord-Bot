@@ -73,7 +73,8 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 	let header = `${'STT'.padEnd(3, ' ')} ${'Family/Character'.padEnd(35, ' ')} ${'Class'.padEnd(15, ' ')} ${'Level'.padEnd(10, ' ')} ${'AP/AWK/DP'.padEnd(18, ' ')} ${'Discord'}\n\n`;
 	if(buildAll) {
 		let data = '';
-		for(let id in list) {
+		let id = null;
+		for(id in list) {
 			if(index == 0) {
 				data = '```' + header;
 			} else if(index % 20 == 0 && index != total) {
@@ -98,7 +99,8 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 		};
 	} else {
 		data += header;
-		for(let id in list) {
+		let id = null;
+		for(id in list) {
 			if(index++ < from - 1) {
 				continue;
 			}
