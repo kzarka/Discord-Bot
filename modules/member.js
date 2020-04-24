@@ -83,9 +83,11 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			let user = message.guild.members.find(x => x.id === id);
 			let info = list[id];
 			index++;
-			let stats = `${list[id].ap}/${list[id].awk}/${list[id].dp}`;
-			let level = `${list[id].level}`;
-			data += `${(index + '.').padEnd(3, ' ')} ${list[id].family}/${list[id].character.padEnd(40, '')} Level:${level.padEnd(10, ' ')} Stats:${stats.padEnd(18, ' ')} Discord:${user.displayName}\n`;
+			let stats = `Stats:${list[id].ap}/${list[id].awk}/${list[id].dp}`;
+			let level = `Level:${list[id].level}`;
+			let familyInfo = `${list[id].family}/${list[id].character}`;
+			let discord = `Discord:${user.displayName}`;
+			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(40, '')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if (index == total) {
 				data += '```';
 				message.channel.send(data);
@@ -99,9 +101,12 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			}
 			let user = message.guild.members.find(x => x.id === id);
 			let info = list[id];
-			let stats = `${list[id].ap}/${list[id].awk}/${list[id].dp}`;
-			let level = `${list[id].level}`;
-			data += `${(index + '.').padEnd(3, ' ')} ${list[id].family}/${list[id].character.padEnd(40, '')} Level:${level.padEnd(10, ' ')} Stats:${stats.padEnd(18, ' ')} Discord:${user.displayName}\n`;			if(index >= to) {
+			let stats = `Stats:${list[id].ap}/${list[id].awk}/${list[id].dp}`;
+			let level = `Level:${list[id].level}`;
+			let familyInfo = `${list[id].family}/${list[id].character}`;
+			let discord = `Discord:${user.displayName}`;
+			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(40, '')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
+			if(index >= to) {
 				break;
 			}	
 		};
