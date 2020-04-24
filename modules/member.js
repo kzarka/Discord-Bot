@@ -70,11 +70,12 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 	let total = Object.keys(list).length;
 	if(to > total) to = total;
 	let index = 0;
+	let header = `${'STT'.padEnd(3, ' ')} ${'Family/Character'.padEnd(35, ' ')} ${'Class'.padEnd(10, ' ')} ${'Level'.padEnd(10, ' ')} ${'AP/AWK/DP'.padEnd(18, ' ')} ${'Discord'}\n`;
 	if(buildAll) {
 		let data = '';
 		for(let id in list) {
 			if(index == 0) {
-				data = '```';
+				data = '```' + header;
 			} else if(index % 20 == 0 && index != total) {
 				data += '```';
 				message.channel.send(data);
@@ -83,11 +84,12 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			let user = message.guild.members.find(x => x.id === id);
 			let info = list[id];
 			index++;
-			let stats = `Stats:${list[id].ap}/${list[id].awk}/${list[id].dp}`;
-			let level = `Level:${list[id].level}`;
+			let stats = `${list[id].ap}/${list[id].awk}/${list[id].dp}`;
+			let level = `${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
-			let discord = `Discord:${user.displayName}`;
-			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
+			let className = `${list[id].class}`;
+			let discord = `${user.displayName}`;
+			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${className.padEnd(10, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if (index == total) {
 				data += '```';
 				message.channel.send(data);
@@ -95,6 +97,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			}
 		};
 	} else {
+		data += header;
 		for(let id in list) {
 			if(index++ < from - 1) {
 				continue;
@@ -104,14 +107,15 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			let stats = `Stats:${list[id].ap}/${list[id].awk}/${list[id].dp}`;
 			let level = `Level:${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
+			let className = `${list[id].class}`;
 			let discord = `Discord:${user.displayName}`;
-			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
+			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${className.padEnd(10, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if(index >= to) {
 				break;
 			}	
 		};
 
-		data += `Trang ${page}/${totalPage}`;
+		data += `Trang ${page}/${totalPage} | Tổng số ${total}`;
 	}
 
 	data += '```';
