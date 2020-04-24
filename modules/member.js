@@ -75,15 +75,18 @@ function buildListUser(list, message, buildAll = true, page = 0) {
 			data += `${++index}. ${list[id].family}/${list[id].character} Level:${list[id].level} Stats:${list[id].ap}/${list[id].awk}/${list[id].dp} Discord:${user.displayName}`;
 		};
 	} else {
+		console.log(page);
+		console.log(from, to);
 		for(let id in list) {
 			if(index++ < from) {
+				console.log('continue');
 				continue;
 			}
 			let user = message.guild.members.find(x => x.id === id);
 			let info = list[id];
 			console.log(user.displayName);
 			console.log(info);
-			data += `${++index}. ${list[id].family}/${list[id].character} Level:${list[id].level} Stats:${list[id].ap}/${list[id].awk}/${list[id].dp} Discord:${user.displayName}\n`;
+			data += `${index}. ${list[id].family}/${list[id].character} Level:${list[id].level} Stats:${list[id].ap}/${list[id].awk}/${list[id].dp} Discord:${user.displayName}\n`;
 			if(index >= to) {
 				break;
 			}	
