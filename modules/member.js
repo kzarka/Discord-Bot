@@ -78,6 +78,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			} else if(index % 20 == 0 || index == total) {
 				data += '```';
 				message.channel.send(data);
+				data = '```';
 			}
 			let user = message.guild.members.find(x => x.id === id);
 			let info = list[id];
