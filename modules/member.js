@@ -76,7 +76,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			if(index == 0) {
 				data = '```';
 			}
-			if(index % 20 = 0 || index == total) {
+			if(index % 20 == 0 || index == total) {
 				data += '```';
 				message.channel.send(data);
 			}
