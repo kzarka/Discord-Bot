@@ -87,7 +87,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			let level = `Level:${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let discord = `Discord:${user.displayName}`;
-			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(40, '')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
+			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(40, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if (index == total) {
 				data += '```';
 				message.channel.send(data);
@@ -105,7 +105,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 			let level = `Level:${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let discord = `Discord:${user.displayName}`;
-			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(40, '')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
+			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(40, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if(index >= to) {
 				break;
 			}	
