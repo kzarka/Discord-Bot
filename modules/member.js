@@ -53,7 +53,7 @@ function getAllUsers(client, message, args) {
 
 	let userData = client.guildsData[message.guild.id].members;
 	let total = Object.keys(userData).length;
-	let totalPage = Math.floor(total/10);
+	let totalPage = Math.ceil(total/10);
 	if(totalPage == 0) totalPage = 1;
 	if(page > totalPage) page = totalPage;
 	if(page < 1) page = 1;
