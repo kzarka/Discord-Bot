@@ -5,12 +5,14 @@ var modules = {
 };
 
 modules.member = function(client, message, args) {
+	console.log(args);
 	if(args.length == 0) return;
 	let subCommand = args.shift();
 	if(subCommand == 'info') {
 		getUserData(client, message);
 		return;
 	}
+	console.log(args);
 
 	if(subCommand == 'list') {
 		getAllUsers(client, message, args);
@@ -41,7 +43,7 @@ function getUserData(client, message) {
 function getAllUsers(client, message, args) {
 	let page = 0;
 	let loadAll = false;
-	if(args.length > 1) {
+	if(args.length > 0) {
 		if(args[0] == 'all') {
 			loadAll = true;
 		} else if(!isNaN(args[0])) {
@@ -59,7 +61,7 @@ function getAllUsers(client, message, args) {
 
 }
 
-function buildListUser(list, message, buildAll = true, page = 0) {
+function buildListUser(list, message, buildAll = true, page = 0, totalPage) {
 	let data = '```';
 	let perPage = 10;
 	let from = 10*page-10;
@@ -75,8 +77,6 @@ function buildListUser(list, message, buildAll = true, page = 0) {
 			data += `${++index}. ${list[id].family}/${list[id].character} Level:${list[id].level} Stats:${list[id].ap}/${list[id].awk}/${list[id].dp} Discord:${user.displayName}`;
 		};
 	} else {
-		console.log(page);
-		console.log(from, to);
 		for(let id in list) {
 			if(index++ < from) {
 				console.log('continue');
@@ -91,7 +91,10 @@ function buildListUser(list, message, buildAll = true, page = 0) {
 				break;
 			}	
 		};
+
+		data += `Trang ${page}/${totalPage}`;
 	}
+
 	data += '```';
 	message.channel.send(data);
 }
