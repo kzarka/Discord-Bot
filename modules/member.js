@@ -66,11 +66,20 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 	let data = '```';
 	let perPage = 10;
 	let from = 10*page-10;
-	let to = from + 9
-	if(to > Object.keys(list).length) to = Object.keys(list).length;
+	let to = from + 9;
+	let total = Object.keys(list).length;
+	if(to > total) to = total;
 	let index = 0;
 	if(buildAll) {
+		let data = '';
 		for(let id in list) {
+			if(index == 0) {
+				data = '```';
+			}
+			if(index % 20 = 0 || index == total) {
+				data += '```';
+				message.channel.send(data);
+			}
 			let user = message.guild.members.find(x => x.id === id);
 			let info = list[id];
 			console.log(user.displayName);
