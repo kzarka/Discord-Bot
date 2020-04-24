@@ -54,6 +54,7 @@ function getAllUsers(client, message, args) {
 	let userData = client.guildsData[message.guild.id].members;
 	let total = Object.keys(userData).length;
 	let totalPage = Math.floor(total/10);
+	if(totalPage == 0) totalPage = 1;
 	if(page > totalPage) page = totalPage;
 	if(page < 1) page = 1;
 	
@@ -78,8 +79,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 		};
 	} else {
 		for(let id in list) {
-			if(index++ < from) {
-				console.log('continue');
+			if(index++ < from - 1) {
 				continue;
 			}
 			let user = message.guild.members.find(x => x.id === id);
