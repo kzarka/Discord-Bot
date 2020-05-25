@@ -10,7 +10,7 @@ module.exports = {
     },
 
     isMe: function (user) {
-        return (user.id === '213722448070180864');
+        return (user.id == '213722448070180864');
     },
 
     /* Send message to all guilds in main channel */
