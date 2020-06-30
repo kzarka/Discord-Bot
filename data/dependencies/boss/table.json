@@ -27,13 +27,13 @@
 		"23:00" : "Garmoth"
 	},
 	"3" : {
-		"0:30" : "Kzarka",
+		"0:30" : "Kzarka|Offin",
 		"6:00" : "",
 		"10:00" : "Nouver|Kutum",
 		"14:00" : "Kzarka|Karanda",
 		"15:00"	: "",
 		"19:00" : "Kutum|Nouver",
-		"23:00" : "Offin"
+		"23:00" : "Vell"
 	},
 	"4" : {
 		"0:30" : "Kutum",
