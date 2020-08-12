@@ -9,7 +9,7 @@ const helper = require("./core/helper");
 client.modules = new Enmap();
 client.commands = new Enmap();
 
-client.on("ready", () => {
+client.once("ready", () => {
 	console.log("------------------");
 	console.log("Xuan - Discord Bot");
 	console.log("------------------");
