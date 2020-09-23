@@ -262,7 +262,7 @@ function matchClass(message) {
     questions = classString.class.hashashin.split(',');
     for(x in questions) {
         if(content.indexOf(questions[x]) == 0) {
-            return 'Guardian';
+            return 'Hashashin';
         }
     }
 
