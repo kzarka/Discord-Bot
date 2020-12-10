@@ -2,7 +2,7 @@
 	"0" : {
 		"0:30" : "Kzarka",
 		"6:00" : "",
-		"10:00" : "Nouver|Karanda",
+		"10:00" : "Nouver|Karanda II",
 		"14:00" : "Kutum|Karanda",
 		"15:00"	: "Vell",
 		"19:00" : "Kzarka II|Karanda",
@@ -41,7 +41,7 @@
 		"10:00" : "Kzarka|Karanda",
 		"14:00" : "Kutum|Nouver",
 		"15:00"	: "",
-		"19:00" : "Karanda|Nouver",
+		"19:00" : "Karanda II|Nouver",
 		"23:00" : "Garmoth"
 	},
 	"5" : {
@@ -57,7 +57,7 @@
 		"0:30" : "Karanda",
 		"6:00" : "",
 		"10:00" : "Kutum|Kzarka II",
-		"14:00" : "Karanda|Nouver",
+		"14:00" : "Karanda II|Nouver",
 		"15:00"	: "Garmoth",
 		"19:00" : "Muraka|Quint",
 		"23:00" : ""
