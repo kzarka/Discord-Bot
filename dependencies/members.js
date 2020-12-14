@@ -1,10 +1,9 @@
 const Discord = require('discord.js');
 const config = require("../config/config.json");
 const fs = require("fs");
-const membersModel = require("../core/sqllite/members.js");
+const membersModel = require("../core/mongo/member.js");
 const helper = require("../helper/war.js");
 const roleHelper = require("../helper/roles.js");
-
 
 const datDirWar = '/data/dependencies/war';
 const datDir = '/data/dependencies/members';
@@ -104,8 +103,9 @@ module.exports = function(client){
             client.guildsData[member.guild_id].members = {};
         }
         client.guildsData[member.guild_id].members[message.author.id] = member;
-        member.userId = message.author.id;
-        membersModel.insert(member);
+        member._id = message.author.id;
+        var query = { _id: member._id };
+        //await membersModel.insertOrUpdate(query, member);
         message.channel.send('Thông tin của bạn đã được lưu lại!\n'
             + '```' + `Family/Character: ${member.family}/${member.character || '???'}\nClass: ${member.class}  Level: ${member.level || '???'}\n`
             + `AP/AWK/DP: ${member.ap || '???'}/${member.awk || '???'}/${member.dp || '???'}` + '```'
