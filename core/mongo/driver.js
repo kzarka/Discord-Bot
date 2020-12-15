@@ -1,12 +1,15 @@
 const { MongoClient } = require("mongodb");
 
 const uri = "mongodb+srv://xuan:anh123@cluster0.nnunb.mongodb.net?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useUnifiedTopology: true });
 
 var driver = {};
 
+var client = null;
+
 driver.connect = async function ()
 {
+    client = null;
+    client = new MongoClient(uri, { useUnifiedTopology: true });
     await client.connect();
     const database = client.db('black_spirit');
     return database;
@@ -26,7 +29,7 @@ driver.insert = async function (table, data) {
         status = false;
     } finally {
         // Ensures that the client will close when you finish/error
-        await client.close();
+        //await client.close();
         return status;
     }
 }
@@ -34,18 +37,16 @@ driver.insert = async function (table, data) {
 driver.fetch = async function (table, query = {}) {
     var result = false;
     try {
-        await client.connect();
-        var database = client.db('black_spirit');
+        var database = await driver.connect();
         var collection = database.collection(table);
 
-        result = collection.find(query);
-        result = await result.toArray();
+        result = await collection.find(query).toArray();
     } catch (e) {
         console.log(e);
         result = false;
     } finally {
         // Ensures that the client will close when you finish/error
-        await client.close();
+        //await client.close();
         return result;
     }
 }
@@ -55,16 +56,22 @@ driver.insertOrUpdate = async function (table, query, data) {
     try {
         var database = await driver.connect();
         var collection = database.collection(table);
-
+        data['updated_at'] = new Date();
+        data = {
+            $set: data,
+            $setOnInsert: {
+                created_at: new Date()
+            }
+        };
         var options = { upsert: true };
-        collection.updateOne(query, data, options);
+        await collection.updateOne(query, data, options);
         status = true;
     } catch (e) {
         console.log(e);
         status = false;
     } finally {
         // Ensures that the client will close when you finish/error
-        await client.close();
+        //await client.close();
         return status;
     }
 }

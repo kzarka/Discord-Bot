@@ -144,7 +144,7 @@ module.exports = {
     },
 
     canManage: function(message) {
-        let author = message.member 
+        let author = message.member;
         return author.hasPermission('ADMINISTRATOR') || 
             author.hasPermission('MANAGE_CHANNELS') || 
             author.hasPermission('MANAGE_GUILD ') || this.isMe(author);

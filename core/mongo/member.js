@@ -15,4 +15,27 @@ members.insertOrUpdate = async function (query, data) {
 	return await driver.insertOrUpdate(TABLE, query, data);
 }
 
+members.fetchByGuildId = async function (guildId) {
+	var query = {'guild_id': guildId};
+	let members = await members.fetch(query);
+	for
+}
+
+members.loadMemberByGuilds = async function (client) {
+    client.guilds.forEach(async guild => {
+        let guildId = guild.id;
+        let result = await members.fetchByGuildId(guildId);
+        if(!client.guildsData) {
+            client.guildsData = {};
+        }
+        if(!client.guildsData[guildId]) {
+            client.guildsData[guildId] = {
+                members: {}
+            };
+        }
+        client.guildsData[guildId].members = result;
+        console.log(client.guildsData);
+    });
+}
+
 module.exports = members;

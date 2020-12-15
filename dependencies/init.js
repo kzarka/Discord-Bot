@@ -1,8 +1,11 @@
 'use strict';
 const fs = require("fs");
+const guildsModel = require("../core/mongo/guilds.js");
+const membersModel = require("../core/mongo/member.js");
 const dependenciesDir = '/dependencies/'
 
-module.exports = function(client){
+module.exports = async function(client){
+	await loadData(client);
 	fs.readdir(`.${dependenciesDir}`, (err, files) => {
   		if (err) console.log(err);
   		console.log('\n----------------');
@@ -21,4 +24,11 @@ module.exports = function(client){
 		});
 		console.log(`Loaded ${loaded}/${files.length-1} dependencies.`);
 	});
+}
+
+async function loadData(client) {
+	client.guildsModel = guildsModel;
+    client.guildsData = await client.guildsModel.loadGuild();
+    client.membersModel = membersModel;
+    await client.membersModel.loadMemberByGuilds(client);
 }

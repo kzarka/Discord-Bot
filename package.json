@@ -11,6 +11,7 @@
     "ffmpeg-binaries": "^4.0.0",
     "jimp": "^0.8.5",
     "lodash": "^4.17.15",
+    "mongodb": "^3.6.3",
     "opusscript": "0.0.6",
     "readline-sync": "^1.4.9",
     "sqlite3": "^4.0.6",

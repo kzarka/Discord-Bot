@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const config = require("../config/config.json");
-const guildsModel = require("../core/sqllite/guilds.js");
 
 const datDir = '/data/dependencies/';
 const table = require(`..${datDir}boss/table.json`);
@@ -17,9 +16,7 @@ const fs = require("fs");
 let sent = true;
 
 module.exports = async function(client){
-    client.guildsModel = guildsModel;
-    let guilds = await guildsModel.loadAll();
-    client.guildsData = guilds;
+    
     let helper = client.helper;
     scheduleWarning();
     setTopic();

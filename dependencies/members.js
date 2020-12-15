@@ -105,7 +105,7 @@ module.exports = function(client){
         client.guildsData[member.guild_id].members[message.author.id] = member;
         member._id = message.author.id;
         var query = { _id: member._id };
-        //await membersModel.insertOrUpdate(query, member);
+        await membersModel.insertOrUpdate(query, member);
         message.channel.send('Thông tin của bạn đã được lưu lại!\n'
             + '```' + `Family/Character: ${member.family}/${member.character || '???'}\nClass: ${member.class}  Level: ${member.level || '???'}\n`
             + `AP/AWK/DP: ${member.ap || '???'}/${member.awk || '???'}/${member.dp || '???'}` + '```'

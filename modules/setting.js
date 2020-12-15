@@ -14,13 +14,13 @@ modules.set = async function(client, message, args) {
 		let data = {
 			main_channel: message.channel.id
 		}
-		await client.guildsModel.update(client, message.guild.id, data); 
+		await client.guildsModel.updateByGuildId(client, message.guild.id, data);
 		message.channel.send('Được chọn là channel chính.');
 		client.emit('reload_topic', []);
 	}
 
 	if(args[0] == 'guild') {
-		if(!client.helper.isMe(message.member)) return;
+		if(!client.helper.isMe(message.author)) return;
 		args.shift();
 		guildFunction(client, message, args);
 	}

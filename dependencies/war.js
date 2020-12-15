@@ -2,8 +2,6 @@ const Discord = require('discord.js');
 const config = require("../config/config.json");
 const helper = require("../helper/war.js");
 
-const membersModel = require("../core/sqllite/members.js");
-
 const datDir = '/data/dependencies/war';
 /* Greeting member when they join our guild */
 const warVoteChannel = 'war-attendance';
@@ -21,8 +19,8 @@ try {
 // joined member 
 var joined = {};
 let channelObject = null;
+
 module.exports = async function(client){
-    loadMemberByGuilds(client);
     // get channel
     try {
         channelObject = client.channels.find(x => x.name === warVoteChannel);
@@ -113,20 +111,4 @@ function dayString(nextDay = false) {
         date.setDate(date.getDate()+1);
     }
     return `${date.getFullYear()}${date.getMonth()+1}${date.getDate()}`;
-}
-
-function loadMemberByGuilds(client) {
-    client.guilds.forEach(async guild => {
-        let guildId = guild.id;
-        let mem = await membersModel.loadAll(guildId);
-        if(!client.guildsData) {
-            client.guildsData = {};
-        }
-        if(!client.guildsData[guildId]) {
-            client.guildsData[guildId] = {
-                members: {}
-            };
-        }
-        client.guildsData[guildId].members = mem;
-    });
 }

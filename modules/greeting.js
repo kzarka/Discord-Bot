@@ -14,6 +14,7 @@ modules.greet = async function(client, message, args) {
 		let msg = args.join(' ');
 		if(!msg) {
 			let currentMsg = client.guildsData[message.guild.id].welcome_message;
+			console.log(client.guildsData[message.guild.id]);
 			if(!currentMsg) {
 				return message.channel.send('Bạn chưa cài nội dung welcome.') 
 			}
@@ -24,7 +25,7 @@ modules.greet = async function(client, message, args) {
 		let data = {
 			welcome_message: msg
 		}
-		await client.guildsModel.update(client, message.guild.id, data); 
+		await client.guildsModel.updateByGuildId(client, message.guild.id, data); 
 		
     	message.channel.send('Nội dung hiện tại:\n`' + msg + '`\n\nSử dụng :member để tag user');
 	}
@@ -33,7 +34,7 @@ modules.greet = async function(client, message, args) {
 		let data = {
 			welcome_enable: 1
 		}
-		await client.guildsModel.update(client, message.guild.id, data); 
+		await client.guildsModel.updateByGuildId(client, message.guild.id, data); 
     	return message.channel.send('Đã bật message welcome!');
 	}
 
@@ -41,7 +42,7 @@ modules.greet = async function(client, message, args) {
 		let data = {
 			welcome_enable: 0
 		}
-		await client.guildsModel.update(client, message.guild.id, data); 
+		await client.guildsModel.updateByGuildId(client, message.guild.id, data);
     	return message.channel.send('Đã tắt message welcome!');
 	}
 
@@ -63,7 +64,7 @@ modules.greet = async function(client, message, args) {
 		let data = {
 			welcome_channel: message.channel.id
 		}
-		await client.guildsModel.update(client, message.guild.id, data); 
+		await client.guildsModel.updateByGuildId(client, message.guild.id, data); 
     	return message.channel.send('Kênh được chọn làm kênh guest!');
 	}
 };
