@@ -17,8 +17,13 @@ members.insertOrUpdate = async function (query, data) {
 
 members.fetchByGuildId = async function (guildId) {
 	var query = {'guild_id': guildId};
-	let members = await members.fetch(query);
-	for
+	let result = await members.fetch(query);
+    let items = {};
+	for(let x in result) {
+        items[result[x]._id] = result[x];
+    }
+
+    return items;
 }
 
 members.loadMemberByGuilds = async function (client) {
