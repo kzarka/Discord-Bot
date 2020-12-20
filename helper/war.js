@@ -2,9 +2,16 @@
 
 const fs = require("fs");
 
+let warModels = require('../core/mongo/wars.js');
+const joinModels = require("../core/mongo/war_participates.js");
+
+
 var helper = {
     description: "War helper"
 }
+
+const warVoteChannel = 'war-attendance';
+
 
 const warStart = '20:00'
 const warEnd = '21:00';
@@ -14,43 +21,88 @@ const recheckWarMin = 1; // minute
 
 const rowPerPage = 10;
 
-helper.reloadTopMessage = function(channelObject, client) {
-    if(channelObject) {
-        channelObject.fetchMessages().then(messages => {
-            let topMessage = messages.filter(msg => msg.author.bot).last();
-            if(topMessage) {
-                let newEmbed = this.buildEmbed(client);
-                topMessage.edit('', newEmbed).catch(console.error);
-            }
-        }).catch(err => {
-            console.log('Error while doing edit messages');
-            console.log(err);
+helper.reloadTopMessage = async function(client, guildId) {
+    let message = await helper.getMessage(client, guildId);
+    if(message) {
+        console.log(message);
+        let newEmbed = this.buildEmbed(client, guildId);
+        message.edit('', newEmbed).catch(console.error);
+        return;
+    }
+    let channelWar = helper.getChannelWar(client, guildId);
+    if(channelWar) {
+        let newEmbed = this.buildEmbed(client, guildId);
+        channelWar.send(newEmbed).then(async message => {
+            let messageId = message.id;
+            await helper.updateWar(client, guildId, messageId);
         });
     }
 }
 
-helper.buildList = function(client) {
+helper.getMessage = async function (client, guildId) {
+    let channelWar = helper.getChannelWar(client, guildId);
+    if(!channelWar) return null;
+    let warData = helper.getGuildWarData(client, guildId);
+    if(!warData || !warData.message_id) return null;
+    let message = null;
+    try {
+        message = await channelWar.messages.fetch(warData.message_id, true, true);
+    } catch (e) {
+        return null;
+    }
+    return message;
+}
+
+helper.getGuildWarData = function (client, guildId) {
+    let guildsData = client.guildsData;
+    if(!guildsData[guildId]) return null;
+
+    if(!guildsData[guildId].wars) return null;
+    return guildsData[guildId].wars;
+}
+
+helper.getGuildJoinData = function (client, guildId) {
+    let guildsData = client.guildsData;
+    if(!guildsData[guildId]) return null;
+
+    if(!guildsData[guildId].joined) return null;
+    return Object.keys(guildsData[guildId].joined);
+}
+
+helper.getChannelWar = function (client, guildId) {
+    try {
+        let channelWar = client.guilds.cache.get(guildId).channels.cache.find(x => x.name === warVoteChannel);
+        return channelWar;
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+}
+
+helper.buildList = function(client, guildId) {
     /* array for storing pages */
     let pages = [];
-    let maxNameLength = this.getlongestNameLength(client) + 1;
+    let joined = helper.getGuildJoinData(client, guildId);
+    let members = client.guildsData[guildId].members;
+    let maxNameLength = this.getlongestNameLength(client, guildId) + 1;
     let maxClassLength = this.getMaxClassNameLength() + 1;
     let maxLengthLevel = 'Level'.length + 4;
     let maxLengthPosition = 3;
     let listString = '``' +`${'STT'.padEnd(maxLengthPosition, ' ')} Family/${'Character'.padEnd((maxNameLength - 'Family'.length),' ')} ${'Class'.padEnd(maxClassLength, ' ')} ${'Level'.padEnd(maxLengthLevel, ' ')} AP/AWK/DP\n` + '``\n';
-    if(client.war.joined == void(0) || client.war.joined.length == 0) {
+    if(joined == void(0) || joined.length == 0) {
         pages.push(listString);
         return pages;
     }
     let totalGS = 0;
     let totalReported = 0;
     // asign to var to prevent some exception
-    let joined = client.war.joined;
+    
     for(let x = 0; x < joined.length; x++) {
         let id = joined[x];
         let positition = (x+1);
         let posititionString = positition + '.';
-        if(!client.members[id]) {
-            let user = client.users.get(id)
+        if(!members[id]) {
+            let user = client.users.cache.get(id);
             let username = '???';
             if(user && user.username) {
                 username = user.username;
@@ -64,12 +116,12 @@ helper.buildList = function(client) {
             // then continue
             continue;
         }
-        let member = client.members[id];
+        let member = members[id];
         let character = member.character || '???';
         let className = member.class || '???';
         let level = member.level || '??';
         level = level + '';
-        listString += '``' + ` ${posititionString.padEnd(maxLengthPosition, ' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd(maxClassLength,' ')} ${level.padEnd(maxLengthLevel, ' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}` + '``\n';
+        listString += '``' + `${posititionString.padEnd(maxLengthPosition, ' ')} ${member.family}/${character.padEnd((maxNameLength - member.family.length),' ')} ${className.padEnd(maxClassLength,' ')} ${level.padEnd(maxLengthLevel, ' ')} ${member.ap ||'??'}/${member.awk || '??'}/${member.dp ||'??'}` + '``\n';
         totalGS += parseInt(member.awk) + parseInt(member.dp);
         totalReported++;
         // go next here so check again
@@ -86,8 +138,8 @@ helper.buildList = function(client) {
     return pages;
 }
 
-helper.buildEmbed = function(client) {
-    const embed = new client.Discord.RichEmbed()
+helper.buildEmbed = function(client, guildId) {
+    const embed = new client.Discord.MessageEmbed()
         //.setTitle("This is your title, it can hold 256 characters")
         //.setURL("https://discord.js.org/#/docs/main/indev/class/RichEmbed")
         .setAuthor("Node War", "https://i.imgur.com/h9cOtT9.png")
@@ -98,7 +150,7 @@ helper.buildEmbed = function(client) {
         //.setThumbnail("https://i.imgur.com/ZkoC0RM.png")
         .setTimestamp();
 
-    let list = this.buildList(client);
+    let list = this.buildList(client, guildId);
     // set fields
     for(let i = 0; i < list.length; i++) {
         if(i == 0) {
@@ -107,31 +159,32 @@ helper.buildEmbed = function(client) {
         }
         embed.addField("\u200B", list[i]);
     }
-    embed.addBlankField(true);
+    embed.addField("\u200B", "\u200B");
     // add description
-    if(!client.war.war) {
+    if(!helper.isWarOpen(client, guildId)) {
         embed.setDescription("Hiện không có war nào!");
         return embed;
     }
-    let info = `Node: ${client.war.node || 'TBD'} - ${client.war.date}\n`;
-    if(client.war.message) {
-        info += `Message: ${client.war.message || ''}`;
+    let warInfo = helper.getGuildWarData(client, guildId);
+    let info = `Node: ${warInfo.node || 'TBD'} - ${warInfo.war_date}\n`;
+    if(warInfo.message) {
+        info += `Message: ${warInfo.message || ''}`;
     }
     embed.setDescription(info);
     return embed;
 }
 
-helper.getlongestNameLength = function (client) {
+helper.getlongestNameLength = function (client, guildId) {
     let maxLength = 'FamilyCharacter'.length;
-    let joined = client.war.joined;
-    let members = client.members;
+    let joined = helper.getGuildJoinData(client, guildId);
+    let members = client.guildsData[guildId].members;
     if(!joined || joined.length == 0) return 'FamilyCharacter'.length;
     for(let i in joined) {
         let id = joined[i];
         let thisLength = 0;
         // case not report gs
-        if(!client.members[id]) {
-            let user = client.users.get(id);
+        if(!members[id]) {
+            let user = client.users.cache.get(id);
             if(!user) continue;
             thisLength = user.username.length;
             if(thisLength > maxLength) {
@@ -179,13 +232,53 @@ helper.validDate = function(date) {
     return `${desireDate.getDate()}/${desireDate.getMonth() + 1}/${desireDate.getFullYear()}`;
 }
 
-helper.saveWarInfo = function(client, datDir) {
-    let data = JSON.stringify(client.war, null, 4);
-    fs.writeFileSync(`.${datDir}/war.json`, data, 'utf8', 'w', (err) => {
-        if (err) {
-            console.log(err);
+helper.saveWarInfo = async function(client, guildId, warDate) {
+    let warData = {
+        'guild_id': guildId,
+        'war_date': warDate,
+        'active': 1
+    }
+
+    let result = await warModels.creatWar(guildId, warData);
+    if(result) {
+        client.guildsData[guildId].wars = await warModels.fetchNextWarByGuildId(guildId);
+    }
+}
+
+helper.disableWar = async function(client, guildId) {
+    if(warModels.disableWar(guildId)) {
+        if(client.guildsData[guildId] && client.guildsData[guildId].wars) {
+            let channelWar = helper.getChannelWar(client, guildId);
+            if(channelWar) {
+                let message = await helper.getMessage(client, guildId);
+                console.log(message);
+                if(message) {
+                    channelWar.messages.delete(message);
+                }
+            }
         }
-    });
+        client.guildsData[guildId].wars = {};
+        client.guildsData[guildId].joined = {};
+    }
+    return true;
+}
+
+helper.updateWar =  async function (client, guildId, messageId = null, node = null, message = null) {
+    let warData = {};
+    if(node) {
+        warData.node = node;
+    }
+
+    if(messageId) {
+        warData.message_id = messageId;
+    }
+
+    if(message) {
+        warData.message = message;
+    }
+
+    if(!warData) return;
+    await warModels.updateWar(guildId, warData);
 }
 
 helper.inWarTime = function() {
@@ -206,23 +299,102 @@ helper.hourToDay = function(hour){
 }
 
 /* Auto shutdown war check */
-helper.warAutoShutdown = function(client, datDir) {
+helper.warAutoShutdown = async function(client, guildId) {
     let that = this;
-    if(!client.war.war) return;
+    let warData = client.guildsData[guildId].wars;
+    if(!warData) return;
     let now = new Date();
-    let items = client.war.date.split('/');
+    let warDate = '';
+    if(warData.war_date) warDate = warData.war_date;
+    let items = warDate.split('/');
     let endWarTime = new Date(items[2], (items[1] - 1), items[0], 22);
     // war end on desire day
     if(now.getTime() >= endWarTime.getTime()) {
-        client.war = {
-            "war": false
-        }
-        helper.saveWarInfo(client, datDir);
+        await helper.disableWar(client, guildId)
         return;
     }
     setTimeout(function() {
-        that.warAutoShutdown(client, datDir)
+        that.warAutoShutdown(client, guildId)
     }, recheckWarMin*10000);
+}
+
+helper.isWarOpen = function (client, guildId) {
+    try {
+        let guildsData = client.guildsData[guildId];
+        console.log(guildsData);
+        if(Object.keys(guildsData.wars).length == 0) return false;
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+helper.buildEmbedInfo = async function (client, guildId) {
+    const embed = new client.Discord.MessageEmbed()
+        //.setTitle("This is your title, it can hold 256 characters")
+        //.setURL("https://discord.js.org/#/docs/main/indev/class/RichEmbed")
+        .setAuthor("Upcomming Node War", "https://i.imgur.com/h9cOtT9.png")
+        .setColor(0x00AE86)
+        //.setDescription("This is the main body of text, it can hold 2048 characters.")
+        .setFooter("Xuan Bot", "https://i.imgur.com/h9cOtT9.png")
+        //.setImage("http://i.imgur.com/yVpymuV.png")
+        //.setThumbnail("https://i.imgur.com/ZkoC0RM.png")
+        .setTimestamp();
+
+    let warInfo = client.guildsData[guildId].wars;
+    console.log(warInfo);
+    let info = `Node: ${warInfo.node || 'TBD'} \nTime: ${warInfo.war_date}\n`;
+    if(client.war.message) {
+        info += `Message: ${warInfo.message || ''}`;
+    }
+    embed.setDescription(info);
+    embed.addField("\u200B", "\u200B");
+    return embed;
+}
+
+helper.isJoined = function (client, message) {
+    let guildId = message.guild.id;
+    let joined = helper.getGuildJoinData(client, guildId);
+    if(joined.length == 0) return false;
+    let memberId = message.author.id;
+    console.log(memberId);
+    console.log(joined);
+    if(joined.indexOf(memberId) != -1) {
+        return true;
+    }
+
+    return false;
+}
+
+helper.userJoining = async function(client, guildId, memberId) {
+    let warData = helper.getGuildWarData(client, guildId);
+    if(!warData || !warData._id) return false;
+    let warId = warData._id;
+    let data = {
+        'guild_id': guildId,
+        'war_id': warId,
+        'member_id': memberId
+    }
+
+    let result = await joinModels.insert(data);
+    if(result) {
+        client.guildsData[guildId].joined = await joinModels.fetchByGuildId(guildId, warId);
+    }
+}
+
+helper.userUnjoin = async function(client, guildId, memberId) {
+    let warData = helper.getGuildWarData(client, guildId);
+    if(!warData || !warData._id) return false;
+    let warId = warData._id;
+    let query = {
+        'guild_id': guildId,
+        'war_id': warId,
+        'member_id': memberId
+    }
+
+    let result = await joinModels.delete(query);
+    if(result) {
+        client.guildsData[guildId].joined = await warModels.fetchByGuildId(guildId, warId);
+    }
 }
 
 module.exports = helper;

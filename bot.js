@@ -17,7 +17,7 @@ client.once("ready", () => {
     console.log('\nBot is ready');
     console.log('----------------\n');
     console.log('Bot Name: '+ client.user.username);
-    console.log('Connected to '+ client.guilds.array().length+ ' servers with total '+client.channels.array().length +' channels');
+    console.log('Connected to '+ client.guilds.cache.array().length+ ' servers with total '+client.channels.cache.array().length +' channels');
     console.log('----------------\n');
 	core.loadAll(client);
 	// Loading dependencies...

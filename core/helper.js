@@ -15,10 +15,10 @@ module.exports = {
 
     /* Send message to all guilds in main channel */
     sendMessageToGuilds: function (message, client) {
-        let guilds = client.guilds;
+        let guilds = client.guilds.cache;
         if(!guilds) return;
         var that = this;
-        guilds.tap(function (guild) {
+        guilds.each(function (guild) {
             let channel = that.getMainChannel(client, guild);
             if(!channel) return;
             channel.send(message).catch(console.error);
@@ -27,10 +27,10 @@ module.exports = {
 
     /* Send message to all guilds in main channel */
     setGuildsTopic: function (message, client) {
-        let guilds = client.guilds;
+        let guilds = client.guilds.cache;
         if(!guilds) return;
         var that = this;
-        guilds.tap(function (guild) {
+        guilds.each(function (guild) {
             let channel = that.getMainChannel(client, guild);
             if(!channel) return;
             channel.setTopic(message).catch(console.error);
@@ -125,9 +125,9 @@ module.exports = {
         let guildData = client.guildsData[guild.id];
         let channel = null;
         if(guildData && guildData['main_channel']) {
-            channel = guild.channels.find(ch => ch.id == guildData['main_channel']);
+            channel = guild.channels.cache.get(guildData['main_channel']);
         } else {
-            channel = guild.channels.find(ch => ch.name === 'general' || ch.name === 'chat' || ch.name === 'guild-chat'|| ch.name === 'chat-guild');
+            channel = guild.channels.cache.find(ch => ch.name === 'general' || ch.name === 'chat' || ch.name === 'guild-chat'|| ch.name === 'chat-guild');
         }
         return channel;
     },
@@ -136,9 +136,9 @@ module.exports = {
         let guildData = client.guildsData[guild.id];
         let channel = null;
         if(guildData && guildData['welcome_channel']) {
-            channel = guild.channels.find(ch => ch.id == guildData['welcome_channel']);
+            channel = guild.channels.cache.find(ch => ch.id == guildData['welcome_channel']);
         } else {
-            channel = guild.channels.find(ch => ch.name === 'guests');
+            channel = guild.channels.cache.find(ch => ch.name === 'guests');
         }
         return channel;
     },

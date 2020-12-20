@@ -4,8 +4,9 @@
   "description": "A Modular Bot written with DiscordJS",
   "main": "sync.js",
   "dependencies": {
+    "@discordjs/opus": "^0.3.3",
     "axios": "^0.19.2",
-    "discord.js": "^11.6.4",
+    "discord.js": "^12.5.1",
     "enmap": "^4.8.7",
     "escape-string-regexp": "^1.0.5",
     "ffmpeg-binaries": "^4.0.0",

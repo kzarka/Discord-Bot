@@ -111,12 +111,7 @@ module.exports = function(client){
             + `AP/AWK/DP: ${member.ap || '???'}/${member.awk || '???'}/${member.dp || '???'}` + '```'
         );
         roleHelper.reAsignRole(message, member.class);
-        try {
-            var channelWar = message.guild.channels.find(x => x.name === warVoteChannel);
-        } catch(e) {
-            console.log(e)
-        }
-        helper.reloadTopMessage(channelWar, client);
+        helper.reloadTopMessage(client, member.guild.id);
         return;
     });
 

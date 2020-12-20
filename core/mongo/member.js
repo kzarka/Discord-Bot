@@ -27,7 +27,7 @@ members.fetchByGuildId = async function (guildId) {
 }
 
 members.loadMemberByGuilds = async function (client) {
-    client.guilds.forEach(async guild => {
+    client.guilds.cache.forEach(async guild => {
         let guildId = guild.id;
         let result = await members.fetchByGuildId(guildId);
         if(!client.guildsData) {
@@ -39,7 +39,7 @@ members.loadMemberByGuilds = async function (client) {
             };
         }
         client.guildsData[guildId].members = result;
-        console.log(client.guildsData);
+        //console.log(client.guildsData);
     });
 }
 

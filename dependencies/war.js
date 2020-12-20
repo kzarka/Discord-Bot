@@ -1,20 +1,14 @@
 const Discord = require('discord.js');
 const config = require("../config/config.json");
 const helper = require("../helper/war.js");
+const warModels = require("../core/mongo/wars.js");
+const joinModels = require("../core/mongo/war_participates.js");
 
-const datDir = '/data/dependencies/war';
 /* Greeting member when they join our guild */
 const warVoteChannel = 'war-attendance';
 
 // time wait to delete message
-const deleteMessageTime = 3000;
-
-var warInfo = null;
-try {
-	warInfo =  require(`..${datDir}/war.json`);
-} catch (e) {
-	console.log('Its first start obviously');
-}
+const deleteMessageTime = { timeout: 3000 };
 
 // joined member 
 var joined = {};
@@ -22,31 +16,14 @@ let channelObject = null;
 
 module.exports = async function(client){
     // get channel
-    try {
-        channelObject = client.channels.find(x => x.name === warVoteChannel);
-    } catch(e) {
-        console.log(e)
-    }    
-
-	loadWar(client, warInfo);
-    let embed = helper.buildEmbed(client);
-    if(channelObject) {
-        channelObject.fetchMessages().then(messages => {
-            channelObject.bulkDelete(messages).catch(console.error);
-        }).catch(err => {
-            console.log('Error while delete messages');
-            console.log(err);
-        });
-        channelObject.send({embed});
-    }
-
+	loadWar(client);
 
     client.on('message', async message => {
     	if(message.channel.name != warVoteChannel) return;
     	if(message.author.bot) return;
     	// if in war time return or war is not activated
         let now = Date.now();
-        if(client.war.war == false) {
+        if(helper.isWarOpen(client, message.guild.id) == false) {
             message.reply('Not in vote time!').then(msg => {
                 msg.delete(deleteMessageTime)
             }).catch(e => {console.log(e)});
@@ -61,9 +38,9 @@ module.exports = async function(client){
             message.delete(deleteMessageTime);
             return;
         }
+
         let authorId = message.author.id;
-        if(!client.war.joined) client.war.joined = [];
-        if(client.war.joined.indexOf(authorId) >= 0) {
+        if(helper.isJoined(client, message)) {
             message.reply("You've already signed for the war").then(msg => {
                 msg.delete(deleteMessageTime)
             }).catch(e => {console.log(e)});
@@ -75,25 +52,49 @@ module.exports = async function(client){
         }).catch(e => {console.log(e)});
         message.delete(deleteMessageTime);
         // save to the file
-        client.war.joined.push(authorId);
+        await helper.userJoining(client, message.guild.id, message.author.id);
         // save to file json
-        helper.saveWarInfo(client, datDir);
-        helper.reloadTopMessage(channelObject, client);
+        await helper.reloadTopMessage(client, message.guild.id);
         return;
     });
 
 }
 
 
-function loadWar(client, war) {
-    if(war == void(0) || !helper.validDate(war.date)) {
-        helper.saveWarInfo(client, datDir);
-        return false;
-    };
-    if(war.war == void(0) || war.war == false) return false;
-    client.war = war;
-    helper.warAutoShutdown(client, datDir);
-    return true;
+function loadWar(client) {
+    client.guilds.cache.forEach(async guild => {
+        let guildId = guild.id;
+        let result = await warModels.fetchByGuildId(guildId);
+        if(!client.guildsData) {
+            client.guildsData = {};
+        }
+        if(!client.guildsData[guildId]) {
+            client.guildsData[guildId] = {
+                wars: {}
+            };
+        }
+        
+        client.guildsData[guildId].wars = Object.values(result)[0];
+        if(typeof client.guildsData[guildId].wars != 'undefined') {
+            let warId = client.guildsData[guildId].wars._id;
+            let result = await joinModels.fetchByGuildId(guildId, warId);
+            if(!client.guildsData) {
+                client.guildsData = {};
+            }
+            if(!client.guildsData[guildId]) {
+                client.guildsData[guildId] = {
+                    joined: {}
+                };
+            }
+            client.guildsData[guildId].joined = result;
+        }
+
+        let message = await helper.getMessage(client, guildId);
+        if(!message) {
+            await helper.reloadTopMessage(client, guildId);
+        }
+        await helper.warAutoShutdown(client, guild.id);
+    });
 }
 
 function hourToDay(hour){

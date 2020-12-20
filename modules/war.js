@@ -10,43 +10,44 @@ const warVoteChannel = 'war-attendance';
 
 var channelWar = null;
 // Global variable for member stats
-modules.war = function(client, message, args) {
-
+modules.war = async function(client, message, args) {
+	let guildId = message.guild.id;
 	try {
-        channelWar = client.channels.find(x => x.name === warVoteChannel);
+        channelWar = message.guild.channels.cache.find(x => x.name === warVoteChannel);
     } catch(e) {
         console.log(e)
     }
+    if(!channelWar) {
+    	message.channel.send("You don't have a channel for war voting");
+		return;
+    }
 	if(args.length == 0) {
-		message.channel.send('Sử dụng `war on [dd/mm/yyyy]` để kích hoạt vote war!');
+		message.channel.send('Use command `war on [dd/mm/yyyy]` to schedule next war!');
 		return;
 	}
 	if(args[0] == 'on') {
-		if(client.war.war == true) {
-			message.channel.send('War đã mở từ trước');
+		if(helper.isWarOpen(client, guildId) == true) {
+			let embed = await helper.buildEmbedInfo(client, guildId);
+			message.channel.send('Already open', embed);
 			return;
 		}
 		if(!args[1]) {
-			message.channel.send('Sử dụng `war on [dd/mm/yyyy]` để kích hoạt vote war!');
+			message.channel.send('Use command `war on [dd/mm/yyyy]` to schedule next war!');
 			return;
 		}
 		let warDate = helper.validDate(args[1]);
 		if(!warDate) {
-			message.channel.send('Sử dụng `war on [dd/mm/yyyy]` để kích hoạt vote war!\nNgày war không lớn hơn 7 ngày từ thời điểm hiện tại\nKhông thể set war sau 22h cùng ngày.');
+			message.channel.send("Sử dụng `war on [dd/mm/yyyy]` to schedule next war!\nDate must not greater than 7 days from now on\nCan not set war after 22h at the same day");
 			return;
 		}
-		client.war.war = true;
-		client.war.date = warDate;
-		client.war.joined = [];
 		// save to file json
-		helper.saveWarInfo(client, datDir);
+		await helper.saveWarInfo(client, guildId, warDate);
 		// reload top msg
-        helper.reloadTopMessage(channelWar, client);
+        await helper.reloadTopMessage(client, guildId);
         // for auto shutdown war
-        helper.warAutoShutdown(client, datDir);
-        message.channel.send('```Đã lưu cài đặt!\nWar kế tiếp: 20:00 ' 
-        	+ client.war.date + `!\nNode: ${client.war.node || 'TBD'}`
-        	+ `\nMessage: ${client.war.message || ''}` + '```');
+        //helper.warAutoShutdown(client, datDir);
+       	let embed = await helper.buildEmbedInfo(client, guildId);
+		message.channel.send('Setting saved!', embed);
 		return;
 	}
 	if(args[0] == 'set') {
@@ -71,10 +72,9 @@ modules.war = function(client, message, args) {
 				message.channel.send('Tên Node quá dài!');
 				return;
 			}
-			client.war.node = nodeName.trim();
-			helper.saveWarInfo(client, datDir);
-			message.channel.send(`Đã lưu Node thành công. Node ${client.war.node}!`);
-			helper.reloadTopMessage(channelWar, client);
+			await helper.updateWar(client, guildId, null, nodeName.trim());
+			message.channel.send(`Đã lưu Node thành công. Node ${nodeName.trim()}!`);
+			await helper.reloadTopMessage(client, guildId);
 			return;
 		}
 		// set message
@@ -91,32 +91,29 @@ modules.war = function(client, message, args) {
 				message.channel.send('Nội dung quá dài, tối đã 200 ký tự!');
 				return;
 			}
-			client.war.message = messageContent.trim();
-			helper.saveWarInfo(client, datDir);
-			message.channel.send(`Đã lưu tin nhắn thành công\nNội dung: ${client.war.message}!`);
-			helper.reloadTopMessage(channelWar, client);
+			await helper.updateWar(client, guildId, null, null, messageContent.trim());
+			message.channel.send(`Đã lưu tin nhắn thành công\nNội dung: ${messageContent.trim()}!`);
+			await helper.reloadTopMessage(client, guildId);
 			return;
 		}
 	}
 	if(args[0] == 'off') {
-		if(client.war.war == false) {
-			message.channel.send('War hiện không mở');
+		console.log(guildId);
+		if(helper.isWarOpen(client, guildId) == false) {
+			message.channel.send('No war scheduled');
 			return;
 		}
-		message.channel.send('Mọi dữ liệu vote sẽ mất, gõ yes để xác nhận!');
+		message.channel.send('Do you want to disable this war vote?');
 		let requestUserId = message.author.id;
 		const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 10000 });
         collector.on('collect', message => {
         	if(message.author.bot) return;
         	if(message.author.id != requestUserId) return;
             if (message.content == "yes") {
-				client.war = {
-            		"war": false
-            	}
 				// save to file json
-				helper.saveWarInfo(client, datDir);
-		        helper.reloadTopMessage(channelWar, client);
-                message.channel.send("Đã hủy bỏ war!");
+				helper.disableWar(client, message.guild.id);
+		        //helper.reloadTopMessage(channelWar, client);
+                message.channel.send("War has been canceled!");
             }
         })
 	}

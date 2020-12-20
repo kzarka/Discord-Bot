@@ -20,7 +20,7 @@ driver.insert = async function (table, data) {
     try {
         var database = await driver.connect();
         var collection = database.collection(table);
-
+        data['created_at'] = new Date();
         var result = await collection.insertOne(data);
 
         status = true;
@@ -48,6 +48,48 @@ driver.fetch = async function (table, query = {}) {
         // Ensures that the client will close when you finish/error
         //await client.close();
         return result;
+    }
+}
+
+driver.update = async function (table, query, data) {
+    var status = false;
+    try {
+        var database = await driver.connect();
+        var collection = database.collection(table);
+        data['updated_at'] = new Date();
+        data = {
+            $set: data,
+            $setOnInsert: {
+                created_at: new Date()
+            }
+        };
+        var options = {};
+        await collection.updateOne(query, data, options);
+        status = true;
+    } catch (e) {
+        console.log(e);
+        status = false;
+    } finally {
+        // Ensures that the client will close when you finish/error
+        //await client.close();
+        return status;
+    }
+}
+
+driver.delete = async function (table, query) {
+    var status = false;
+    try {
+        var database = await driver.connect();
+        var collection = database.collection(table);
+        await collection.deleteOne(query);
+        status = true;
+    } catch (e) {
+        console.log(e);
+        status = false;
+    } finally {
+        // Ensures that the client will close when you finish/error
+        //await client.close();
+        return status;
     }
 }
 
