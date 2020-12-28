@@ -66,7 +66,7 @@ helper.getGuildJoinData = function (client, guildId) {
     if(!guildsData[guildId]) return null;
 
     if(!guildsData[guildId].joined) return null;
-    return Object.keys(guildsData[guildId].joined);
+    return Object.keys(guildsData[guildId].joined) || [];
 }
 
 helper.getChannelWar = function (client, guildId) {
