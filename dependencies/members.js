@@ -261,6 +261,13 @@ function matchClass(message) {
         }
     }
 
+    questions = classString.class.nova.split(',');
+    for(x in questions) {
+        if(content.indexOf(questions[x]) == 0) {
+            return 'Nova';
+        }
+    }
+
     return false;
 }
 
