@@ -51,7 +51,7 @@ modules.war = async function(client, message, args) {
 		return;
 	}
 	if(args[0] == 'set') {
-		if(client.war.war == false) {
+		if(helper.isWarOpen(client, guildId) == false) {
 			message.channel.send('War hiện không mở');
 			return;
 		}

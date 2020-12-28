@@ -8,7 +8,7 @@ helper.reAsignRole = async function(message, roleName) {
     let roleToKeep = ['VIP', 'Filthy Outsider', 'Carrying Fury Scrubs', 'Guest', 'Ng0k', '( ͡° ͜ʖ ͡°)'];
     let roles = message.member.roles;
     // first remove old role
-    let isOfficer = roles.some(role => role.name === 'Officer');
+    let isOfficer = roles.cache.some(role => role.name === 'Officer');
     if(!isOfficer) {
         roles = roles.filter(function(role) {
             if(!roleToKeep) return true;
