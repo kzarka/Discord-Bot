@@ -30,7 +30,7 @@ async function getUserData(client, message) {
 
 	try {
 		let userData = client.guildsData[message.guild.id].members[user.id];
-		let attachment = await drawImage(message.member, userData);
+		let attachment = await drawImage(user, userData);
 		message.channel.send(attachment);
 	} catch {
 		message.channel.send('Thành viên này chưa báo danh!');
@@ -124,7 +124,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 module.exports = modules;
 
 async function drawImage(member, userData) {
-	const canvas = Canvas.createCanvas(700, 250);
+	const canvas = Canvas.createCanvas(900, 250);
 	const ctx = canvas.getContext('2d');
 
 	const background = await Canvas.loadImage('.' + dataDir + 'background.png');
