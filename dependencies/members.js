@@ -111,7 +111,7 @@ module.exports = function(client){
             + `AP/AWK/DP: ${member.ap || '???'}/${member.awk || '???'}/${member.dp || '???'}` + '```'
         );
         roleHelper.reAsignRole(message, member.class);
-        helper.reloadTopMessage(client, member.guild.id);
+        helper.reloadTopMessage(client, message.guild.id);
         return;
     });
 
