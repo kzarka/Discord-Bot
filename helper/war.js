@@ -267,14 +267,17 @@ helper.updateWar =  async function (client, guildId, messageId = null, node = nu
     let warData = {};
     if(node) {
         warData.node = node;
+        client.guildsData[guildId].wars.node = node;
     }
 
     if(messageId) {
         warData.message_id = messageId;
+        client.guildsData[guildId].wars.message_id = messageId;
     }
 
     if(message) {
         warData.message = message;
+        client.guildsData[guildId].wars.message = message;
     }
 
     if(!warData) return;

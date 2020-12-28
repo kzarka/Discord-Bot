@@ -52,7 +52,6 @@ wars.fetchNextWarByGuildId = async function (guildId) {
     let result = await wars.fetch(query);
     let items = {};
     if(!result) return null;
-    console.log(result[0]);
     return result[0]; // first element
 }
 
