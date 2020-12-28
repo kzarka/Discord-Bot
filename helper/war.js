@@ -265,6 +265,9 @@ helper.disableWar = async function(client, guildId) {
 
 helper.updateWar =  async function (client, guildId, messageId = null, node = null, message = null) {
     let warData = {};
+    if(!client.guildsData[guildId].wars) {
+        client.guildsData[guildId].wars = {}
+    }
     if(node) {
         warData.node = node;
         client.guildsData[guildId].wars.node = node;
