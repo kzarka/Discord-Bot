@@ -1,4 +1,5 @@
 'use strict';
+const Discord = require("discord.js");
 
 var modules = {
 	description: 'Music module'
@@ -8,15 +9,14 @@ const Canvas = require('canvas');
 
 const dataDir = '/data/modules/member/';
 
-modules.member = function(client, message, args) {
+modules.member = async function(client, message, args) {
 	console.log(args);
 	if(args.length == 0) return;
 	let subCommand = args.shift();
 	if(subCommand == 'info') {
-		getUserData(client, message);
+		await getUserData(client, message);
 		return;
 	}
-	console.log(args);
 
 	if(subCommand == 'list') {
 		getAllUsers(client, message, args);
@@ -24,23 +24,14 @@ modules.member = function(client, message, args) {
 	}
 };
 
-function getUserData(client, message) {
+async function getUserData(client, message) {
 	let user = message.mentions.members.first();
 	if(!user) user = message.member;
 
-	console.log(message.author.displayAvatarURL());
 	try {
 		let userData = client.guildsData[message.guild.id].members[user.id];
-		message.channel.send('```' 
-			+ 'Thông Tin\nFamily/Character: ' 
-			+ userData['family'] + '/' + userData['character'] 
-			+ '\nClass: ' 
-			+ userData['class']
-			+ '\nLevel: ' 
-			+ userData['level']
-			+ '\nAP/AWK/DP: ' 
-			+ userData['ap'] + '/' + userData['awk'] + '/' + userData['dp'] 
-			+ '```', drawImage(message.member));
+		let attachment = await drawImage(message.member, userData);
+		message.channel.send(attachment);
 	} catch {
 		message.channel.send('Thành viên này chưa báo danh!');
 	}
@@ -132,7 +123,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 
 module.exports = modules;
 
-async function drawImage(member) {
+async function drawImage(member, userData) {
 	const canvas = Canvas.createCanvas(700, 250);
 	const ctx = canvas.getContext('2d');
 
@@ -145,12 +136,12 @@ async function drawImage(member) {
 	// Slightly smaller text placed above the member's display name
 	ctx.font = '28px sans-serif';
 	ctx.fillStyle = '#ffffff';
-	ctx.fillText('Welcome to the server,', canvas.width / 2.5, canvas.height / 3.5);
+	ctx.fillText(`${member.user.tag}:`, canvas.width / 2.5, canvas.height / 2.5);
 
 	// Add an exclamation point here and below
-	ctx.font = applyText(canvas, `${member.displayName}!`);
+	ctx.font = '28px sans-serif';
 	ctx.fillStyle = '#ffffff';
-	ctx.fillText(`${member.displayName}!`, canvas.width / 2.5, canvas.height / 1.8);
+	ctx.fillText(`Class: ${userData.class}\nFamily/Character: ${userData.family}/${userData.character}\nLevel: ${userData.level}`, canvas.width / 2.5, canvas.height / 1.8);
 
 	ctx.beginPath();
 	ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
