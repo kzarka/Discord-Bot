@@ -140,7 +140,27 @@ async function drawImage(member, userData) {
 
 	ctx.font = '16px Roboto';
 	ctx.fillStyle = '#62d3f5';
-	ctx.fillText(`FAMILY `, 250, 60);
+	ctx.fillText(`FAMILY `, 250, 110);
+
+	ctx.font = '25px Roboto';
+	ctx.fillStyle = 'white';
+	ctx.fillText(`${userData.family}`, 360, 110);
+
+	ctx.font = '16px Roboto';
+	ctx.fillStyle = '#62d3f5';
+	ctx.fillText(`CHARACTER `, 250, 145);
+
+	ctx.font = '25px Roboto';
+	ctx.fillStyle = 'white';
+	ctx.fillText(`${userData.character}`, 360, 145);
+
+	ctx.font = '16px Roboto';
+	ctx.fillStyle = '#62d3f5';
+	ctx.fillText(`GEAR `, 250, 185);
+
+	ctx.font = '25px Roboto';
+	ctx.fillStyle = 'white';
+	ctx.fillText(`${userData.ap}/${userData.awk}/${userData.dp}`, 360, 185);
 
 	//ctx.strokeStyle = 'black';
 	ctx.strokeRect(0, 0, canvas.width, canvas.height);
@@ -171,22 +191,6 @@ async function drawImage(member, userData) {
 	ctx.font = '28px Roboto';
 	ctx.fillStyle = 'white';
 	ctx.fillText(`${userData.level}`, 250+lengthName, 60);
-
-	// Slightly smaller text placed above the member's display name
-	ctx.font = '28px Roboto';
-	ctx.fillStyle = '#000000';
-	ctx.fillText(`${member.user.tag}:`, canvas.width / 2.5, canvas.height / 2.5);
-
-	// Add an exclamation point here and below
-	ctx.font = '28px Roboto';
-
-	ctx.shadowColor="#000000";
-	ctx.shadowBlur=2;
-	//ctx.lineWidth=2;
-	//ctx.strokeText(`${userData.family}/${userData.character} (Lvl ${userData.level})\nGear: ${userData.ap}/${userData.awk}/${userData.dp}`, canvas.width / 2.5, canvas.height / 1.8);
-	//ctx.shadowBlur=0;
-	ctx.fillStyle = '#000000';
-	ctx.fillText(`${userData.family}/${userData.character} (Lvl ${userData.level})\nGear: ${userData.ap}/${userData.awk}/${userData.dp}`, canvas.width / 2.5, canvas.height / 1.8);
 
 	ctx.beginPath();
 	ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
