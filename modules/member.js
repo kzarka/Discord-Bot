@@ -10,16 +10,15 @@ const Canvas = require('canvas');
 const dataDir = '/data/modules/member/';
 
 modules.member = async function(client, message, args) {
-	console.log(args);
 	if(args.length == 0) return;
 	let subCommand = args.shift();
 	if(subCommand == 'card') {
-		await getUserData(client, message);
+		await getUserData(client, message, args);
 		return;
 	}
 
 	if(subCommand == 'gear') {
-		await getUserData(client, message, true);
+		await getUserData(client, message, args, true);
 		return;
 	}
 
@@ -29,10 +28,15 @@ modules.member = async function(client, message, args) {
 	}
 };
 
-async function getUserData(client, message, withImage = false) {
-	let user = message.mentions.members.first();
+async function getUserData(client, message, args, withImage = false) {
+	let user = null;
+	if(args.length != 0) {
+		let discrim = args.shift(); // the discrim
+		user = await message.channel.guild.members.fetch();
+		user = user.find(member => member.user.tag.split('#')[1] === discrim);
+	}
+	if(!user) user = message.mentions.members.first();
 	if(!user) user = message.member;
-
 	try {
 		let userData = client.guildsData[message.guild.id].members[user.id];
 		if(!userData) throw 'E';
@@ -137,11 +141,28 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 module.exports = modules;
 
 async function drawImage(member, userData) {
-	console.log(userData);
+	let width = 857;
+	let height = 238;
+	let x = 0;
+	let y = 0;
 	const canvas = Canvas.createCanvas(857, 238);
 	const ctx = canvas.getContext('2d');
 
 	const background = await Canvas.loadImage(getClassBg(userData.class));
+	ctx.beginPath();
+	let radius = 20;
+	ctx.moveTo(x + radius, y);
+	ctx.lineTo(x + width - radius, y);
+	ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+	ctx.lineTo(x + width, y + height - radius);
+	ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	ctx.lineTo(x + radius, y + height);
+	ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+	ctx.lineTo(x, y + radius);
+	ctx.quadraticCurveTo(x, y, x + radius, y);
+	ctx.closePath();
+	ctx.clip();
+
 	ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
 	let memberTag = member.user.tag;
@@ -157,7 +178,7 @@ async function drawImage(member, userData) {
 
 	ctx.font = '25px Roboto';
 	ctx.fillStyle = 'white';
-	ctx.fillText(`${userData.family}`, 360, 110);
+	ctx.fillText(`${userData.family || '??'}`, 360, 110);
 
 	ctx.font = '16px Roboto';
 	ctx.fillStyle = '#62d3f5';
@@ -165,7 +186,7 @@ async function drawImage(member, userData) {
 
 	ctx.font = '25px Roboto';
 	ctx.fillStyle = 'white';
-	ctx.fillText(`${userData.character}`, 360, 145);
+	ctx.fillText(`${userData.character || '??'}`, 360, 145);
 
 	ctx.font = '16px Roboto';
 	ctx.fillStyle = '#62d3f5';
@@ -173,7 +194,7 @@ async function drawImage(member, userData) {
 
 	ctx.font = '25px Roboto';
 	ctx.fillStyle = 'white';
-	ctx.fillText(`${userData.ap}/${userData.awk}/${userData.dp}`, 360, 185);
+	ctx.fillText(`${userData.ap || '??'}/${userData.awk || '??'}/${userData.dp || '??'}`, 360, 185);
 
 	//ctx.strokeStyle = 'black';
 	ctx.strokeRect(0, 0, canvas.width, canvas.height);
@@ -203,18 +224,21 @@ async function drawImage(member, userData) {
 
 	ctx.font = '28px Roboto';
 	ctx.fillStyle = 'white';
-	ctx.fillText(`${userData.level}`, 250+lengthName, 60);
+	ctx.fillText(`${userData.level || '??'}`, 250+lengthName, 60);
+
+	// DRAW AVATAR
 
 	ctx.beginPath();
-	ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
+	ctx.arc(115, 115, 75, 0, Math.PI * 2, true);
 	ctx.closePath();
 	ctx.clip();
 	let avatar = await Canvas.loadImage(member.user.displayAvatarURL({ format: 'png' }));
-	//let avatar = await Canvas.loadImage('https://cdn.discordapp.com/avatars/213722448070180864/187bbc9ae2f6538f03a641f12596bf3c.png');
+
+	ctx.drawImage(avatar, 40, 40, 150, 150);
+
 	if(member.id == '266275542691479554') {
-		ctx.filter = "opacity(50%)";
+		roundRect(ctx, 40, 40, 150, 150, 5, "rgba(240, 240, 240, 0.8)");
 	}
-	ctx.drawImage(avatar, 25, 25, 200, 200);
 
 	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'member-info.png');
 
