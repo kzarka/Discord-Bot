@@ -232,7 +232,7 @@ async function drawImage(member, userData) {
 	// COPY RIGHT SECTION
 	ctx.font = 'bold 11px Roboto';
 	ctx.fillStyle = '#fff';
-	ctx.fillText(`© Xuan Bot`, width-90, height-20);
+	ctx.fillText(`© Xuan Bot`, width-90, height-15);
 
 	// DRAW AVATAR
 
