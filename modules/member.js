@@ -13,8 +13,13 @@ modules.member = async function(client, message, args) {
 	console.log(args);
 	if(args.length == 0) return;
 	let subCommand = args.shift();
-	if(subCommand == 'info') {
+	if(subCommand == 'card') {
 		await getUserData(client, message);
+		return;
+	}
+
+	if(subCommand == 'gear') {
+		await getUserData(client, message, true);
 		return;
 	}
 
@@ -24,7 +29,7 @@ modules.member = async function(client, message, args) {
 	}
 };
 
-async function getUserData(client, message) {
+async function getUserData(client, message, withImage = false) {
 	let user = message.mentions.members.first();
 	if(!user) user = message.member;
 
@@ -33,7 +38,7 @@ async function getUserData(client, message) {
 		if(!userData) throw 'E';
 		let attachment = await drawImage(user, userData);
 		let gearImg = userData.image;
-		if(gearImg) {
+		if(gearImg && badgeOnly) {
 			message.channel.send(attachment);
 			message.channel.send({files: [gearImg]});
 			return;
