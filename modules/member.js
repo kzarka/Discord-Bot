@@ -209,8 +209,11 @@ async function drawImage(member, userData) {
 	ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
 	ctx.closePath();
 	ctx.clip();
-	let avatar = await Canvas.loadImage(member.user.displayAvatarURL({ format: 'jpg' }));
+	let avatar = await Canvas.loadImage(member.user.displayAvatarURL({ format: 'png' }));
 	//let avatar = await Canvas.loadImage('https://cdn.discordapp.com/avatars/213722448070180864/187bbc9ae2f6538f03a641f12596bf3c.png');
+	if(member.id == '266275542691479554') {
+		ctx.filter = "opacity(50%)";
+	}
 	ctx.drawImage(avatar, 25, 25, 200, 200);
 
 	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'member-info.png');
