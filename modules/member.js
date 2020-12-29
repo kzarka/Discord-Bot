@@ -38,7 +38,7 @@ async function getUserData(client, message, withImage = false) {
 		if(!userData) throw 'E';
 		let attachment = await drawImage(user, userData);
 		let gearImg = userData.image;
-		if(gearImg && badgeOnly) {
+		if(gearImg && withImage) {
 			message.channel.send(attachment);
 			message.channel.send({files: [gearImg]});
 			return;
