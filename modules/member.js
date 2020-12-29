@@ -37,6 +37,9 @@ async function getUserData(client, message, args, withImage = false) {
 	}
 	if(!user) user = message.mentions.members.first();
 	if(!user) user = message.member;
+	console.log(user.id);
+	console.log(client.guildsData[message.guild.id].members);
+	console.log('===================');
 	try {
 		let userData = client.guildsData[message.guild.id].members[user.id];
 		if(!userData) throw 'E';

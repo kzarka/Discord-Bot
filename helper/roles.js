@@ -10,7 +10,7 @@ helper.reAsignRole = async function(message, roleName) {
     // first remove old role
     let isOfficer = roles.cache.some(role => role.name === 'Officer');
     if(!isOfficer) {
-        roles = roles.filter(function(role) {
+        roles = roles.cache.filter(function(role) {
             if(!roleToKeep) return true;
             if(roleToKeep.constructor !== Array) {
                 return role.name !== roleToKeep;
@@ -23,16 +23,16 @@ helper.reAsignRole = async function(message, roleName) {
             }
             return result;
         });
-        await message.member.removeRoles(roles).catch(err => {
+        await message.member.roles.remove(roles).catch(err => {
             console.log(err);
         });
     }
 
     /* Now add role to member */
-    let role = message.guild.roles.find(r => r.name === roleName);
+    let role = message.guild.roles.cache.find(r => r.name === roleName);
     if(!role) return;
-    if(!message.member.roles.has(role.id)) {
-        await message.member.addRole(role).catch((e) => {
+    if(!message.member.roles.cache.has(role.id)) {
+        await message.member.roles.add(role).catch((e) => {
             console.log(e);
         });
     }
