@@ -30,7 +30,14 @@ async function getUserData(client, message) {
 
 	try {
 		let userData = client.guildsData[message.guild.id].members[user.id];
+		if(!userData) throw 'E';
 		let attachment = await drawImage(user, userData);
+		let gearImg = userData.image;
+		if(gearImg) {
+			message.channel.send(attachment);
+			message.channel.send({files: [gearImg]});
+			return;
+		}
 		message.channel.send(attachment);
 	} catch(e) {
 		console.log(e);
@@ -125,6 +132,7 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 module.exports = modules;
 
 async function drawImage(member, userData) {
+	console.log(userData);
 	const canvas = Canvas.createCanvas(857, 238);
 	const ctx = canvas.getContext('2d');
 
