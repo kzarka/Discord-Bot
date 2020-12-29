@@ -226,6 +226,11 @@ async function drawImage(member, userData) {
 	ctx.fillStyle = 'white';
 	ctx.fillText(`${userData.level || '??'}`, 250+lengthName, 60);
 
+	// COPY RIGHT SECTION
+	ctx.font = 'bold 11px Roboto';
+	ctx.fillStyle = '#fff';
+	ctx.fillText(`© Xuan Bot`, width-75, height-10);
+
 	// DRAW AVATAR
 
 	ctx.beginPath();

@@ -32,6 +32,7 @@ helper.reloadTopMessage = async function(client, guildId) {
     let channelWar = helper.getChannelWar(client, guildId);
     if(channelWar) {
         let newEmbed = this.buildEmbed(client, guildId);
+        if(!newEmbed) return;
         channelWar.send(newEmbed).then(async message => {
             let messageId = message.id;
             await helper.updateWar(client, guildId, messageId);
@@ -163,7 +164,7 @@ helper.buildEmbed = function(client, guildId) {
     // add description
     if(!helper.isWarOpen(client, guildId)) {
         embed.setDescription("Hiện không có war nào!");
-        return embed;
+        return null;
     }
     let warInfo = helper.getGuildWarData(client, guildId);
     let info = `Node: ${warInfo.node || 'TBD'} - ${warInfo.war_date}\n`;
