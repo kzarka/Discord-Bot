@@ -12,7 +12,7 @@ module.exports = function(client){
 		msgContent = msgContent.replace(`<@${mentionUser.id}>`, "").trim();
 		if(msgContent == '') return message.channel.send(hi[Math.floor(Math.random() * (hi.length - 1)) + 1]);
 		message.channel.startTyping();
-		axios.get('https://simsimi.copcute.pw/api/sim.php',{params:{text:msgContent, lang: "vi_VN", cf: true}})
+		axios.get('https://simsimi.copcute.pw/api',{params:{text:msgContent, lang: "vi_VN", cf: true}})
       		.then( response =>{
       			message.channel.stopTyping();
       			let responseMsg = 'Em bị lỗi rồi';
