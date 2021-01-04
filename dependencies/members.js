@@ -102,16 +102,18 @@ module.exports = function(client){
         if(!client.guildsData[member.guild_id].members) {
             client.guildsData[member.guild_id].members = {};
         }
+
+        member.image = getImages(message);
         client.guildsData[member.guild_id].members[message.author.id] = member;
-        member._id = message.author.id;
-        var query = { _id: member._id };
+        member.member_id = message.author.id;
+        var query = { member_id: member.member_id, guild_id: member.guild_id };
         await membersModel.insertOrUpdate(query, member);
         message.channel.send('Thông tin của bạn đã được lưu lại!\n'
             + '```' + `Family/Character: ${member.family}/${member.character || '???'}\nClass: ${member.class}  Level: ${member.level || '???'}\n`
             + `AP/AWK/DP: ${member.ap || '???'}/${member.awk || '???'}/${member.dp || '???'}` + '```'
         );
         roleHelper.reAsignRole(message, member.class);
-        helper.reloadTopMessage(client, member.guild.id);
+        helper.reloadTopMessage(client, message.guild.id);
         return;
     });
 
@@ -261,10 +263,31 @@ function matchClass(message) {
         }
     }
 
+    questions = classString.class.nova.split(',');
+    for(x in questions) {
+        if(content.indexOf(questions[x]) == 0) {
+            return 'Nova';
+        }
+    }
+
     return false;
 }
 
 function capitalizeFirstLetter(string) {
     if(!string) return null;
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function getImages(message) {
+    let attachments = message.attachments;
+    if(!attachments) return null;
+    attachments = attachments.array();
+    for (var i in attachments) {
+        let url = attachments[i].url;
+        if(url.match(/\.(jpeg|jpg|gif|png)$/i) != null) {
+            return url;
+        }
+    }
+
+    return null;
 }

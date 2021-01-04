@@ -1,24 +1,27 @@
 const { MongoClient } = require("mongodb");
+const config = require("../../config/config.json");
 
-const uri = "mongodb+srv://xuan:anh123@cluster0.nnunb.mongodb.net?retryWrites=true&w=majority";
+const uri = `mongodb+srv://xuan:${config.cluster_pass}@cluster0.nnunb.mongodb.net?retryWrites=true&w=majority`;
 
 var driver = {};
 
-var client = null;
-
 driver.connect = async function ()
 {
-    client = null;
-    client = new MongoClient(uri, { useUnifiedTopology: true });
+    var client = null;
+    client = new MongoClient(uri, { useUnifiedTopology: true}, { useNewUrlParser: true }, { connectTimeoutMS: 30000 }, { keepAlive: 1});
     await client.connect();
     const database = client.db('black_spirit');
-    return database;
+    return {
+        'db': database,
+        'client': client
+    }
 }
 
 driver.insert = async function (table, data) {
     var status = false;
     try {
-        var database = await driver.connect();
+        var connection = await driver.connect();
+        var database = connection.db;
         var collection = database.collection(table);
         data['created_at'] = new Date();
         var result = await collection.insertOne(data);
@@ -29,7 +32,7 @@ driver.insert = async function (table, data) {
         status = false;
     } finally {
         // Ensures that the client will close when you finish/error
-        //await client.close();
+        await connection.client.close();
         return status;
     }
 }
@@ -37,7 +40,8 @@ driver.insert = async function (table, data) {
 driver.fetch = async function (table, query = {}) {
     var result = false;
     try {
-        var database = await driver.connect();
+        var connection = await driver.connect();
+        var database = connection.db;
         var collection = database.collection(table);
 
         result = await collection.find(query).toArray();
@@ -46,7 +50,7 @@ driver.fetch = async function (table, query = {}) {
         result = false;
     } finally {
         // Ensures that the client will close when you finish/error
-        //await client.close();
+        await connection.client.close();
         return result;
     }
 }
@@ -54,7 +58,8 @@ driver.fetch = async function (table, query = {}) {
 driver.update = async function (table, query, data) {
     var status = false;
     try {
-        var database = await driver.connect();
+        var connection = await driver.connect();
+        var database = connection.db;
         var collection = database.collection(table);
         data['updated_at'] = new Date();
         data = {
@@ -71,7 +76,7 @@ driver.update = async function (table, query, data) {
         status = false;
     } finally {
         // Ensures that the client will close when you finish/error
-        //await client.close();
+        await connection.client.close();
         return status;
     }
 }
@@ -79,7 +84,8 @@ driver.update = async function (table, query, data) {
 driver.delete = async function (table, query) {
     var status = false;
     try {
-        var database = await driver.connect();
+        var connection = await driver.connect();
+        var database = connection.db;
         var collection = database.collection(table);
         await collection.deleteOne(query);
         status = true;
@@ -88,7 +94,7 @@ driver.delete = async function (table, query) {
         status = false;
     } finally {
         // Ensures that the client will close when you finish/error
-        //await client.close();
+        await connection.client.close();
         return status;
     }
 }
@@ -96,7 +102,8 @@ driver.delete = async function (table, query) {
 driver.insertOrUpdate = async function (table, query, data) {
     var status = false;
     try {
-        var database = await driver.connect();
+        var connection = await driver.connect();
+        var database = connection.db;
         var collection = database.collection(table);
         data['updated_at'] = new Date();
         data = {
@@ -113,7 +120,7 @@ driver.insertOrUpdate = async function (table, query, data) {
         status = false;
     } finally {
         // Ensures that the client will close when you finish/error
-        //await client.close();
+        await connection.client.close();
         return status;
     }
 }

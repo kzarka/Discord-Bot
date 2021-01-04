@@ -32,6 +32,7 @@ helper.reloadTopMessage = async function(client, guildId) {
     let channelWar = helper.getChannelWar(client, guildId);
     if(channelWar) {
         let newEmbed = this.buildEmbed(client, guildId);
+        if(!newEmbed) return;
         channelWar.send(newEmbed).then(async message => {
             let messageId = message.id;
             await helper.updateWar(client, guildId, messageId);
@@ -66,7 +67,7 @@ helper.getGuildJoinData = function (client, guildId) {
     if(!guildsData[guildId]) return null;
 
     if(!guildsData[guildId].joined) return null;
-    return Object.keys(guildsData[guildId].joined);
+    return Object.keys(guildsData[guildId].joined) || [];
 }
 
 helper.getChannelWar = function (client, guildId) {
@@ -163,7 +164,7 @@ helper.buildEmbed = function(client, guildId) {
     // add description
     if(!helper.isWarOpen(client, guildId)) {
         embed.setDescription("Hiện không có war nào!");
-        return embed;
+        return null;
     }
     let warInfo = helper.getGuildWarData(client, guildId);
     let info = `Node: ${warInfo.node || 'TBD'} - ${warInfo.war_date}\n`;
@@ -265,16 +266,22 @@ helper.disableWar = async function(client, guildId) {
 
 helper.updateWar =  async function (client, guildId, messageId = null, node = null, message = null) {
     let warData = {};
+    if(!client.guildsData[guildId].wars) {
+        client.guildsData[guildId].wars = {}
+    }
     if(node) {
         warData.node = node;
+        client.guildsData[guildId].wars.node = node;
     }
 
     if(messageId) {
         warData.message_id = messageId;
+        client.guildsData[guildId].wars.message_id = messageId;
     }
 
     if(message) {
         warData.message = message;
+        client.guildsData[guildId].wars.message = message;
     }
 
     if(!warData) return;

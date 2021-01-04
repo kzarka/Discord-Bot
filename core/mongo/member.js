@@ -20,7 +20,7 @@ members.fetchByGuildId = async function (guildId) {
 	let result = await members.fetch(query);
     let items = {};
 	for(let x in result) {
-        items[result[x]._id] = result[x];
+        items[result[x].member_id] = result[x];
     }
 
     return items;
