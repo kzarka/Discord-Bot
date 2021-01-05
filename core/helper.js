@@ -147,6 +147,6 @@ module.exports = {
         let author = message.member;
         return author.hasPermission('ADMINISTRATOR') || 
             author.hasPermission('MANAGE_CHANNELS') || 
-            author.hasPermission('MANAGE_GUILD ') || this.isMe(author);
+            author.hasPermission('MANAGE_GUILD') || this.isMe(author);
     }
 };

@@ -23,6 +23,10 @@ modules.member = async function(client, message, args) {
 	}
 
 	if(subCommand == 'list') {
+		if(!client.helper.canManage(message)) {
+			message.channel.send('Bạn không có quyền thực hiện lệnh này!');
+			return;
+		}
 		getAllUsers(client, message, args);
 		return;
 	}
