@@ -56,17 +56,17 @@ helper.getMessage = async function (client, guildId) {
 
 helper.getGuildWarData = function (client, guildId) {
     let guildsData = client.guildsData;
-    if(!guildsData[guildId]) return null;
+    if(!guildsData[guildId]) return [];
 
-    if(!guildsData[guildId].wars) return null;
+    if(!guildsData[guildId].wars) return [];
     return guildsData[guildId].wars;
 }
 
 helper.getGuildJoinData = function (client, guildId) {
     let guildsData = client.guildsData;
-    if(!guildsData[guildId]) return null;
+    if(!guildsData[guildId]) return [];
 
-    if(!guildsData[guildId].joined) return null;
+    if(!guildsData[guildId].joined) return [];
     return Object.keys(guildsData[guildId].joined) || [];
 }
 
