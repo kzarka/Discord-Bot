@@ -85,6 +85,7 @@ function getAllUsers(client, message, args) {
 	if(totalPage == 0) totalPage = 1;
 	if(page > totalPage) page = totalPage;
 	if(page < 1) page = 1;
+	if(!page) page = 1;
 	
 	buildListUser(userData, message, loadAll, page, totalPage);
 
@@ -120,7 +121,7 @@ async function buildListUser(list, message, buildAll = true, page = 0, totalPage
 			let level = `${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let className = `${list[id].class}`;
-			let discord = 'Left User';
+			let discord = '----------';
 			if(user) {
 				discord = `${user.user.tag}`;
 			}
@@ -147,7 +148,7 @@ async function buildListUser(list, message, buildAll = true, page = 0, totalPage
 			let level = `${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let className = `${list[id].class}`;
-			let discord = 'Left User';
+			let discord = '----------';
 			if(user) {
 				discord = `${user.user.tag}`;
 			}
