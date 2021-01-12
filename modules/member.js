@@ -1,9 +1,11 @@
 'use strict';
 const Discord = require("discord.js");
+const participateModel = require("../core/mongo/war_participates.js");
 
 var modules = {
 	description: 'Music module'
 };
+const warHelper = require("../helper/war.js");
 
 const Canvas = require('canvas');
 
@@ -28,6 +30,15 @@ modules.member = async function(client, message, args) {
 			return;
 		}
 		getAllUsers(client, message, args);
+		return;
+	}
+
+	if(subCommand == 'warlog') {
+		if(!client.helper.canManage(message)) {
+			message.channel.send('Bạn không có quyền thực hiện lệnh này!');
+			return;
+		}
+		getMemberWar(client, message, args);
 		return;
 	}
 };
@@ -314,4 +325,18 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 		ctx.stroke();
 	}
 
+}
+
+async function getMemberWar(client, message, args) {
+	let user = null;
+	if(args.length != 0) {
+		let memberId = args.shift(); // the member Id
+		let members = await message.channel.guild.members.fetch();
+		user = members.find(member => member.id === memberId);
+	}
+	if(!user) user = message.mentions.members.first();
+	if(!user) user = message.member;
+	let result = await participateModel.fetchByMemberId(user.id, message.guild.id);
+	let embed = warHelper.buildEmbedMemberWar(client, result, user);
+	message.channel.send(embed);
 }

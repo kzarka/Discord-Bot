@@ -48,4 +48,11 @@ participates.loadMemberByGuilds = async function (client) {
     });
 }
 
+participates.fetchByMemberId = async function (memberId, guildId) {
+    let query = {guild_id: guildId, member_id: memberId};
+    let result = driver.lookup(TABLE, 'wars', 'war_id', '_id', 'war', query);
+    
+    return result;
+}
+
 module.exports = participates;
