@@ -69,7 +69,7 @@ async function getUserData(client, message, args, withImage = false) {
 }
 
 function getAllUsers(client, message, args) {
-	let page = 0;
+	let page = 1;
 	let loadAll = false;
 	if(args.length > 0) {
 		if(args[0] == 'all') {
