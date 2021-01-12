@@ -34,10 +34,6 @@ modules.member = async function(client, message, args) {
 	}
 
 	if(subCommand == 'warlog') {
-		if(!client.helper.canManage(message)) {
-			message.channel.send('Bạn không có quyền thực hiện lệnh này!');
-			return;
-		}
 		getMemberWar(client, message, args);
 		return;
 	}
