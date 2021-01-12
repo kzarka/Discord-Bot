@@ -11,6 +11,10 @@ members.fetch = async function (query = {}) {
 	return await driver.fetch(TABLE, query);
 }
 
+members.delete = async function (query = {}) {
+    return await driver.delete(TABLE, query);
+}
+
 members.insertOrUpdate = async function (query, data) {
 	return await driver.insertOrUpdate(TABLE, query, data);
 }

@@ -1,6 +1,7 @@
 'use strict';
 const Discord = require("discord.js");
 const participateModel = require("../core/mongo/war_participates.js");
+const memberModel = require("../core/mongo/members.js");
 
 var modules = {
 	description: 'Music module'
@@ -35,6 +36,11 @@ modules.member = async function(client, message, args) {
 
 	if(subCommand == 'warlog') {
 		getMemberWar(client, message, args);
+		return;
+	}
+
+	if(subCommand == 'remove') {
+		removeMember(client, message, args);
 		return;
 	}
 };
@@ -121,7 +127,7 @@ async function buildListUser(list, message, buildAll = true, page = 0, totalPage
 			let level = `${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let className = `${list[id].class}`;
-			let discord = '----------';
+			let discord = id;
 			if(user) {
 				discord = `${user.user.tag}`;
 			}
@@ -148,7 +154,7 @@ async function buildListUser(list, message, buildAll = true, page = 0, totalPage
 			let level = `${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let className = `${list[id].class}`;
-			let discord = '----------';
+			let discord = id;
 			if(user) {
 				discord = `${user.user.tag}`;
 			}
@@ -348,4 +354,60 @@ async function getMemberWar(client, message, args) {
 	let result = await participateModel.fetchByMemberId(user.id, message.guild.id);
 	let embed = warHelper.buildEmbedMemberWar(client, result, user);
 	message.channel.send(embed);
+}
+
+async function removeMember(client, message, args) {
+	let user = null;
+	if(args.length != 0) {
+		let discrim = args.shift(); // the discrim/id
+		user = await message.channel.guild.members.fetch();
+		user = user.find(member => member.user.tag === discrim);
+		if(!user) user = user.find(member => member.id === discrim);
+	}
+	if(!user) user = message.mentions.members.first();
+	if(!user) {
+		message.channel.send('Thành viên không hợp lệ.');
+		return;
+	}
+	
+	try {
+		let guildId = message.guild.id;
+		await memberModel.delete({member_id: user.id, guild_id: guildId});
+		client.guildsData[guildId].members = await memberModel.fetchByGuildId(guildId);
+		message.channel.send('Đã xóa thành viên khỏi danh sách!');
+	} catch(e) {
+		console.log(e);
+		message.channel.send('Thành viên này chưa báo danh!');
+	}
+}
+
+async function addMember(client, message, args) {
+	let user = null;
+	if(args.length != 0) {
+		let discrim = args.shift(); // the discrim/id
+		user = await message.channel.guild.members.fetch();
+		user = user.find(member => member.user.tag === discrim);
+		if(!user) user = user.find(member => member.id === discrim);
+	}
+	if(!user) user = message.mentions.members.first();
+	if(!user) {
+		message.channel.send('Thành viên không hợp lệ.');
+		return;
+	}
+	
+	try {
+		let guildId = message.guild.id;
+		let member = {
+			member_id: user.id,
+			guild_id: guildId
+		};
+		var query = { member_id: member.member_id, guild_id: member.guild_id };
+        await memberModel.insertOrUpdate(query, member);
+        client.guildsData[guildId].members = await memberModel.fetchByGuildId(guildId);
+        message.channel.send('Đã thêm thành viên vào danh sách!');
+		
+	} catch(e) {
+		console.log(e);
+		message.channel.send('Không thể thêm thành viên này!');
+	}
 }
