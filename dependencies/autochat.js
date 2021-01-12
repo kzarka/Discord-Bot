@@ -12,14 +12,19 @@ module.exports = function(client){
 		msgContent = msgContent.replace(`<@${mentionUser.id}>`, "").trim();
 		if(msgContent == '') return message.channel.send(hi[Math.floor(Math.random() * (hi.length - 1)) + 1]);
 		message.channel.startTyping();
-		axios.get('https://simsimi.copcute.pw/api',{params:{text:msgContent, lang: "vi_VN", cf: true}})
+
+            setTimeout(function(){
+                  message.channel.stopTyping();
+            }, 2000);
+
+		axios.get('https://api.simsimi.net/v1/',{params:{text:msgContent, lang: "vi_VN"}})
       		.then( response =>{
       			message.channel.stopTyping();
       			let responseMsg = 'Em bị lỗi rồi';
                         console.log(response.data);
       			try {
-                              let data = response.data;
-      				responseMsg = data.messages[0].text;
+                              let msg = response.messages;
+      				responseMsg = msg[0].response;
       			} catch (e) {
       				return message.channel.send(responseMsg);
       			}
