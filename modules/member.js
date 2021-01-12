@@ -105,7 +105,7 @@ async function buildListUser(list, message, buildAll = true, page = 0, totalPage
 		let id = null;
 		for(id in list) {
 			let user = message.guild.members.cache.find(x => x.id === id);
-			if(!user) continue;
+			
 			if(index == 0) {
 				data = '```' + header;
 			} else if(index % 15 == 0 && index != total) {
@@ -120,7 +120,10 @@ async function buildListUser(list, message, buildAll = true, page = 0, totalPage
 			let level = `${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let className = `${list[id].class}`;
-			let discord = `${user.user.tag}`;
+			let discord = 'Left User';
+			if(user) {
+				discord = `${user.user.tag}`;
+			}
 			let warCount = withWarCount[id];
 			if(!warCount) warCount = 0;
 			warCount = warCount + '';
@@ -136,7 +139,6 @@ async function buildListUser(list, message, buildAll = true, page = 0, totalPage
 		let id = null;
 		for(id in list) {
 			let user = message.guild.members.cache.find(x => x.id === id);
-			if(!user) continue;
 			if(index++ < from - 1) {
 				continue;
 			}
@@ -145,7 +147,10 @@ async function buildListUser(list, message, buildAll = true, page = 0, totalPage
 			let level = `${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let className = `${list[id].class}`;
-			let discord = `${user.displayName}`;
+			let discord = 'Left User';
+			if(user) {
+				discord = `${user.user.tag}`;
+			}
 			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${className.padEnd(15, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if(index >= to) {
 				break;
