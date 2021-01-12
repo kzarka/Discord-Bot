@@ -135,10 +135,11 @@ async function buildListUser(list, message, buildAll = true, page = 0, totalPage
 		data += header;
 		let id = null;
 		for(id in list) {
+			let user = message.guild.members.cache.find(x => x.id === id);
+			if(!user) continue;
 			if(index++ < from - 1) {
 				continue;
 			}
-			let user = message.guild.members.cache.find(x => x.id === id);
 			let info = list[id];
 			let stats = `${list[id].ap}/${list[id].awk}/${list[id].dp}`;
 			let level = `${list[id].level}`;
