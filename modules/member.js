@@ -410,7 +410,6 @@ async function addMember(client, message, args) {
 		user = members.find(member => member.user.tag === discrim);
 		if(!user) user = members.find(member => member.id === discrim);
 	}
-	if(!user) user = message.mentions.members.first();
 	if(!user) {
 		message.channel.send('Thành viên không hợp lệ.');
 		return;
@@ -422,12 +421,11 @@ async function addMember(client, message, args) {
 		message.channel.send('Thành viên đã có trong danh sách.');
 		return;
 	}
-	
+	let member = getMemberInfo(args);
 	try {
-		let member = {
-			member_id: user.id,
-			guild_id: guildId
-		};
+		
+		member['member_id'] = user.id;
+		member['guild_id'] = guildId;
 		var query = { member_id: member.member_id, guild_id: member.guild_id };
         await memberModel.insertOrUpdate(query, member);
         client.guildsData[guildId].members = await memberModel.fetchByGuildId(guildId);
@@ -437,4 +435,22 @@ async function addMember(client, message, args) {
 		console.log(e);
 		message.channel.send('Không thể thêm thành viên này!');
 	}
+}
+
+function getMemberInfo(args) {
+	console.log(args);
+	let memberInfo = {};
+	for(let i = 0; i < args.length; i++) {
+		if(i == 0) {
+			memberInfo['family'] = args[i];
+			continue;
+		}
+
+		if(i == 1) {
+			memberInfo['character'] = args[i];
+			continue;
+		}
+	}
+	console.log(memberInfo);
+	return memberInfo;
 }
