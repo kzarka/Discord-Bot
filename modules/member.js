@@ -90,7 +90,8 @@ function getAllUsers(client, message, args) {
 
 }
 
-function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) {
+async function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) {
+	let withWarCount = await participateModel.fetchWarMemberCountByGuildId(message.guild.id);
 	let data = '```';
 	let perPage = 10;
 	let from = 10*page-10;
@@ -98,11 +99,13 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 	let total = Object.keys(list).length;
 	if(to > total) to = total;
 	let index = 0;
-	let header = `${'STT'.padEnd(3, ' ')} ${'Family/Character'.padEnd(35, ' ')} ${'Class'.padEnd(15, ' ')} ${'Level'.padEnd(10, ' ')} ${'AP/AWK/DP'.padEnd(18, ' ')} ${'Discord'}\n\n`;
+	let header = `${'STT'.padEnd(3, ' ')} ${'Family/Character'.padEnd(35, ' ')} ${'Node War'.padEnd(10, ' ')} ${'Class'.padEnd(15, ' ')} ${'Level'.padEnd(10, ' ')} ${'AP/AWK/DP'.padEnd(18, ' ')} ${'Discord'}\n\n`;
 	if(buildAll) {
 		let data = '';
 		let id = null;
 		for(id in list) {
+			let user = message.guild.members.cache.find(x => x.id === id);
+			if(!user) continue;
 			if(index == 0) {
 				data = '```' + header;
 			} else if(index % 15 == 0 && index != total) {
@@ -110,15 +113,18 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 				message.channel.send(data);
 				data = '```';
 			}
-			let user = message.guild.members.cache.find(x => x.id === id);
+
 			let info = list[id];
 			index++;
 			let stats = `${list[id].ap}/${list[id].awk}/${list[id].dp}`;
 			let level = `${list[id].level}`;
 			let familyInfo = `${list[id].family}/${list[id].character}`;
 			let className = `${list[id].class}`;
-			let discord = `${user.displayName}`;
-			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${className.padEnd(15, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
+			let discord = `${user.user.tag}`;
+			let warCount = withWarCount[id];
+			if(!warCount) warCount = 0;
+			warCount = warCount + '';
+			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${warCount.padEnd(10, ' ')} ${className.padEnd(15, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if (index == total) {
 				data += '```';
 				message.channel.send(data);
