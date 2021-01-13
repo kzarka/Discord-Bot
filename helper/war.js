@@ -56,17 +56,17 @@ helper.getMessage = async function (client, guildId) {
 
 helper.getGuildWarData = function (client, guildId) {
     let guildsData = client.guildsData;
-    if(!guildsData[guildId]) return null;
+    if(!guildsData[guildId]) return [];
 
-    if(!guildsData[guildId].wars) return null;
+    if(!guildsData[guildId].wars) return [];
     return guildsData[guildId].wars;
 }
 
 helper.getGuildJoinData = function (client, guildId) {
     let guildsData = client.guildsData;
-    if(!guildsData[guildId]) return null;
+    if(!guildsData[guildId]) return [];
 
-    if(!guildsData[guildId].joined) return null;
+    if(!guildsData[guildId].joined) return [];
     return Object.keys(guildsData[guildId].joined) || [];
 }
 
@@ -402,6 +402,78 @@ helper.userUnjoin = async function(client, guildId, memberId) {
     if(result) {
         client.guildsData[guildId].joined = await warModels.fetchByGuildId(guildId, warId);
     }
+}
+
+helper.buildListWarJoin = function(data) {
+    /* array for storing pages */
+    let pages = [];
+    let maxNameLength = 20;
+    let maxClassLength = 8 + 1;
+    let maxLengthLevel = 'Level'.length + 4;
+    let maxLengthPosition = 3;
+    let listString = '``' +`${'STT'.padEnd(maxLengthPosition, ' ')} ${'Node'.padEnd((maxNameLength),' ')} ${'Date'.padEnd(maxClassLength, ' ')}\n` + '``\n';
+    if(data == void(0) || data.length == 0) {
+        pages.push(listString);
+        return pages;
+    }
+
+    
+    for(let x = 0; x < data.length; x++) {
+        let warData = data[x].war;
+        if(!warData) continue;
+        warData = warData[0];
+        console.log(warData);
+        let positition = (x+1);
+        let posititionString = positition + '.';
+        
+        let node = warData.node || '???';
+        let warDate = warData.war_date || '???';
+
+        listString += '``' + `${posititionString.padEnd(maxLengthPosition, ' ')} ${node.padEnd((maxNameLength),' ')} ${warDate.padEnd(maxClassLength,' ')}` + '``\n';
+        // go next here so check again
+        if((positition % rowPerPage == 0) || (positition == data.length)) {
+            pages.push(listString);
+            listString = '';
+        }
+
+    }
+
+    return pages;
+}
+
+helper.buildEmbedMemberWar = function(client, data, member) {
+    const embed = new client.Discord.MessageEmbed()
+        //.setTitle("This is your title, it can hold 256 characters")
+        //.setURL("https://discord.js.org/#/docs/main/indev/class/RichEmbed")
+        .setAuthor("Node War", "https://i.imgur.com/h9cOtT9.png")
+        .setColor(0x00AE86)
+        //.setDescription("This is the main body of text, it can hold 2048 characters.")
+        .setFooter("Xuan Bot", "https://i.imgur.com/h9cOtT9.png")
+        //.setImage("http://i.imgur.com/yVpymuV.png")
+        //.setThumbnail("https://i.imgur.com/ZkoC0RM.png")
+        .setTimestamp();
+
+    let list = this.buildListWarJoin(data);
+    // set fields
+    for(let i = 0; i < list.length; i++) {
+        if(i == 0) {
+            embed.addField("NODE WAR ĐÃ THAM GIA", list[i]);
+            continue;
+        }
+        embed.addField("\u200B", list[i]);
+    }
+    embed.addField("\u200B", "\u200B");
+    // add description
+
+   /* let warInfo = helper.getGuildWarData(client, guildId);
+    let info = `Node: ${warInfo.node || 'TBD'} - ${warInfo.war_date}\n`;
+    if(warInfo.message) {
+        info += `Message: ${warInfo.message || ''}`;
+    }*/
+
+    let info = '**' + member.user.tag + '**';
+    embed.setDescription(info);
+    return embed;
 }
 
 module.exports = helper;

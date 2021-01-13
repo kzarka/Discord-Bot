@@ -125,6 +125,49 @@ driver.insertOrUpdate = async function (table, query, data) {
     }
 }
 
+driver.lookup = async function (table, joinTable, localField, foreignField, newCol, query = null) {
+    var result = false;
+    try {
+        if(!newCol) newCol = localField;
+        var connection = await driver.connect();
+        var database = connection.db;
+        var collection = database.collection(table);
+
+        let aggregate = [
+            { 
+                $lookup: {
+                    from: joinTable,
+                    localField: localField,
+                    foreignField: foreignField,
+                    as: newCol
+                }
+            }
+        ];
+
+        if(query) {
+            aggregate = [
+                {$match: query},
+                {
+                    $lookup: {
+                        from: joinTable,
+                        localField: localField,
+                        foreignField: foreignField,
+                        as: newCol
+                    }
+                }
+            ];
+        }
+        result = await collection.aggregate(aggregate).toArray()
+    } catch (e) {
+        console.log(e);
+        result = false;
+    } finally {
+        // Ensures that the client will close when you finish/error
+        await connection.client.close();
+        return result;
+    }
+}
+
 module.exports = driver;
 
 //run().catch(console.dir);

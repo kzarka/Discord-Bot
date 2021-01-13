@@ -47,6 +47,16 @@ wars.fetchByGuildId = async function (guildId) {
     return items;
 }
 
+wars.fetchByMemberId = async function (memberId) {
+    let result = await driver.lookup('war_participates');
+    let items = {};
+    for(let x in result) {
+        items[result[x]._id] = result[x];
+    }
+
+    return items;
+}
+
 wars.fetchNextWarByGuildId = async function (guildId) {
     var query = {'guild_id': guildId, 'active': 1}; // only one active war
     let result = await wars.fetch(query);

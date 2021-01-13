@@ -1,9 +1,12 @@
 'use strict';
 const Discord = require("discord.js");
+const participateModel = require("../core/mongo/war_participates.js");
+const memberModel = require("../core/mongo/member.js");
 
 var modules = {
 	description: 'Music module'
 };
+const warHelper = require("../helper/war.js");
 
 const Canvas = require('canvas');
 
@@ -30,20 +33,42 @@ modules.member = async function(client, message, args) {
 		getAllUsers(client, message, args);
 		return;
 	}
+
+	if(subCommand == 'warlog') {
+		getMemberWar(client, message, args);
+		return;
+	}
+
+	if(subCommand == 'remove') {
+		if(!client.helper.canManage(message)) {
+			message.channel.send('Bạn không có quyền thực hiện lệnh này!');
+			return;
+		}
+		removeMember(client, message, args);
+		return;
+	}
+
+	if(subCommand == 'add') {
+		if(!client.helper.canManage(message)) {
+			message.channel.send('Bạn không có quyền thực hiện lệnh này!');
+			return;
+		}
+		addMember(client, message, args);
+		return;
+	}
 };
 
 async function getUserData(client, message, args, withImage = false) {
 	let user = null;
+	let discrim = null;
 	if(args.length != 0) {
-		let discrim = args.shift(); // the discrim
-		user = await message.channel.guild.members.fetch();
-		user = user.find(member => member.user.tag.split('#')[1] === discrim);
+		discrim = args.shift(); // the discrim/id
+		let members = await message.channel.guild.members.fetch();
+		user = members.find(member => member.user.tag === discrim);
+		if(!user) user = members.find(member => member.id === discrim);
 	}
 	if(!user) user = message.mentions.members.first();
 	if(!user) user = message.member;
-	console.log(user.id);
-	console.log(client.guildsData[message.guild.id].members);
-	console.log('===================');
 	try {
 		let userData = client.guildsData[message.guild.id].members[user.id];
 		if(!userData) throw 'E';
@@ -62,7 +87,7 @@ async function getUserData(client, message, args, withImage = false) {
 }
 
 function getAllUsers(client, message, args) {
-	let page = 0;
+	let page = 1;
 	let loadAll = false;
 	if(args.length > 0) {
 		if(args[0] == 'all') {
@@ -78,12 +103,14 @@ function getAllUsers(client, message, args) {
 	if(totalPage == 0) totalPage = 1;
 	if(page > totalPage) page = totalPage;
 	if(page < 1) page = 1;
+	if(!page) page = 1;
 	
 	buildListUser(userData, message, loadAll, page, totalPage);
 
 }
 
-function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) {
+async function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) {
+	let withWarCount = await participateModel.fetchWarMemberCountByGuildId(message.guild.id);
 	let data = '```';
 	let perPage = 10;
 	let from = 10*page-10;
@@ -91,11 +118,13 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 	let total = Object.keys(list).length;
 	if(to > total) to = total;
 	let index = 0;
-	let header = `${'STT'.padEnd(3, ' ')} ${'Family/Character'.padEnd(35, ' ')} ${'Class'.padEnd(15, ' ')} ${'Level'.padEnd(10, ' ')} ${'AP/AWK/DP'.padEnd(18, ' ')} ${'Discord'}\n\n`;
+	let header = `${'STT'.padEnd(3, ' ')} ${'Family/Character'.padEnd(35, ' ')} ${'Node War'.padEnd(10, ' ')} ${'Class'.padEnd(15, ' ')} ${'Level'.padEnd(10, ' ')} ${'AP/AWK/DP'.padEnd(18, ' ')} ${'Discord'}\n\n`;
 	if(buildAll) {
 		let data = '';
 		let id = null;
 		for(id in list) {
+			let user = message.guild.members.cache.find(x => x.id === id);
+			
 			if(index == 0) {
 				data = '```' + header;
 			} else if(index % 15 == 0 && index != total) {
@@ -103,15 +132,21 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 				message.channel.send(data);
 				data = '```';
 			}
-			let user = message.guild.members.cache.find(x => x.id === id);
+
 			let info = list[id];
 			index++;
-			let stats = `${list[id].ap}/${list[id].awk}/${list[id].dp}`;
-			let level = `${list[id].level}`;
-			let familyInfo = `${list[id].family}/${list[id].character}`;
-			let className = `${list[id].class}`;
-			let discord = `${user.displayName}`;
-			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${className.padEnd(15, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
+			let stats = `${list[id].ap || '--'}/${list[id].awk || '--'}/${list[id].dp || '--'}`;
+			let level = `${list[id].level || '--'}`;
+			let familyInfo = `${list[id].family || '---'}/${list[id].character || '---'}`;
+			let className = `${list[id].class || '---'}`;
+			let discord = id;
+			if(user) {
+				discord = `${user.user.tag}`;
+			}
+			let warCount = withWarCount[id];
+			if(!warCount) warCount = 0;
+			warCount = warCount + '';
+			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${warCount.padEnd(10, ' ')} ${className.padEnd(15, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if (index == total) {
 				data += '```';
 				message.channel.send(data);
@@ -122,16 +157,19 @@ function buildListUser(list, message, buildAll = true, page = 0, totalPage = 0) 
 		data += header;
 		let id = null;
 		for(id in list) {
+			let user = message.guild.members.cache.find(x => x.id === id);
 			if(index++ < from - 1) {
 				continue;
 			}
-			let user = message.guild.members.cache.find(x => x.id === id);
 			let info = list[id];
-			let stats = `${list[id].ap}/${list[id].awk}/${list[id].dp}`;
-			let level = `${list[id].level}`;
-			let familyInfo = `${list[id].family}/${list[id].character}`;
-			let className = `${list[id].class}`;
-			let discord = `${user.displayName}`;
+			let stats = `${list[id].ap || '--'}/${list[id].awk || '--'}/${list[id].dp || '--'}`;
+			let level = `${list[id].level || '--'}`;
+			let familyInfo = `${list[id].family || '---'}/${list[id].character || '---'}`;
+			let className = `${list[id].class || '---'}`;
+			let discord = id;
+			if(user) {
+				discord = `${user.user.tag}`;
+			}
 			data += `${(index + '.').padEnd(3, ' ')} ${familyInfo.padEnd(35, ' ')} ${className.padEnd(15, ' ')} ${level.padEnd(10, ' ')} ${stats.padEnd(18, ' ')} ${discord}\n`;
 			if(index >= to) {
 				break;
@@ -185,7 +223,7 @@ async function drawImage(member, userData) {
 
 	ctx.font = '25px Roboto';
 	ctx.fillStyle = 'white';
-	ctx.fillText(`${userData.family || '??'}`, 360, 110);
+	ctx.fillText(`${userData.family || '---'}`, 360, 110);
 
 	ctx.font = '16px Roboto';
 	ctx.fillStyle = '#62d3f5';
@@ -193,7 +231,7 @@ async function drawImage(member, userData) {
 
 	ctx.font = '25px Roboto';
 	ctx.fillStyle = 'white';
-	ctx.fillText(`${userData.character || '??'}`, 360, 145);
+	ctx.fillText(`${userData.character || '---'}`, 360, 145);
 
 	ctx.font = '16px Roboto';
 	ctx.fillStyle = '#62d3f5';
@@ -201,7 +239,7 @@ async function drawImage(member, userData) {
 
 	ctx.font = '25px Roboto';
 	ctx.fillStyle = 'white';
-	ctx.fillText(`${userData.ap || '??'}/${userData.awk || '??'}/${userData.dp || '??'}`, 360, 185);
+	ctx.fillText(`${userData.ap || '--'}/${userData.awk || '--'}/${userData.dp || '--'}`, 360, 185);
 
 	//ctx.strokeStyle = 'black';
 	ctx.strokeRect(0, 0, canvas.width, canvas.height);
@@ -231,7 +269,7 @@ async function drawImage(member, userData) {
 
 	ctx.font = '28px Roboto';
 	ctx.fillStyle = 'white';
-	ctx.fillText(`${userData.level || '??'}`, 250+lengthName, 60);
+	ctx.fillText(`${userData.level || '--'}`, 250+lengthName, 60);
 
 	// COPY RIGHT SECTION
 	ctx.font = 'bold 11px Roboto';
@@ -314,4 +352,105 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 		ctx.stroke();
 	}
 
+}
+
+async function getMemberWar(client, message, args) {
+	let user = null;
+	if(args.length != 0) {
+		let memberId = args.shift(); // the member Id
+		let members = await message.channel.guild.members.fetch();
+		user = members.find(member => member.id === memberId);
+	}
+	if(!user) user = message.mentions.members.first();
+	if(!user) user = message.member;
+	let result = await participateModel.fetchByMemberId(user.id, message.guild.id);
+	let embed = warHelper.buildEmbedMemberWar(client, result, user);
+	message.channel.send(embed);
+}
+
+async function removeMember(client, message, args) {
+	let user = null;
+	let discrim = null;
+	if(args.length != 0) {
+		discrim = args.shift(); // the discrim/id
+		let members = await message.channel.guild.members.fetch();
+		user = members.find(member => member.user.tag === discrim);
+		if(!user) user = members.find(member => member.id === discrim);
+	}
+	if(!user) user = message.mentions.members.first();
+	let userId = discrim;
+	if(!userId && !user) {
+		message.channel.send('Thành viên không hợp lệ.');
+		return;
+	}
+
+	if(user) userId = user.id;
+	let guildId = message.guild.id;
+	if(!client.guildsData[guildId].members[userId]) {
+		message.channel.send('Thành viên này không có trong danh sách.');
+		return;
+	}
+	
+	try {
+		await memberModel.delete({member_id: userId, guild_id: guildId});
+		client.guildsData[guildId].members = await memberModel.fetchByGuildId(guildId);
+		message.channel.send('Đã xóa thành viên khỏi danh sách!');
+	} catch(e) {
+		console.log(e);
+		message.channel.send('Thành viên này chưa báo danh!');
+	}
+}
+
+async function addMember(client, message, args) {
+	let user = null;
+	let discrim = null;
+	if(args.length != 0) {
+		discrim = args.shift(); // the discrim/id
+		let members = await message.channel.guild.members.fetch();
+		user = members.find(member => member.user.tag === discrim);
+		if(!user) user = members.find(member => member.id === discrim);
+	}
+	if(!user) {
+		message.channel.send('Thành viên không hợp lệ.');
+		return;
+	}
+
+	let guildId = message.guild.id;
+
+	if(client.guildsData[guildId].members[user.id]) {
+		message.channel.send('Thành viên đã có trong danh sách.');
+		return;
+	}
+	let member = getMemberInfo(args);
+	try {
+		
+		member['member_id'] = user.id;
+		member['guild_id'] = guildId;
+		var query = { member_id: member.member_id, guild_id: member.guild_id };
+        await memberModel.insertOrUpdate(query, member);
+        client.guildsData[guildId].members = await memberModel.fetchByGuildId(guildId);
+        message.channel.send('Đã thêm thành viên vào danh sách!');
+		
+	} catch(e) {
+		console.log(e);
+		message.channel.send('Không thể thêm thành viên này!');
+	}
+}
+
+function getMemberInfo(args) {
+	console.log(args);
+	let memberInfo = {};
+	for(let i = 0; i < args.length; i++) {
+		if(i == 0) {
+			memberInfo['family'] = args[i];
+			continue;
+		}
+
+		if(i == 1) {
+			memberInfo['character'] = args[i];
+			continue;
+		}
+	}
+	console.log(memberInfo);
+	return memberInfo;
 }

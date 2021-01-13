@@ -48,4 +48,26 @@ participates.loadMemberByGuilds = async function (client) {
     });
 }
 
+participates.fetchByMemberId = async function (memberId, guildId) {
+    let query = {guild_id: guildId, member_id: memberId};
+    let result = await driver.lookup(TABLE, 'wars', 'war_id', '_id', 'war', query);
+    
+    return result;
+}
+
+participates.fetchWarMemberCountByGuildId = async function (guildId) {
+    let query = {guild_id: guildId};
+    let result = await driver.lookup(TABLE, 'wars', 'war_id', '_id', 'war', query);
+    let items = {};
+    for(let x in result) {
+        let member_id = result[x].member_id
+        if(items[member_id]) {
+            items[member_id] = items[member_id]+1;
+        } else {
+            items[member_id] = 1;
+        }
+    }
+    return items;
+}
+
 module.exports = participates;
