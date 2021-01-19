@@ -45,7 +45,7 @@ modules.war = async function(client, message, args) {
 		// reload top msg
         await helper.reloadTopMessage(client, guildId);
         // for auto shutdown war
-        //helper.warAutoShutdown(client, datDir);
+        helper.warAutoShutdown(client, guildId);
        	let embed = await helper.buildEmbedInfo(client, guildId);
 		message.channel.send('Setting saved!', embed);
 		return;
