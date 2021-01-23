@@ -59,14 +59,8 @@ modules.member = async function(client, message, args) {
 };
 
 async function getUserData(client, message, args, withImage = false) {
-	let user = null;
-	let discrim = null;
-	if(args.length != 0) {
-		discrim = args.shift(); // the discrim/id
-		let members = await message.channel.guild.members.fetch();
-		user = members.find(member => member.user.tag === discrim);
-		if(!user) user = members.find(member => member.id === discrim);
-	}
+	let user = await getMemberFromArgs(message, args);
+
 	if(!user) user = message.mentions.members.first();
 	if(!user) user = message.member;
 	try {
@@ -355,12 +349,7 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 }
 
 async function getMemberWar(client, message, args) {
-	let user = null;
-	if(args.length != 0) {
-		let memberId = args.shift(); // the member Id
-		let members = await message.channel.guild.members.fetch();
-		user = members.find(member => member.id === memberId);
-	}
+	let user = await getMemberFromArgs(message, args);
 	if(!user) user = message.mentions.members.first();
 	if(!user) user = message.member;
 	let result = await participateModel.fetchByMemberId(user.id, message.guild.id);
@@ -369,14 +358,8 @@ async function getMemberWar(client, message, args) {
 }
 
 async function removeMember(client, message, args) {
-	let user = null;
-	let discrim = null;
-	if(args.length != 0) {
-		discrim = args.shift(); // the discrim/id
-		let members = await message.channel.guild.members.fetch();
-		user = members.find(member => member.user.tag === discrim);
-		if(!user) user = members.find(member => member.id === discrim);
-	}
+	let user = await getMemberFromArgs(message, args);;
+
 	if(!user) user = message.mentions.members.first();
 	let userId = discrim;
 	if(!userId && !user) {
@@ -402,14 +385,7 @@ async function removeMember(client, message, args) {
 }
 
 async function addMember(client, message, args) {
-	let user = null;
-	let discrim = null;
-	if(args.length != 0) {
-		discrim = args.shift(); // the discrim/id
-		let members = await message.channel.guild.members.fetch();
-		user = members.find(member => member.user.tag === discrim);
-		if(!user) user = members.find(member => member.id === discrim);
-	}
+	let user = await getMemberFromArgs(message, args);
 	if(!user) {
 		message.channel.send('Thành viên không hợp lệ.');
 		return;
@@ -453,4 +429,33 @@ function getMemberInfo(args) {
 	}
 	console.log(memberInfo);
 	return memberInfo;
+}
+
+async function getMemberFromArgs(message, args) {
+	let user = null;
+	if(args.length == 0) return user;
+	let userArgs = [];
+	let index = 0;
+	for(let i = 0; i < args.length; i++) {
+		let current = args[i];
+		index = i;
+		if(current.indexOf('#') !== -1) {
+			userArgs.push(current);
+			break;
+		}
+		userArgs.push(current);
+	}
+	let discrim = userArgs.join(' ');
+	if(userArgs.length == 0) {
+		discrim = args.shift(); // the discrim/id
+	} else {
+		for(let j = 0; j < userArgs.length; j++) {
+			args.shift(); //remove
+		}
+	}
+	let members = await message.channel.guild.members.fetch();
+	user = members.find(member => member.user.tag === discrim);
+	if(!user) user = members.find(member => member.id === discrim);
+
+	return user;
 }
