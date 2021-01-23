@@ -365,8 +365,7 @@ async function removeMember(client, message, args) {
 		message.channel.send('Thành viên không hợp lệ.');
 		return;
 	}
-
-	if(user) userId = user.id;
+	let userId = user.id;
 	let guildId = message.guild.id;
 	if(!client.guildsData[guildId].members[userId]) {
 		message.channel.send('Thành viên này không có trong danh sách.');
