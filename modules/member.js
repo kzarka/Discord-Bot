@@ -361,8 +361,7 @@ async function removeMember(client, message, args) {
 	let user = await getMemberFromArgs(message, args);;
 
 	if(!user) user = message.mentions.members.first();
-	let userId = discrim;
-	if(!userId && !user) {
+	if(!user) {
 		message.channel.send('Thành viên không hợp lệ.');
 		return;
 	}
