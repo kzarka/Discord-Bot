@@ -6,6 +6,7 @@ module.exports = function(client){
 
 	var hi = ['', 'Hi', 'Hello', 'Sup', 'Yo', 'Whassup', '?'];
 	client.on('message', async message => {
+            return;
 		let mentionUser = message.mentions.users.first();
 		if(!mentionUser || mentionUser.id != client.user.id) return;
 		let msgContent = message.content;
