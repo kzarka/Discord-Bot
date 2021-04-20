@@ -41,7 +41,7 @@ function channel(client, message, args) {
 }
 
 function buildInfoEmbed(client, message) {
-	const embed = new client.Discord.RichEmbed()
+	const embed = new client.Discord.MessageEmbed()
         //.setTitle("This is your title, it can hold 256 characters")
         //.setURL("https://discord.js.org/#/docs/main/indev/class/RichEmbed")
         .setAuthor("Black Spirit Bot", "https://i.imgur.com/h9cOtT9.png")
